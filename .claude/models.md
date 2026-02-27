@@ -1,0 +1,31 @@
+# Règles d'attribution des modèles Claude
+
+## Claude Opus — Tâches complexes
+Utiliser pour :
+- Conception d'architecture (DDD, bounded contexts)
+- Sécurité : design des voters, stratégie d'authentification
+- Refactoring majeur avec impact transverse
+- Résolution de bugs complexes (race conditions, performances)
+- Génération de la documentation d'architecture
+
+Prompt d'amorce : "Tu es un architecte Symfony senior. Contexte : [coller CONTEXT.md]"
+
+## Claude Sonnet — Tâches intermédiaires
+Utiliser pour :
+- Génération de controllers avec logique métier
+- Couche Service complète
+- Tests fonctionnels (PHPUnit, Panther)
+- Intégration API externe
+- Configuration GitHub Actions
+
+Prompt d'amorce : "Tu es un développeur Symfony 7.4 expérimenté. Stack : PHP 8.5, Doctrine ORM."
+
+## Claude Haiku — Tâches simples/répétitives
+Utiliser pour :
+- CRUD basique (entité + controller + templates Twig)
+- Migrations Doctrine
+- Composants Stimulus simples
+- Corrections de typos, formatage
+- Questions rapides sur la syntaxe
+
+Prompt d'amorce : "Symfony 7.4, PHP 8.5. Génère [tâche précise]."
