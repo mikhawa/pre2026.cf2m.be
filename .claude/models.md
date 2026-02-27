@@ -8,7 +8,7 @@ Utiliser pour :
 - Résolution de bugs complexes (race conditions, performances)
 - Génération de la documentation d'architecture
 
-Prompt d'amorce : "Tu es un architecte Symfony senior. Contexte : [coller CONTEXT.md]"
+Prompt d'amorce : "Tu es un architecte Symfony senior. Contexte : voir `.claude/CONTEXT.md`. Propose une solution pour [problème précis]."
 
 ## Claude Sonnet — Tâches intermédiaires
 Utiliser pour :
