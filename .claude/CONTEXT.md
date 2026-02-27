@@ -92,6 +92,24 @@
   Recherche full-text via `LIKE` ou intégration Meilisearch/Elasticsearch.
   Dépend de : `PageRepository`, `EntityManagerInterface`,`FormationRepository`
 
+### Cache & Performance
+- `App\Service\CacheService`
+  Abstraction du cache Symfony (PSR-6/PSR-16) pour les données coûteuses à calculer.
+  Dépend de : `CacheInterface`
+
+- `App\Service\StatisticsService`
+  Calcul de statistiques (vues, inscriptions, ventes) avec mise en cache.
+  Dépend de : `CacheService`, repositories divers
+
+### Logging & Audit
+- `App\Service\AuditService`
+  Enregistrement des actions sensibles en BDD (qui a fait quoi, quand, depuis quelle IP).
+  Dépend de : `AuditLogRepository`, `Security`, `RequestStack`
+
+- `App\Service\ActivityLogService`
+  Historique des actions utilisateur pour affichage dans le back-office.
+  Dépend de : `ActivityLogRepository`, `EntityManagerInterface`
+
 ## Contraintes importantes
 - PHP 8.5 strict_types partout
 - Pas de JavaScript bundler (ImportMap natif Symfony)
