@@ -3,17 +3,17 @@ FROM php:8.5-fpm
 # Extensions systeme requises
 RUN apt-get update && apt-get install -y \
     libicu-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
+    libfreetype-dev \
+    libjpeg-dev \
     libpng-dev \
     libzip-dev \
+    libonig-dev \
     unzip \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
         intl \
-        opcache \
         gd \
         zip \
     && apt-get clean \
