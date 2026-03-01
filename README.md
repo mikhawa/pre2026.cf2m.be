@@ -8,6 +8,14 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 > Symfony 7.4 LTS | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap
 
+| Service | URL | Description |
+|---------|-----|-------------|
+| App Symfony | http://localhost:8085 | Application principale |
+| phpMyAdmin | http://localhost:8181 | Interface de gestion BDD |
+| Mailpit | http://localhost:8025 | Boîte mail de test SMTP |
+| BDD (MariaDB) | localhost:3307 | Connexion directe (non HTTP) |
+
+
 ---
 
 ## 🚀 Démarrage rapide (développement)
