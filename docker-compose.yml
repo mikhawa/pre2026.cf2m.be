@@ -1,0 +1,71 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: pre_cf2m_php
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      DATABASE_URL: "mysql://pre_cf2m_user:pre_cf2m_pass@db:3306/pre_cf2m_db?serverVersion=11.4.10-MariaDB"
+
+  nginx:
+    image: nginx:alpine
+    container_name: pre_cf2m_nginx
+    ports:
+      - "8085:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  db:
+    image: mariadb:11.4
+    container_name: pre_cf2m_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pre_cf2m_db
+      MYSQL_USER: pre_cf2m_user
+      MYSQL_PASSWORD: pre_cf2m_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: pre_cf2m_phpmyadmin
+    ports:
+      - "8181:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: pre_cf2m_user
+      PMA_PASSWORD: pre_cf2m_pass
+    depends_on:
+      - db
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: pre_cf2m_mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+
+volumes:
+  db_data:

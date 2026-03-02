@@ -1,0 +1,3 @@
+# Surcharges Docker générées par Symfony Flex — adaptées à notre stack
+# Les services db et mailpit sont déjà définis dans docker-compose.yml
+services: {}
