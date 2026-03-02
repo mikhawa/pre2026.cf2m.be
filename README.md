@@ -15,7 +15,16 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 | Mailpit | http://localhost:8025 | Boîte mail de test SMTP |
 | BDD (MariaDB) | localhost:3307 | Connexion directe (non HTTP) |
 
-
+### ----------------------
+### Git Commands
+### ----------------------
+```bash
+alias gs='git status'
+alias ga='git add .'
+alias gc='git commit'
+alias gps='git push'
+alias gpu='git pull'
+```
 ---
 
 ## 🚀 Démarrage rapide (développement)
