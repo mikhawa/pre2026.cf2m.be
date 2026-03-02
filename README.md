@@ -8,7 +8,11 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 > Symfony 7.4 LTS | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap
 
+- 2026-06-10 : mise à jour du README avec les liens vers la documentation d'architecture, devops, et les règles d'utilisation des modèles Claude.
 
+## URL utiles en développement
+
+Lancer `docker compose up -d --build` puis accéder aux services via les URLs suivantes :
 
 | Service | URL | Description |
 |---------|-----|-------------|
@@ -16,6 +20,10 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 | phpMyAdmin | http://localhost:8181 | Interface de gestion BDD |
 | Mailpit | http://localhost:8025 | Boîte mail de test SMTP |
 | BDD (MariaDB) | localhost:3307 | Connexion directe (non HTTP) |
+
+Pour PHP, utiliser `docker compose exec php sh` pour ouvrir un shell dans le conteneur et exécuter les commandes Symfony habituelles (`php bin/console`, `composer`, etc.).
+
+Ne pas oublier de fermer les conteneurs avec `docker compose down` après la session de développement.
 
 ## 🛠️ Raccourcis et commandes utiles
 

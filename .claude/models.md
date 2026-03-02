@@ -18,7 +18,7 @@ Utiliser pour :
 - Intégration API externe
 - Configuration GitHub Actions
 
-Prompt d'amorce : "Tu es un développeur Symfony 7.4 expérimenté. Stack : PHP 8.5, Doctrine ORM."
+Prompt d'amorce : "Tu es un développeur Symfony 7.4 expérimenté. Stack : PHP 8.5, Doctrine ORM. Propose une solution pour [problème précis]."
 
 ## Claude Haiku — Tâches simples/répétitives
 Utiliser pour :
