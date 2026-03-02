@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^3.2.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6.2",
+        "easycorp/easyadmin-bundle": "^5.0.1",
         "phpdocumentor/reflection-docblock": "^6.0.2",
         "phpstan/phpdoc-parser": "^2.3.2",
         "symfony/apache-pack": ">=1.0.1",
@@ -45,7 +46,8 @@
         "symfony/web-link": "7.4.*",
         "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^2.12|^3.23",
-        "twig/twig": "^2.12|^3.23"
+        "twig/twig": "^2.12|^3.23",
+        "vich/uploader-bundle": "^2.9.1"
     },
     "config": {
         "allow-plugins": {
@@ -99,6 +101,7 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.3.1",
         "phpunit/phpunit": "^13.0.5",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
