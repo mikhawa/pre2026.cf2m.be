@@ -3,7 +3,8 @@
 ## Entités principales
 - User (roles: ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER)
 - Formation — relation ManyToOne avec User
-- Inscription — relation ManyToOne avec Formation
+- Works — relation ManyToOne avec Formation et ManyToMany avec User, permet de mettre des travaux d'élèves de la Formation, éventuellement des CV, gestion des fichiers uploadés
+- Inscription — relation ManyToOne avec Formation, envoyé via le formulaire d'inscription si la formation est en recrutement
 - ContactMessage — messages envoyés via le formulaire de contact
 - Page — relation ManyToOne avec User, contenu modifiable (ex: mentions légales)
 - Partenaire — gestion des partenaires du CF2m avec logo et description
@@ -81,8 +82,10 @@
   Gère le calcul du `slug` (unique) et la date de publication.
   Dépend de : `FormationRepository`, `SluggerInterface`
 
-
-# ICI TO DO
+- `App\Service\WorksService`
+  Création, publication, dépublication, archivage des travaux de stagiaires pour les Formations. On ne peut s'inscrire que sur les formations en recrutement.
+  Gère le calcul du `slug` (unique) et la date de publication.
+  Dépend de : `FormationRepository`,`WorksRepository`, `SluggerInterface`
 
 - `App\Service\SlugService`
   Génération de slugs uniques avec gestion des doublons (ajout d'un suffixe `-2`, `-3`...).
@@ -90,7 +93,7 @@
 
 - `App\Service\SearchService`
   Recherche full-text via `LIKE` ou intégration Meilisearch/Elasticsearch.
-  Dépend de : `PageRepository`, `EntityManagerInterface`,`FormationRepository`
+  Dépend de : `PageRepository`, `FormationRepository`, `WorksRepository`, `EntityManagerInterface`,
 
 ### Cache & Performance
 - `App\Service\CacheService`
@@ -114,7 +117,7 @@
 - PHP 8.5 strict_types partout
 - Pas de JavaScript bundler (ImportMap natif Symfony)
 - Toutes les routes API préfixées `/api/`
-- Multilingue : fr uniquement pour l'instant
+- Multilingue : base de Symfony reste en `en`, mais le site sera actuellement en `fr` uniquement pour l'instant
 
 ## Variables d'environnement attendues
 DATABASE_URL, MAILER_DSN, APP_SECRET, APP_ENV
