@@ -1,5 +1,7 @@
 # Règles d'attribution des modèles Claude
 
+Claude devra choisir son modèle le plus adapté en fonction de la complexité de la tâche à accomplir. Voici les règles d'attribution :
+
 ## Claude Opus — Tâches complexes
 Utiliser pour :
 - Conception d'architecture (DDD, bounded contexts)
