@@ -19,5 +19,5 @@
 - DATABASE_URL_PREPROD
 
 ## Serveur cible
-Ubuntu 22.04 — Nginx — PHP 8.3-FPM — MariaDB
+Ubuntu 22.04 — Nginx — PHP 8.5-FPM — MariaDB
 Répertoire : /var/www/preprod/[projet]
