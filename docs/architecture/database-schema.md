@@ -8,14 +8,24 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 ### User
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | Auto-increment |
+| id | int unsigned (PK) | Auto-increment, assigné par Doctrine |
 | email | varchar(180) | Unique |
-| roles | json | Ex: ["ROLE_ADMIN"] |
-| password | varchar(255) | Hashé (bcrypt) |
-| is_verified | bool | Confirmation email |
-| created_at | datetime | |
-| updated_at | datetime | |
-| avatar | varchar(255) | Nullable — chemin relatif |
+| roles | json | Ex: ["ROLE_ADMIN"] — ROLE_USER toujours ajouté |
+| password | varchar(255) | Hashé (bcrypt) — non mappé : `plainPassword` |
+| user_name | varchar(50) | Unique, alphanumérique + underscore |
+| activation_token | varchar(64) | Nullable — confirmation email |
+| status | smallint unsigned | 0 = inactif, 1 = actif (défaut : 0) |
+| reset_password_token | varchar(64) | Nullable |
+| reset_password_requested_at | datetime | Nullable |
+| avatar_name | varchar(255) | Nullable — nom du fichier (VichUploader, mapping `user_avatar`) |
+| biography | varchar(500) | Nullable |
+| external_link1 | varchar(255) | Nullable — URL validée |
+| external_link2 | varchar(255) | Nullable — URL validée |
+| external_link3 | varchar(255) | Nullable — URL validée |
+| created_at | datetime | Défini via `#[ORM\PrePersist]` |
+| updated_at | datetime | Nullable — mis à jour lors d'un upload avatar |
+
+**Champ non mappé** : `avatarFile` (`Symfony\Component\HttpFoundation\File\File`) — géré par VichUploader, ne persiste pas en BDD.
 
 ### Formation
 | Champ | Type | Notes |
@@ -97,6 +107,24 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 | url | varchar(255) | Nullable |
 | is_active | bool | |
 
+### Comment
+> Entité à créer — référencée dans `User.php` (OneToMany)
+
+| Champ | Type | Notes |
+|-------|------|-------|
+| id | int unsigned (PK) | |
+| … | … | À définir |
+| user_id | int (FK → User) | ManyToOne, orphanRemoval |
+
+### Rating
+> Entité à créer — référencée dans `User.php` (OneToMany)
+
+| Champ | Type | Notes |
+|-------|------|-------|
+| id | int unsigned (PK) | |
+| … | … | À définir |
+| user_id | int (FK → User) | ManyToOne, orphanRemoval |
+
 ## Relations résumées
 ```
 User ──< Formation         (ManyToOne)
@@ -106,10 +134,15 @@ Works ──< Messages         (ManyToOne)
 User ──< Messages          (ManyToOne)
 Formation ──< Inscription  (ManyToOne)
 User ──< Page              (ManyToOne)
+User ──< Comment           (OneToMany, orphanRemoval)
+User ──< Rating            (OneToMany, orphanRemoval)
 ```
 
 ## Conventions
 - Nommage BDD : `snake_case`
 - Clés étrangères : suffixe `_id`
 - Tables de jointure ManyToMany : `entite1_entite2` (ordre alphabétique)
-- Statuts gérés comme `string` enum-like (pas d'enum MySQL pour portabilité)
+- `id` toujours `unsigned`
+- Statuts gérés comme `smallint unsigned` (User.status) ou `string` enum-like selon l'entité
+- Timestamps : `createdAt` via `#[ORM\PrePersist]`, `updatedAt` mis à jour manuellement ou via VichUploader
+- Champs fichier VichUploader : non mappés en BDD (`avatarFile`), seul le nom est persisté (`avatarName`)
