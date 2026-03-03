@@ -118,12 +118,18 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 
 ### Rating
 > Entité à créer — référencée dans `User.php` (OneToMany)
+> S'applique uniquement sur **Works** et **Messages** via des relations ManyToMany
 
 | Champ | Type | Notes |
 |-------|------|-------|
 | id | int unsigned (PK) | |
-| … | … | À définir |
-| user_id | int (FK → User) | ManyToOne, orphanRemoval |
+| value | smallint unsigned | Note attribuée (ex: 1 à 5) — à définir |
+| created_at | datetime | Via `#[ORM\PrePersist]` |
+| user_id | int (FK → User) | ManyToOne, orphanRemoval — auteur de la note |
+
+**Tables de jointure** :
+- `rating_works` (ManyToMany entre Rating et Works)
+- `rating_messages` (ManyToMany entre Rating et Messages)
 
 ## Relations résumées
 ```
@@ -136,6 +142,8 @@ Formation ──< Inscription  (ManyToOne)
 User ──< Page              (ManyToOne)
 User ──< Comment           (OneToMany, orphanRemoval)
 User ──< Rating            (OneToMany, orphanRemoval)
+Rating >──< Works          (ManyToMany via rating_works)
+Rating >──< Messages       (ManyToMany via rating_messages)
 ```
 
 ## Conventions
