@@ -23,9 +23,9 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 | external_link2 | varchar(255) | Nullable — URL validée |
 | external_link3 | varchar(255) | Nullable — URL validée |
 | created_at | datetime | Défini via `#[ORM\PrePersist]` |
-| updated_at | datetime | Nullable — mis à jour lors d'un upload avatar |
+| updated_at | datetime | Nullable — mis à jour via `setAvatarFile()` (VichUploader)
 
-**Champ non mappé** : `avatarFile` (`Symfony\Component\HttpFoundation\File\File`) — géré par VichUploader, ne persiste pas en BDD.
+**Champ non mappé** : `avatarFile` (`File`) — géré par VichUploader, ne persiste pas en BDD.
 
 ### Formation
 | Champ | Type | Notes |
@@ -144,5 +144,5 @@ User ──< Rating            (OneToMany, orphanRemoval)
 - Tables de jointure ManyToMany : `entite1_entite2` (ordre alphabétique)
 - `id` toujours `unsigned`
 - Statuts gérés comme `smallint unsigned` (User.status) ou `string` enum-like selon l'entité
-- Timestamps : `createdAt` via `#[ORM\PrePersist]`, `updatedAt` mis à jour manuellement ou via VichUploader
+- Timestamps : `createdAt` via `#[ORM\PrePersist]`, `updatedAt` mis à jour via VichUploader (`setAvatarFile()`) ou manuellement
 - Champs fichier VichUploader : non mappés en BDD (`avatarFile`), seul le nom est persisté (`avatarName`)
