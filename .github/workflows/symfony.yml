@@ -7,7 +7,7 @@ name: Symfony
 
 on:
   push:
-    branches: [ "CreateMDFiles" ]
+    branches: [ "baseGithubWorkflow" ]
   pull_request:
     branches: [ "main" ]
 
