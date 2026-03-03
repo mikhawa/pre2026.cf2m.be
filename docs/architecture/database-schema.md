@@ -30,24 +30,24 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 ### Formation
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | title | varchar(255) | |
 | slug | varchar(255) | Unique |
 | description | longtext | |
 | status | varchar(20) | draft / published / archived / recruiting |
 | created_at | datetime | |
 | published_at | datetime | Nullable |
-| user_id | int (FK → User) | Formateur responsable |
+| user_id | int unsigned (FK → User) | Formateur responsable |
 
 ### Works (travaux de stagiaires)
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | title | varchar(255) | |
 | slug | varchar(255) | Unique |
 | description | longtext | Nullable |
 | status | varchar(20) | draft / published / archived |
-| formation_id | int (FK → Formation) | ManyToOne |
+| formation_id | int unsigned (FK → Formation) | ManyToOne |
 | created_at | datetime | |
 | published_at | datetime | Nullable |
 
@@ -56,28 +56,28 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 ### Messages
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | content | longtext | |
 | is_approved | bool | Modération obligatoire |
 | created_at | datetime | |
-| user_id | int (FK → User) | |
-| works_id | int (FK → Works) | |
+| user_id | int unsigned (FK → User) | |
+| works_id | int unsigned (FK → Works) | |
 
 ### Inscription
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | nom | varchar(100) | |
 | prenom | varchar(100) | |
 | email | varchar(180) | |
 | message | longtext | Nullable |
 | created_at | datetime | |
-| formation_id | int (FK → Formation) | ManyToOne |
+| formation_id | int unsigned (FK → Formation) | ManyToOne |
 
 ### ContactMessage
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | nom | varchar(100) | |
 | email | varchar(180) | |
 | sujet | varchar(255) | |
@@ -88,19 +88,19 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 ### Page
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | title | varchar(255) | |
 | slug | varchar(255) | Unique |
 | content | longtext | |
 | status | varchar(20) | draft / published / archived |
 | created_at | datetime | |
 | published_at | datetime | Nullable |
-| user_id | int (FK → User) | Auteur |
+| user_id | int unsigned (FK → User) | Auteur |
 
 ### Partenaire
 | Champ | Type | Notes |
 |-------|------|-------|
-| id | int (PK) | |
+| id | int unsigned (PK) | |
 | nom | varchar(255) | |
 | description | longtext | Nullable |
 | logo | varchar(255) | Nullable — chemin relatif |
@@ -114,7 +114,7 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 |-------|------|-------|
 | id | int unsigned (PK) | |
 | … | … | À définir |
-| user_id | int (FK → User) | ManyToOne, orphanRemoval |
+| user_id | int unsigned (FK → User) | ManyToOne, orphanRemoval |
 
 ### Rating
 > Entité à créer — référencée dans `User.php` (OneToMany)
@@ -125,7 +125,7 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 | id | int unsigned (PK) | |
 | value | smallint unsigned | Note attribuée (ex: 1 à 5) — à définir |
 | created_at | datetime | Via `#[ORM\PrePersist]` |
-| user_id | int (FK → User) | ManyToOne, orphanRemoval — auteur de la note |
+| user_id | int unsigned (FK → User) | ManyToOne, orphanRemoval — auteur de la note |
 
 **Tables de jointure** :
 - `rating_works` (ManyToMany entre Rating et Works)
