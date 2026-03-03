@@ -2,6 +2,14 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
+#
+# TODO (mise en production) :
+# - Adapter les branches déclenchant le workflow (push/pull_request) selon la stratégie de déploiement
+# - Remplacer la base de données SQLite par la vraie base de production (MySQL, PostgreSQL, etc.)
+# - Configurer les secrets GitHub (DATABASE_URL, APP_SECRET, etc.) via Settings > Secrets and variables
+# - Ajouter une étape de déploiement (ex: SSH, rsync, FTP, Deployer, Docker, etc.)
+# - Envisager de séparer le workflow de tests du workflow de déploiement
+# - Vérifier que la version de PHP correspond à celle du serveur de production
 
 name: Symfony
 
