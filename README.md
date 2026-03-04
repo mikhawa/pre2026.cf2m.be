@@ -27,6 +27,12 @@ Ne pas oublier de fermer les conteneurs avec `docker compose down` après la ses
 
 ## 🛠️ Raccourcis et commandes utiles
 
+A mettre dans le `.bashrc` ou `.zshrc` pour gagner du temps lors du développement.
+
+```bash
+nano ~/.bashrc
+```
+
 ### ----------------------
 ### Git Commands
 ### ----------------------
@@ -36,6 +42,33 @@ alias ga='git add .'
 alias gc='git commit'
 alias gps='git push'
 alias gpu='git pull'
+```
+---
+
+### ----------------------
+### Docker Commands
+### ----------------------
+```bash
+alias uphp='docker compose exec php sh'
+alias dphp='docker compose exec -it php bash'
+alias dup='docker compose up -d --build'
+alias ddo='docker compose down'
+alias phpfix='./vendor/bin/php-cs-fixer fix'
+alias asset='php bin/console asset-map:compile'
+```
+---
+
+### ----------------------
+### Symfony Commands
+### ----------------------
+```bash
+alias pbc='php bin/console'
+alias ddc='php bin/console doctrine:database:create'
+alias sssd='symfony serve -d'
+alias sss='symfony server:stop'
+alias dfl='php bin/console doctrine:fixture:load'
+alias test='vendor/bin/phpunit --testdox'
+alias csfix='./vendor/bin/php-cs-fixer fix'
 ```
 ---
 
