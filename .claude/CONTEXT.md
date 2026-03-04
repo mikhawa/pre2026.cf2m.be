@@ -4,11 +4,12 @@
 - User (roles: ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER)
 - Formation — relation ManyToOne avec User
 - Works — relation ManyToOne avec Formation et ManyToMany avec User, permet de mettre des travaux d'élèves de la Formation, éventuellement des CV, gestion des fichiers uploadés
-- Messages - Messages laissés par les utilisateurs sur les pages de Works, avec modération obligatoire
+- Comment - Messages laissés par les utilisateurs sur les pages de Works, avec modération obligatoire
 - Inscription — relation ManyToOne avec Formation, envoyé via le formulaire d'inscription si la formation est en recrutement
 - ContactMessage — messages envoyés via le formulaire de contact
 - Page — relation ManyToOne avec User, contenu modifiable (ex: mentions légales)
 - Partenaire — gestion des partenaires du CF2m avec logo et description
+- Rating - entité à créer pour permettre aux utilisateurs de noter les Works et les Comments (ManyToMany)
 
 ## Services critiques
 ### Sécurité & Authentification
