@@ -80,9 +80,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatarName = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(length: 600, nullable: true)]
     #[Assert\Length(
-        max: 500,
+        max: 600,
         maxMessage: 'La présentation ne peut pas dépasser {{ limit }} caractères.'
     )]
     private ?string $biography = null;
@@ -110,10 +110,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $ratings;
 
+    /** @var Collection<int, Formation> */
+    #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'responsables')]
+    private Collection $formations;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->ratings = new ArrayCollection();
+        $this->formations = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -402,6 +407,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /** @return Collection<int, Formation> */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): static
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations->add($formation);
+            $formation->addResponsable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): static
+    {
+        if ($this->formations->removeElement($formation)) {
+            $formation->removeResponsable($this);
+        }
 
         return $this;
     }
