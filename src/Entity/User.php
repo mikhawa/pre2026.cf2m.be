@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(message: 'Le nom d\'utilisateur ne peut pas être vide.')]
     #[Assert\Length(
         min: 3,
