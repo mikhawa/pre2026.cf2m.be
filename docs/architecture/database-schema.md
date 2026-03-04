@@ -166,3 +166,111 @@ Page >──< User                (ManyToMany via page_user)
 - Statuts gérés comme `smallint unsigned` (User.status) ou `string` enum-like selon l'entité
 - Timestamps : `createdAt` via `#[ORM\PrePersist]`, `updatedAt` mis à jour via VichUploader (`setAvatarFile()`) ou manuellement
 - Champs fichier VichUploader : non mappés en BDD (`avatarFile`), seul le nom est persisté (`avatarName`)
+
+## Graphique de l'architecture de la BDD
+
+```mermaid
+erDiagram
+    User {
+        int id PK
+        varchar email
+        json roles
+        varchar password
+        varchar user_name
+        varchar activation_token
+        smallint status
+        varchar avatar_name
+        varchar biography
+        datetime created_at
+        datetime updated_at
+    }
+    Formation {
+        int id PK
+        varchar title
+        varchar slug
+        longtext description
+        varchar status
+        datetime created_at
+        int created_by_user_id FK
+        datetime published_at
+        datetime updated_at
+        int updated_by_user_id FK
+    }
+    Works {
+        int id PK
+        varchar title
+        varchar slug
+        longtext description
+        varchar status
+        int formation_id FK
+        datetime created_at
+        datetime published_at
+    }
+    Comment {
+        int id PK
+        longtext content
+        bool is_approved
+        datetime created_at
+        int user_id FK
+        int works_id FK
+    }
+    Rating {
+        int id PK
+        smallint value
+        datetime created_at
+        int user_id FK
+    }
+    Inscription {
+        int id PK
+        varchar nom
+        varchar prenom
+        varchar email
+        longtext message
+        datetime created_at
+        bool treat
+        datetime treat_at
+        int treat_by_user_id FK
+        int formation_id FK
+    }
+    ContactMessage {
+        int id PK
+        varchar nom
+        varchar email
+        varchar sujet
+        longtext message
+        datetime created_at
+        bool is_read
+        int read_by_user_id FK
+    }
+    Page {
+        int id PK
+        varchar title
+        varchar slug
+        longtext content
+        varchar status
+        datetime created_at
+        datetime published_at
+    }
+    Partenaire {
+        int id PK
+        varchar nom
+        longtext description
+        varchar logo
+        varchar url
+        bool is_active
+    }
+
+    User ||--o{ Formation : "créateur"
+    Formation }o--o{ User : "responsables"
+    Formation ||--o{ Works : "contient"
+    Works }o--o{ User : "stagiaires"
+    Works ||--o{ Comment : "reçoit"
+    User ||--o{ Comment : "rédige"
+    Comment }o--o{ Rating : "noté"
+    Works }o--o{ Rating : "noté"
+    User ||--o{ Rating : "attribue"
+    Formation ||--o{ Inscription : "reçoit"
+    Inscription }o--o| User : "traité par"
+    ContactMessage }o--o| User : "lu par"
+    Page }o--o{ User : "éditeurs"
+```
