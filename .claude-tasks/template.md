@@ -1,7 +1,11 @@
-# Tâche : [Nom]
-**Modèle** : Sonnet  
-**Complexité** : Moyenne  
-**Fichiers concernés** : src/Controller/X, src/Service/X, templates/x/
+# Tâche : [Nom descriptif]
+
+**Numéro** : NNN
+**Date** : YYYY-MM-DD
+**Modèle utilisé** : Haiku | Sonnet | Opus
+**Justification du modèle** : [Pourquoi ce modèle selon les critères de `.claude/models.md`]
+**Complexité** : Simple | Moyenne | Complexe
+**Fichiers concernés** : `src/X`, `templates/x/`, etc.
 
 ## Contexte nécessaire
 [Ce que Claude doit savoir pour cette tâche uniquement]
@@ -20,4 +24,10 @@
 - [ ] Gestion des exceptions métier
 
 ## Prompt prêt à l'emploi
-[Prompt complet copier-coller pour Claude]
+[Prompt complet copier-coller pour Claude — utiliser le prompt d'amorce de `.claude/models.md` correspondant au modèle choisi]
+
+## Résultat
+[À remplir après exécution : ce qui a été produit, difficultés rencontrées]
+
+---
+> Ce fichier est à placer dans `.claude-tasks/haiku/`, `.claude-tasks/sonnet/` ou `.claude-tasks/opus/` selon le modèle utilisé.

@@ -25,4 +25,7 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    'suneditor' => [
+        'version' => '2.47.8',
+    ],
 ];
