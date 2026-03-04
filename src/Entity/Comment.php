@@ -24,7 +24,7 @@ class Comment
     #[Assert\NotBlank(message: 'Le contenu du commentaire ne peut pas être vide.')]
     private ?string $content = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(options: ['default' => false, 'unsigned' => true])]
     private bool $isApproved = false;
 
     #[ORM\Column]

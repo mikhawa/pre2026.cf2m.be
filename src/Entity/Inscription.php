@@ -37,7 +37,7 @@ class Inscription
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(options: ['default' => false, 'unsigned' => true])]
     private bool $treat = false;
 
     #[ORM\Column(nullable: true)]

@@ -38,7 +38,7 @@ class ContactMessage
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(options: ['default' => false, 'unsigned' => true])]
     private bool $isRead = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]

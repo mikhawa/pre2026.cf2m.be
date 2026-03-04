@@ -31,7 +31,7 @@ class Partenaire
     #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true)]
     private ?string $url = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(options: ['default' => false, 'unsigned' => true])]
     private bool $isActive = false;
 
     public function __toString(): string
