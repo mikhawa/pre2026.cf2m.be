@@ -20,6 +20,7 @@ class Rating
     private ?int $id = null;
 
     #[ORM\Column(type: 'smallint', options: ['unsigned' => true])]
+    #[Assert\NotNull(message: 'La note ne peut pas être vide.')]
     #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'La note doit être entre {{ min }} et {{ max }}.')]
     private ?int $value = null;
 
