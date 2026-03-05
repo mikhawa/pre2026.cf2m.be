@@ -35,7 +35,7 @@ Email : mikhawa@cf2m.be
 
 ## 🛠️ Raccourcis et commandes utiles
 
-A mettre dans le `.bashrc` ou `.zshrc` pour gagner du temps lors du développement.
+À mettre dans le `.bashrc` ou `.zshrc` pour gagner du temps lors du développement.
 
 ```bash
 nano ~/.bashrc
