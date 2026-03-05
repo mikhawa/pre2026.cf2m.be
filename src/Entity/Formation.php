@@ -58,9 +58,19 @@ class Formation
     #[ORM\JoinTable(name: 'formation_user')]
     private Collection $responsables;
 
+    /** @var Collection<int, Works> */
+    #[ORM\OneToMany(targetEntity: Works::class, mappedBy: 'formation', orphanRemoval: true)]
+    private Collection $works;
+
+    /** @var Collection<int, Inscription> */
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'formation', orphanRemoval: true)]
+    private Collection $inscriptions;
+
     public function __construct()
     {
         $this->responsables = new ArrayCollection();
+        $this->works = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -200,6 +210,60 @@ class Formation
     {
         if ($this->responsables->removeElement($responsable)) {
             $responsable->removeFormation($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Works> */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Works $work): static
+    {
+        if (!$this->works->contains($work)) {
+            $this->works->add($work);
+            $work->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Works $work): static
+    {
+        if ($this->works->removeElement($work)) {
+            if ($work->getFormation() === $this) {
+                $work->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Inscription> */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            if ($inscription->getFormation() === $this) {
+                $inscription->setFormation(null);
+            }
         }
 
         return $this;

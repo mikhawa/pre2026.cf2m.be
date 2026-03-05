@@ -27,11 +27,13 @@ src/Controller/Admin/
 ├── UserCrudController.php
 ├── FormationCrudController.php
 ├── WorksCrudController.php
-├── MessagesCrudController.php
+├── CommentCrudController.php    
+├── RatingCrudController.php
 ├── InscriptionCrudController.php
 ├── ContactMessageCrudController.php
 ├── PageCrudController.php
 └── PartenaireCrudController.php
+
 ```
 
 ## DashboardController
@@ -62,20 +64,30 @@ Responsabilités :
 - Champ `description` : `TextareaField` + SunEditor (éditeur riche avec upload de fichiers)
 - Fichiers joints (CV, travaux) : upload via VichUploader
 
-### MessagesCrudController
+### CommentCrudController
 - Champs : content, is_approved, created_at, user, works
 - Action rapide : approuver / refuser un message (modération)
 - Par défaut : filtre sur `is_approved = false` pour afficher les messages en attente
+
+### RatingCrudController
+- Champs : value (1-5), created_at, user_id
+- Relation ManyToMany avec Works et Comment (via les tables de jointure)
+- Lecture seule (pas de création depuis le back-office)
+- Affiche des étoiles graphiques dans la liste (via un custom template)
 
 ### InscriptionCrudController
 - Champs : nom, prenom, email, message, formation, created_at
 - Lecture seule (pas de création depuis le back-office)
 - Export CSV à prévoir
+- Filtre par formation et date d'inscription
+- Envoi d'email de confirmation à l'inscription (via `InscriptionService`)
+- Envoi d'email de notification aux utilisateurs choisis via la formation (via `NotificationService`)
 
 ### ContactMessageCrudController
 - Champs : nom, email, sujet, message, created_at, is_read
 - Action rapide : marquer comme lu
 - Lecture seule
+- Envoi d'email de notification à l'équipe admin (à définir) à la réception d'un message (via `ContactMessageService`)
 
 ### PageCrudController
 - Champs : title, slug, content, status, published_at, user
@@ -101,12 +113,21 @@ public function configureDashboard(): Dashboard
 ```
 
 ### Permissions par rôle
-| Action | ROLE_ADMIN | ROLE_SUPER_ADMIN |
-|--------|-----------|-----------------|
-| Voir tous les CRUD | ✅ | ✅ |
-| Modifier les rôles User | ❌ | ✅ |
-| Supprimer un User | ❌ | ✅ |
-| Accès aux logs d'audit | ❌ | ✅ |
+
+| Action                         | ROLE_ADMIN | ROLE_SUPER_ADMIN | ROLE_FORMATEUR |
+|--------------------------------|------------|------------------|----------------|
+| Voir tous les CRUD             | ✅          | ✅                | ❌              |
+| Modifier les rôles User        | ❌          | ✅                | ❌              |
+| Supprimer un User              | ❌          | ✅                | ❌              |
+| Accès aux logs d'audit         | ❌          | ✅                | ❌              |
+ | Modifier les formations        | ✅          | ✅                | ✅              |
+ | Créer une formation            | ❌          | ✅                | ❌              |
+ | Créer et modifier les works    | ✅          | ✅                | ✅              |
+| Modérer les commentaires       | ✅          | ✅                | ✅              |
+| Gérer les inscriptions         | ✅          | ✅                | ❌              |
+| Gérer les pages et partenaires | ✅          | ✅                | ❌              |
+
+- Implémentation via `configureActions()` dans chaque `CrudController` et/ou via un
 
 ### Champs communs à configurer
 - `DateTimeField` : format `d/m/Y H:i` (locale fr)

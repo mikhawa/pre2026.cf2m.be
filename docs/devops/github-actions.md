@@ -1,5 +1,7 @@
 # GitHub Actions — Stratégie de déploiement
 
+## À faire plus tard (améliorations possibles)
+
 ## Branches
 - `main` → déploiement automatique en préprod
 - `develop` → tests CI uniquement
