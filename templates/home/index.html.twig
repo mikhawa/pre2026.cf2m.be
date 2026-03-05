@@ -1,9 +1,97 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil — CF2m{% endblock %}
+{% block title %}Accueil — CF2m Centre de Formation{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Bienvenue au Centre de Formation CF2m</h1>
-    </main>
+
+{# ── Section Hero ──────────────────────────────────────────────────── #}
+<section class="cf2m-hero">
+    <div class="container text-center">
+        <p class="text-uppercase fw-semibold mb-3" style="color: var(--cf2m-accent); letter-spacing: 2px; font-size: 0.9rem;">
+            Centre de Formation
+        </p>
+        <h1 class="mb-4">
+            Bienvenue au<br>
+            <span style="color: var(--cf2m-accent);">CF2m</span>
+        </h1>
+        <p class="lead mb-5 mx-auto" style="max-width: 600px;">
+            Développez vos compétences avec nos formations professionnelles
+            adaptées aux besoins du marché. Étudiants, formateurs, entreprises —
+            nous vous accompagnons vers votre réussite.
+        </p>
+        <a href="#formations" class="btn cf2m-hero-btn">
+            Voir nos formations
+        </a>
+    </div>
+</section>
+
+{# ── Section Formations ────────────────────────────────────────────── #}
+<section id="formations" class="py-5">
+    <div class="container">
+        <h2 class="cf2m-section-title text-center">Nos formations</h2>
+
+        {% if formations is empty %}
+            <div class="text-center text-muted py-5">
+                <p class="fs-5">Aucune formation disponible pour le moment.</p>
+                <p>Revenez bientôt pour découvrir notre catalogue.</p>
+            </div>
+        {% else %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for formation in formations %}
+                    <div class="col">
+                        <div class="card cf2m-card">
+                            <div class="card-header d-flex justify-content-between align-items-start">
+                                <span>{{ formation.title }}</span>
+                                <span class="badge badge-status ms-2">Ouverte</span>
+                            </div>
+                            <div class="card-body">
+                                {% if formation.description %}
+                                    <p class="card-text text-muted small">
+                                        {{ formation.description|striptags|slice(0, 150) }}{% if formation.description|length > 150 %}…{% endif %}
+                                    </p>
+                                {% endif %}
+                                {% if formation.publishedAt %}
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            Publiée le {{ formation.publishedAt|date('d/m/Y') }}
+                                        </small>
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-3">
+                                <a href="#" class="btn btn-outline-secondary btn-sm w-100" aria-label="Voir la formation {{ formation.title }}">
+                                    En savoir plus
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{# ── Section Partenaires ───────────────────────────────────────────── #}
+{% if partenaires is not empty %}
+<section id="partenaires" class="cf2m-partners py-5">
+    <div class="container">
+        <h2 class="cf2m-section-title text-center">Nos partenaires</h2>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+            {% for partenaire in partenaires %}
+                {% if partenaire.url %}
+                    <a href="{{ partenaire.url }}" target="_blank" rel="noopener noreferrer"
+                       class="cf2m-partner-item"
+                       title="{{ partenaire.description ?? partenaire.nom }}">
+                        {{ partenaire.nom }}
+                    </a>
+                {% else %}
+                    <span class="cf2m-partner-item">{{ partenaire.nom }}</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endblock %}

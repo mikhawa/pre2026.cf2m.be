@@ -17,4 +17,14 @@ class PartenaireRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Partenaire::class);
     }
+
+    /** @return Partenaire[] */
+    public function findAllActive(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.isActive = true')
+            ->orderBy('p.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
