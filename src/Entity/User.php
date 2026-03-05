@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(message: 'Le nom d\'utilisateur ne peut pas être vide.')]
     #[Assert\Length(
         min: 3,
@@ -114,11 +114,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'responsables')]
     private Collection $formations;
 
+    /** @var Collection<int, Works> */
+    #[ORM\ManyToMany(targetEntity: Works::class, mappedBy: 'users')]
+    private Collection $works;
+
+    /** @var Collection<int, Page> */
+    #[ORM\ManyToMany(targetEntity: Page::class, mappedBy: 'users')]
+    private Collection $pages;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->ratings = new ArrayCollection();
         $this->formations = new ArrayCollection();
+        $this->works = new ArrayCollection();
+        $this->pages = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -431,6 +441,56 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->formations->removeElement($formation)) {
             $formation->removeResponsable($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Works> */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Works $work): static
+    {
+        if (!$this->works->contains($work)) {
+            $this->works->add($work);
+            $work->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Works $work): static
+    {
+        if ($this->works->removeElement($work)) {
+            $work->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Page> */
+    public function getPages(): Collection
+    {
+        return $this->pages;
+    }
+
+    public function addPage(Page $page): static
+    {
+        if (!$this->pages->contains($page)) {
+            $this->pages->add($page);
+            $page->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePage(Page $page): static
+    {
+        if ($this->pages->removeElement($page)) {
+            $page->removeUser($this);
         }
 
         return $this;

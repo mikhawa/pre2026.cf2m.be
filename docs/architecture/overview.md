@@ -45,7 +45,7 @@ docs/                 # Documentation technique
 - Symfony Security Component
 - Voters custom pour les permissions granulaires
 - Tokens pour confirmation email et reset password (voir `TokenService`)
-- Roles : `ROLE_SUPER_ADMIN`, `ROLE_ADMIN`, `ROLE_USER`
+- Roles : `ROLE_SUPER_ADMIN`, `ROLE_ADMIN`, `ROLE_FORMATEUR`, `ROLE_USER`
 
 ## Frontend
 - Pas de bundler (Webpack/Vite) — ImportMap natif Symfony
@@ -56,7 +56,7 @@ docs/                 # Documentation technique
 - Interface d'administration générée via EasyAdmin 4
 - Un `CrudController` par entité dans `src/Controller/Admin/`
 - `DashboardController` central : `src/Controller/Admin/DashboardController.php`
-- Accès restreint aux rôles `ROLE_ADMIN` et `ROLE_SUPER_ADMIN` (via `security.yaml`)
+- Accès restreint aux rôles `ROLE_FORMATEUR`, `ROLE_ADMIN` et `ROLE_SUPER_ADMIN` (via `security.yaml`)
 - Route du back-office : `/admin`
 - Personnalisations à documenter dans `docs/architecture/easyadmin.md`
 

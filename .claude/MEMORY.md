@@ -68,7 +68,16 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-018 (2026-03-04)
+022 (2026-03-05)
 
 ## Dernier numéro .claude-tasks
-007 (2026-03-04)
+012 (2026-03-05)
+
+## Conventions Foundry 2.x (factories)
+- `createMany()` / `createOne()` retournent des entités directement (pas de proxies, pas de `_real()`)
+- Pour les booleans `is*` : utiliser la clé sans préfixe `is` pour PropertyAccessor
+  - `isActive` → clé `'active'` (setter `setActive()`)
+  - `isApproved` → clé `'approved'` (setter `setApproved()`)
+  - `isRead` → clé `'read'` (setter `setRead()`)
+- Defaults callable (`fn():array`) pour générer slug depuis le titre
+- Hachage MDP dans `afterInstantiate` via injection de `UserPasswordHasherInterface`
