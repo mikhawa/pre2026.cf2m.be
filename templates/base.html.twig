@@ -13,9 +13,11 @@
     <body>
 
         {# ── Navigation ──────────────────────────────────────────────── #}
+        {%- set _nav_formations = nav_formations() -%}
         <header>
             <nav class="navbar navbar-expand-lg navbar-dark cf2m-navbar sticky-top" aria-label="Navigation principale">
                 <div class="container">
+
                     {# Logo / Marque #}
                     <a class="navbar-brand fw-bold fs-4" href="{{ path('app_home') }}">
                         <span class="cf2m-brand-cf">CF</span><span class="cf2m-brand-2m">2m</span>
@@ -32,36 +34,81 @@
                     {# Liens #}
                     <div class="collapse navbar-collapse" id="navbarMain">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                             <li class="nav-item">
                                 <a class="nav-link {% if app.request.pathInfo == '/' %}active{% endif %}"
                                    href="{{ path('app_home') }}">Accueil</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_home') }}#formations">Formations</a>
+
+                            {# Dropdown Formations #}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   id="dropdownFormations" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Formations
+                                    {% if _nav_formations|length > 0 %}
+                                        <span class="cf2m-nav-count">{{ _nav_formations|length }}</span>
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu cf2m-dropdown" aria-labelledby="dropdownFormations">
+                                    {% if _nav_formations is empty %}
+                                        <li>
+                                            <span class="dropdown-item-text text-muted fst-italic">
+                                                Aucune formation disponible
+                                            </span>
+                                        </li>
+                                    {% else %}
+                                        {% for formation in _nav_formations %}
+                                            <li>
+                                                <a class="dropdown-item cf2m-dropdown-item" href="#">
+                                                    <span class="cf2m-dropdown-arrow">›</span>
+                                                    {{ formation.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                        <li><hr class="dropdown-divider cf2m-dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item cf2m-dropdown-all" href="{{ path('app_home') }}#formations">
+                                                Voir toutes les formations →
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" href="#">À propos</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Contact</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link cf2m-nav-external"
+                                   href="https://cf2d.be/"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   title="Visiter le site CF2d (nouvel onglet)">
+                                    CF2d
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="cf2m-external-icon"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                </a>
+                            </li>
                         </ul>
 
                         {# Auth #}
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 ms-lg-3">
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                                 <a class="nav-link text-white" href="#">
-                                    <i class="bi bi-person-circle me-1"></i>
                                     {{ app.user.userName ?? app.user.email }}
                                 </a>
                                 <a class="btn btn-outline-light btn-sm" href="#">Déconnexion</a>
                             {% else %}
-                                <a class="btn cf2m-btn-accent btn-sm" href="#">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i>Se connecter
+                                <a class="cf2m-btn-connexion" href="#">
+                                    Connexion
                                 </a>
                             {% endif %}
                         </div>
                     </div>
+
                 </div>
             </nav>
         </header>

@@ -3,6 +3,7 @@ when@dev: &dev
     zenstruck_foundry:
         faker:
             locale: fr_BE
+        enable_auto_refresh_with_lazy_objects: true
         persistence:
             # Flush only once per call of `PersistentObjectFactory::create()`
             flush_once: true
