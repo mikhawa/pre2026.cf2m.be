@@ -10,42 +10,49 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
+    <body class="{% block body_class %}{% endblock %}"
+          data-page="{{ app.request.pathInfo == '/' ? 'home' : 'inner' }}">
 
         {# ── Navigation ──────────────────────────────────────────────── #}
         {%- set _nav_formations = nav_formations() -%}
         <header>
-            <nav class="navbar navbar-expand-lg navbar-dark cf2m-navbar sticky-top" aria-label="Navigation principale">
+            <nav class="navbar navbar-expand-lg navbar-dark cf2m-navbar"
+                 aria-label="Navigation principale">
                 <div class="container">
 
-                    {# Logo / Marque #}
-                    <a class="navbar-brand fw-bold fs-4" href="{{ path('app_home') }}">
-                        <span class="cf2m-brand-cf">CF</span><span class="cf2m-brand-2m">2m</span>
+                    {# Logo seul (icône circulaire) #}
+                    <a class="navbar-brand" href="{{ path('app_home') }}" aria-label="CF2m — Accueil">
+                        <img src="{{ asset('images/logo-cf2m.svg') }}"
+                             alt="Logo CF2m"
+                             width="42" height="42"
+                             class="cf2m-logo-img">
                     </a>
 
                     {# Toggler mobile #}
-                    <button class="navbar-toggler" type="button"
+                    <button class="navbar-toggler border-0" type="button"
                             data-bs-toggle="collapse" data-bs-target="#navbarMain"
                             aria-controls="navbarMain" aria-expanded="false"
                             aria-label="Afficher/masquer le menu">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
-                    {# Liens #}
+                    {# Liens centrés + auth à droite #}
                     <div class="collapse navbar-collapse" id="navbarMain">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        {# Liens principaux — centrés via mx-auto #}
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
 
                             <li class="nav-item">
                                 <a class="nav-link {% if app.request.pathInfo == '/' %}active{% endif %}"
                                    href="{{ path('app_home') }}">Accueil</a>
                             </li>
 
-                            {# Dropdown Formations #}
+                            {# Dropdown Nos formations #}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#"
                                    id="dropdownFormations" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Formations
+                                    Nos formations
                                     {% if _nav_formations|length > 0 %}
                                         <span class="cf2m-nav-count">{{ _nav_formations|length }}</span>
                                     {% endif %}
@@ -68,7 +75,8 @@
                                         {% endfor %}
                                         <li><hr class="dropdown-divider cf2m-dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item cf2m-dropdown-all" href="{{ path('app_home') }}#formations">
+                                            <a class="dropdown-item cf2m-dropdown-all"
+                                               href="{{ path('app_home') }}#formations">
                                                 Voir toutes les formations →
                                             </a>
                                         </li>
@@ -77,11 +85,13 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="#">À propos</a>
+                                <a class="nav-link" href="#">Nous contacter</a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Contact</a>
+                                <a class="nav-link" href="#">Nos activités</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link cf2m-nav-external"
                                    href="https://cf2d.be/"
@@ -89,26 +99,34 @@
                                    rel="noopener noreferrer"
                                    title="Visiter le site CF2d (nouvel onglet)">
                                     CF2d
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="cf2m-external-icon"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                         aria-hidden="true" class="cf2m-external-icon">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                        <polyline points="15 3 21 3 21 9"/>
+                                        <line x1="10" y1="14" x2="21" y2="3"/>
+                                    </svg>
                                 </a>
                             </li>
                         </ul>
 
-                        {# Auth #}
-                        <div class="d-flex align-items-center gap-2 ms-lg-3">
+                        {# Auth — droite #}
+                        <div class="d-flex align-items-center gap-3">
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                <a class="nav-link text-white" href="#">
+                                <span class="cf2m-user-name">
                                     {{ app.user.userName ?? app.user.email }}
-                                </a>
-                                <a class="btn btn-outline-light btn-sm" href="#">Déconnexion</a>
+                                </span>
+                                <a class="cf2m-btn-connexion"
+                                   href="{{ path('app_logout') }}">Déconnexion</a>
                             {% else %}
-                                <a class="cf2m-btn-connexion" href="#">
+                                <a class="cf2m-btn-connexion" href="{{ path('app_login') }}">
                                     Connexion
                                 </a>
                             {% endif %}
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </nav>
         </header>

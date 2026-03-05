@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Logo CF2m">
+  <!-- Fond circulaire navy -->
+  <circle cx="40" cy="40" r="40" fill="#08111e"/>
+  <!-- Anneau cyan -->
+  <circle cx="40" cy="40" r="37" fill="none" stroke="#00b4d8" stroke-width="1.5" opacity="0.6"/>
+  <!-- Icône bâtiment stylisé -->
+  <polyline points="21,34 40,20 59,34" fill="none" stroke="#00b4d8" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="25" y="33" width="30" height="22" rx="1.5" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <!-- Fenêtres gauche/droite -->
+  <rect x="29" y="40" width="7" height="7" rx="1" fill="#00b4d8"/>
+  <rect x="44" y="40" width="7" height="7" rx="1" fill="#00b4d8"/>
+  <!-- Porte centrale -->
+  <rect x="37" y="44" width="6" height="11" rx="1" fill="#ffffff"/>
+</svg>

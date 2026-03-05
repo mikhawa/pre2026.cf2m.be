@@ -2,48 +2,80 @@
 
 {% block title %}Accueil — CF2m Centre de Formation{% endblock %}
 
+{% block body_class %}page-home{% endblock %}
+
 {% block body %}
 
 {# ── Section Hero ──────────────────────────────────────────────────── #}
 <section class="cf2m-hero">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
+        <div class="row align-items-center g-4">
 
-                <p class="cf2m-hero-label">Formations Professionnelles</p>
+            {# ── Colonne gauche : contenu glassmorphisme ── #}
+            <div class="col-lg-6 col-md-9">
+                <div class="cf2m-hero-glass">
 
-                <h1 class="mb-4">
-                    des métiers<br>
-                    <em>du numérique</em>
-                </h1>
+                    <p class="cf2m-hero-label">Formations Professionnelles</p>
 
-                <p class="lead mb-4">
-                    Développez vos compétences avec nos formations professionnelles
-                    adaptées aux besoins du marché belge. Étudiants, demandeurs d'emploi,
-                    entreprises — nous vous accompagnons.
-                </p>
+                    <h1 class="mb-4">
+                        des métiers<br>
+                        <em>du numérique</em>
+                    </h1>
 
-                {# Stats inspirées de l'image de référence #}
-                <div class="cf2m-hero-stats">
-                    <div>
-                        <div class="cf2m-stat-value">100%</div>
-                        <div class="cf2m-stat-label">gratuit</div>
+                    <p class="lead mb-4">
+                        Développez vos compétences avec nos formations professionnelles
+                        adaptées aux besoins du marché belge. Étudiants, demandeurs d'emploi,
+                        entreprises — nous vous accompagnons.
+                    </p>
+
+                    {# Stats #}
+                    <div class="cf2m-hero-stats">
+                        <div>
+                            <div class="cf2m-stat-value">100%</div>
+                            <div class="cf2m-stat-label">gratuit</div>
+                        </div>
+                        <div>
+                            <div class="cf2m-stat-value">80%</div>
+                            <div class="cf2m-stat-label">de pratique</div>
+                        </div>
+                        <div>
+                            <div class="cf2m-stat-value">1600 h</div>
+                            <div class="cf2m-stat-label">de cours</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="cf2m-stat-value">80%</div>
-                        <div class="cf2m-stat-label">de pratique</div>
-                    </div>
-                    <div>
-                        <div class="cf2m-stat-value">{{ formations|length }}</div>
-                        <div class="cf2m-stat-label">formations</div>
-                    </div>
+
+                    <a href="#formations" class="cf2m-hero-btn">
+                        Nos formations
+                    </a>
+
                 </div>
-
-                <a href="#formations" class="cf2m-hero-btn">
-                    Nos formations
-                </a>
-
             </div>
+
+            {# ── Colonne droite : portrait circulaire ── #}
+            <div class="col-lg-6 d-none d-lg-flex cf2m-hero-portrait-wrap">
+                <div class="cf2m-hero-portrait">
+                    {#
+                        Déposer une photo de formateur/trice à :
+                        public/images/hero-portrait.jpg
+                        (format portrait, cadrage visage + buste)
+                    #}
+                    {% if false %}{# remplacer par une vérification d'existence de fichier si besoin #}
+                        <img src="{{ asset('images/hero-portrait.jpg') }}"
+                             alt="Formateur CF2m"
+                             width="340" height="340">
+                    {% else %}
+                        <div class="cf2m-hero-portrait-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

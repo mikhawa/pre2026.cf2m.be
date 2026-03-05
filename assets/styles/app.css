@@ -46,29 +46,107 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 
 /* ── Navbar ──────────────────────────────────────────────────────────── */
 .cf2m-navbar {
-    background-color: var(--cf2m-dark);
-    border-bottom: 1px solid rgba(0, 180, 216, 0.15);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    background: rgba(6, 14, 26, 0.45);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    transition: background 0.3s;
 }
 
-.cf2m-brand-cf { color: var(--cf2m-white); }
-.cf2m-brand-2m { color: var(--cf2m-cyan); }
+/* Sur les pages à fond plein (home, connexion…) : flotte par-dessus le contenu */
+.page-home .cf2m-navbar,
+.page-login .cf2m-navbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1030;
+    width: 100%;
+}
 
+/* Sur pages intérieures : sticky, même apparence */
+body:not(.page-home):not(.page-login) .cf2m-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+/* Logo : icône seule */
+.cf2m-navbar .navbar-brand {
+    padding: 0;
+    line-height: 1;
+}
+.cf2m-logo-img {
+    display: block;
+    transition: opacity 0.2s;
+}
+.cf2m-logo-img:hover { opacity: 0.85; }
+
+/* Liens de navigation */
+.cf2m-navbar .nav-link {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.82) !important;
+    letter-spacing: 0.3px;
+    padding: 0.4rem 1rem !important;
+    position: relative;
+    transition: color 0.2s;
+}
+.cf2m-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 1.5px;
+    background: var(--cf2m-cyan);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+    border-radius: 1px;
+}
+.cf2m-navbar .nav-link:hover,
+.cf2m-navbar .nav-link.active {
+    color: var(--cf2m-white) !important;
+}
+.cf2m-navbar .nav-link:hover::after,
+.cf2m-navbar .nav-link.active::after {
+    transform: scaleX(1);
+}
+/* Pas de soulignement sur le dropdown toggle */
+.cf2m-navbar .nav-link.dropdown-toggle::after {
+    display: none;
+}
+
+/* Bouton connexion */
 .cf2m-btn-connexion {
     background: transparent;
-    border: 1.5px solid var(--cf2m-cyan);
-    color: var(--cf2m-cyan);
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0.4rem 1.1rem;
-    border-radius: 0.35rem;
+    font-weight: 500;
+    font-size: 0.82rem;
+    padding: 0.38rem 1rem;
+    border-radius: 2rem;
     letter-spacing: 0.3px;
-    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 .cf2m-btn-connexion:hover {
-    background: var(--cf2m-cyan);
-    color: var(--cf2m-dark);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-cyan);
+    background: rgba(0, 180, 216, 0.08);
+}
+
+/* Nom utilisateur connecté */
+.cf2m-navbar .cf2m-user-name {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
 }
 
 /* ── Navbar : badge compteur ─────────────────────────────────────────── */
@@ -161,31 +239,132 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 
 /* ── Hero ────────────────────────────────────────────────────────────── */
 .cf2m-hero {
-    background:
-        linear-gradient(135deg,
-            rgba(8, 17, 30, 0.97)  0%,
-            rgba(13, 30, 53, 0.95) 55%,
-            rgba(0, 50, 80, 0.92)  100%),
-        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300b4d8' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    /*
+     * Photo de fond : déposer public/images/hero-bg.jpg (photo sombre type "mains sur clavier")
+     * Sans photo : blobs de couleur cyan/bleu visibles derrière le glassmorphisme
+     */
+    background-color: #05111f;
+    background-image:
+        url('/images/hero-bg.jpg') center / cover no-repeat,
+        radial-gradient(ellipse 70% 60% at 15% 50%, rgba(0, 80, 150, 0.55) 0%, transparent 100%),
+        radial-gradient(ellipse 50% 50% at 85% 15%, rgba(0, 180, 216, 0.32) 0%, transparent 100%),
+        radial-gradient(ellipse 80% 80% at 60% 100%, rgba(5, 25, 60, 0.70) 0%, transparent 100%);
     color: var(--cf2m-white);
-    padding: 7rem 0 6rem;
-    min-height: 65vh;
+    /* Padding-top inclut la hauteur de la navbar (≈70px) car elle est en position:absolute */
+    padding: calc(70px + 4rem) 0 5rem;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
     overflow: hidden;
 }
 
-/* Lueur décorative cyan en bas à droite */
+/* Sombre overlay par-dessus la photo pour garder le texte lisible */
+.cf2m-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        rgba(5, 15, 30, 0.52) 0%,
+        rgba(5, 15, 30, 0.30) 55%,
+        rgba(5, 15, 30, 0.10) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Lueur cyan en haut à droite */
 .cf2m-hero::after {
     content: '';
     position: absolute;
-    bottom: -120px;
-    right: -80px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.12) 0%, transparent 65%);
+    top: -80px;
+    right: -60px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.14) 0%, transparent 65%);
     pointer-events: none;
+    z-index: 0;
+}
+
+.cf2m-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Panel glassmorphisme ─────────────────────────────────────────────── */
+.cf2m-hero-glass {
+    background: rgba(5, 15, 32, 0.38);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-right-color: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    padding: 2.75rem 3rem;
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 991px) {
+    .cf2m-hero-glass {
+        background: rgba(5, 15, 32, 0.55);
+        border-right-color: rgba(255, 255, 255, 0.09);
+    }
+}
+@media (max-width: 576px) {
+    .cf2m-hero-glass {
+        padding: 1.75rem 1.5rem;
+        border-radius: 1rem;
+    }
+}
+
+/* ── Portrait circulaire (colonne droite du hero) ────────────────────── */
+.cf2m-hero-portrait-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cf2m-hero-portrait {
+    width: clamp(220px, 28vw, 340px);
+    height: clamp(220px, 28vw, 340px);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(0, 180, 216, 0.45);
+    box-shadow:
+        0 0 0 10px rgba(0, 180, 216, 0.08),
+        0 0 0 20px rgba(0, 180, 216, 0.04),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.cf2m-hero-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+/* Placeholder si pas d'image portrait */
+.cf2m-hero-portrait-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+        rgba(0, 70, 130, 0.6) 0%,
+        rgba(0, 30, 60, 0.9) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(0, 180, 216, 0.5);
+}
+.cf2m-hero-portrait-placeholder svg {
+    width: 60px;
+    height: 60px;
+    opacity: 0.4;
 }
 
 .cf2m-hero-label {
@@ -369,6 +548,192 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     border-color: var(--cf2m-cyan);
     transform: translateY(-2px);
 }
+
+/* ── Page Connexion ──────────────────────────────────────────────────── */
+.cf2m-login-section {
+    background-color: #06101c;
+    background-image:
+        radial-gradient(ellipse 55% 50% at 10% 30%, rgba(0, 90, 160, 0.40) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(0, 180, 216, 0.22) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 60% at 50% 100%, rgba(8, 35, 75, 0.50) 0%, transparent 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.cf2m-login-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+.cf2m-login-blob--tl {
+    top: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.14) 0%, transparent 70%);
+}
+.cf2m-login-blob--br {
+    bottom: -100px;
+    right: -60px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(0, 60, 140, 0.25) 0%, transparent 70%);
+}
+
+/* Carte glassmorphisme */
+.cf2m-login-card {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(6, 16, 30, 0.55);
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 1.5rem;
+    padding: 2.75rem 2.5rem 2rem;
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 0 0 0.5px rgba(0, 180, 216, 0.08);
+    position: relative;
+    z-index: 1;
+}
+
+.cf2m-login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.cf2m-login-logo {
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 12px rgba(0, 180, 216, 0.4));
+}
+
+.cf2m-login-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--cf2m-white);
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.3px;
+}
+
+.cf2m-login-subtitle {
+    font-size: 0.88rem;
+    color: var(--cf2m-muted);
+    margin: 0;
+}
+
+/* Champs */
+.cf2m-login-field {
+    margin-bottom: 1.25rem;
+}
+
+.cf2m-login-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.3px;
+}
+
+.cf2m-login-input-wrap {
+    position: relative;
+}
+
+.cf2m-login-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cf2m-cyan);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.cf2m-login-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.6rem;
+    color: var(--cf2m-white);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.cf2m-login-input::placeholder {
+    color: rgba(255, 255, 255, 0.28);
+}
+.cf2m-login-input:focus {
+    border-color: var(--cf2m-cyan);
+    background: rgba(0, 180, 216, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+}
+
+/* Lien mot de passe oublié */
+.cf2m-login-forgot {
+    font-size: 0.78rem;
+    color: var(--cf2m-cyan);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+}
+.cf2m-login-forgot:hover { opacity: 1; color: var(--cf2m-cyan-light); }
+
+/* Message d'erreur */
+.cf2m-login-error {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(220, 53, 69, 0.15);
+    border: 1px solid rgba(220, 53, 69, 0.35);
+    border-radius: 0.6rem;
+    color: #ff8896;
+    font-size: 0.88rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Bouton de connexion */
+.cf2m-login-btn {
+    width: 100%;
+    background: var(--cf2m-cyan);
+    border: none;
+    border-radius: 0.6rem;
+    color: var(--cf2m-dark);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 0.85rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(0, 180, 216, 0.35);
+}
+.cf2m-login-btn:hover {
+    background: var(--cf2m-cyan-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(0, 180, 216, 0.45);
+}
+.cf2m-login-btn:active { transform: translateY(0); }
+
+/* Lien retour accueil */
+.cf2m-login-back {
+    text-align: center;
+    margin: 1.5rem 0 0;
+}
+.cf2m-login-back a {
+    font-size: 0.82rem;
+    color: var(--cf2m-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.cf2m-login-back a:hover { color: var(--cf2m-white); }
 
 /* ── Footer ──────────────────────────────────────────────────────────── */
 .cf2m-footer {
