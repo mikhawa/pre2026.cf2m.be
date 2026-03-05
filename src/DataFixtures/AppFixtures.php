@@ -20,6 +20,15 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        // ── Super administrateur ────────────────────────────────────────
+        UserFactory::createOne([
+            'email'         => 'mikhawa@cf2m.be',
+            'userName'      => 'Mikhawa',
+            'roles'         => ['ROLE_SUPER_ADMIN'],
+            'status'        => 1,
+            'plainPassword' => '123mikhawa',
+        ]);
+
         // ── Utilisateurs ────────────────────────────────────────────────
         $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
         $formateurs = UserFactory::createMany(5, fn () => ['roles' => ['ROLE_FORMATEUR']]);

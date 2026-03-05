@@ -25,6 +25,14 @@ Pour PHP, utiliser `docker compose exec php sh` pour ouvrir un shell dans le con
 
 Ne pas oublier de fermer les conteneurs avec `docker compose down` après la session de développement.
 
+## Utilisateurs et rôles
+
+Email : mikhawa@cf2m.be
+- userName : Mikhawa
+- Rôle : ROLE_SUPER_ADMIN
+- Mot de passe : 123mikhawa
+
+
 ## 🛠️ Raccourcis et commandes utiles
 
 A mettre dans le `.bashrc` ou `.zshrc` pour gagner du temps lors du développement.
