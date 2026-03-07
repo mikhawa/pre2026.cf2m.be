@@ -187,6 +187,16 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     min-width: 180px;
 }
 
+/* En mobile : le dropdown utilisateur s'aligne à gauche pour rester visible */
+@media (max-width: 991.98px) {
+    .cf2m-user-dropdown {
+        --bs-dropdown-min-width: 180px;
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+    }
+}
+
 /* ── Navbar : badge compteur ─────────────────────────────────────────── */
 .cf2m-nav-count {
     display: inline-flex;
