@@ -144,12 +144,41 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     background: rgba(0, 180, 216, 0.08);
 }
 
-/* Nom utilisateur connecté */
-.cf2m-navbar .cf2m-user-name {
+/* Dropdown utilisateur connecté */
+.cf2m-user-dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-display);
-    font-size: 0.85rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.82rem;
+    padding: 0.38rem 1rem;
+    border-radius: 2rem;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.cf2m-user-dropdown-toggle::after {
+    /* supprime la flèche Bootstrap par défaut */
+    display: none;
+}
+.cf2m-user-dropdown-toggle:hover,
+.cf2m-user-dropdown-toggle[aria-expanded="true"] {
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-cyan);
+    background: rgba(0, 180, 216, 0.08);
+}
+.cf2m-user-avatar-icon {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.75;
+}
+.cf2m-user-dropdown .dropdown-menu-end {
+    right: 0;
+    left: auto;
 }
 
 /* ── Navbar : badge compteur ─────────────────────────────────────────── */
@@ -737,6 +766,33 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     transition: color 0.15s;
 }
 .cf2m-login-back a:hover { color: var(--cf2m-white); }
+
+/* ── Page profil ─────────────────────────────────────────────────────── */
+.cf2m-avatar-wrap {
+    flex-shrink: 0;
+}
+.cf2m-avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(0, 180, 216, 0.4);
+}
+.cf2m-avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0, 180, 216, 0.08);
+    border: 2px solid rgba(0, 180, 216, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 180, 216, 0.6);
+}
+.cf2m-avatar-placeholder svg {
+    width: 40px;
+    height: 40px;
+}
 
 /* ── Footer ──────────────────────────────────────────────────────────── */
 .cf2m-footer {

@@ -115,11 +115,49 @@
                         {# Auth — droite #}
                         <div class="d-flex align-items-center gap-3">
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                <span class="cf2m-user-name">
-                                    {{ app.user.userName ?? app.user.email }}
-                                </span>
-                                <a class="cf2m-btn-connexion"
-                                   href="{{ path('app_logout') }}">Déconnexion</a>
+                                <div class="dropdown">
+                                    <button class="cf2m-user-dropdown-toggle dropdown-toggle"
+                                            type="button"
+                                            id="dropdownUser"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <span class="cf2m-user-avatar-icon" aria-hidden="true">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="8" r="4"/>
+                                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                            </svg>
+                                        </span>
+                                        {{ app.user.userName ?? app.user.email }}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end cf2m-dropdown cf2m-user-dropdown"
+                                        aria-labelledby="dropdownUser">
+                                        <li>
+                                            <a class="dropdown-item cf2m-dropdown-item"
+                                               href="{{ path('app_profile') }}">
+                                                <span class="cf2m-dropdown-arrow">›</span>
+                                                Mon profil
+                                            </a>
+                                        </li>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <li>
+                                                <a class="dropdown-item cf2m-dropdown-item"
+                                                   href="/admin">
+                                                    <span class="cf2m-dropdown-arrow">›</span>
+                                                    Administration
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider cf2m-dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item cf2m-dropdown-all"
+                                               href="{{ path('app_logout') }}">
+                                                Déconnexion
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             {% else %}
                                 <a class="cf2m-btn-connexion" href="{{ path('app_login') }}">
                                     Connexion
