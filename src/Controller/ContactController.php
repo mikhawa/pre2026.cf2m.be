@@ -21,6 +21,8 @@ class ContactController extends AbstractController
     public function __construct(
         #[Autowire(env: 'MAIL_ADMIN')]
         private readonly string $mailAdmin,
+        #[Autowire(env: 'MAIL_FORM')]
+        private readonly string $mailForm,
     ) {
     }
 
@@ -44,7 +46,7 @@ class ContactController extends AbstractController
             $em->flush();
 
             $email = (new TemplatedEmail())
-                ->from(new Address($this->mailAdmin, 'CF2m — Contact'))
+                ->from(new Address($this->mailForm, 'CF2m — Contact'))
                 ->to($this->mailAdmin)
                 ->replyTo(new Address($message->getEmail(), $message->getNom()))
                 ->subject('[CF2m] ' . $message->getSujet())
