@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-login{% endblock %}
+
+{% block body %}
+
+<section class="cf2m-login-section">
+
+    {# Blob décoratifs en arrière-plan #}
+    <div class="cf2m-login-blob cf2m-login-blob--tl" aria-hidden="true"></div>
+    <div class="cf2m-login-blob cf2m-login-blob--br" aria-hidden="true"></div>
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 70px;">
+        <div class="cf2m-login-card">
+
+            {# En-tête #}
+            <div class="cf2m-login-header">
+                <img src="{{ asset('images/logo-cf2m.svg') }}"
+                     alt="Logo CF2m"
+                     width="54" height="54"
+                     class="cf2m-login-logo">
+                <h1 class="cf2m-login-title">Connexion</h1>
+                <p class="cf2m-login-subtitle">Accédez à votre espace CF2m</p>
+            </div>
+
+            {# Message d'erreur #}
+            {% if error %}
+                <div class="cf2m-login-error" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {# Formulaire #}
+            <form method="post" action="{{ path('app_login') }}" novalidate>
+
+                <div class="cf2m-login-field">
+                    <label for="inputEmail" class="cf2m-login-label">Adresse e-mail</label>
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                        </svg>
+                        <input type="email"
+                               id="inputEmail"
+                               name="_username"
+                               value="{{ last_username }}"
+                               class="cf2m-login-input"
+                               placeholder="votre@email.com"
+                               autocomplete="email"
+                               autofocus
+                               required>
+                    </div>
+                </div>
+
+                <div class="cf2m-login-field">
+                    <div class="d-flex justify-content-between align-items-baseline mb-1">
+                        <label for="inputPassword" class="cf2m-login-label">Mot de passe</label>
+                        <a href="#" class="cf2m-login-forgot">Mot de passe oublié ?</a>
+                    </div>
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password"
+                               id="inputPassword"
+                               name="_password"
+                               class="cf2m-login-input"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               required>
+                    </div>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="cf2m-login-btn">
+                    Se connecter
+                </button>
+
+            </form>
+
+            {# Pied de carte #}
+            <p class="cf2m-login-back">
+                <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
+            </p>
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
