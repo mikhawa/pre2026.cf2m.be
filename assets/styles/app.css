@@ -67,11 +67,14 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     width: 100%;
 }
 
-/* Sur pages intérieures : sticky, même apparence */
+/* Sur pages intérieures : sticky, fond opaque identique à l'apparence sur la home */
 body:not(.page-home):not(.page-login) .cf2m-navbar {
     position: sticky;
     top: 0;
     z-index: 1030;
+    background: var(--cf2m-dark);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 /* Logo : icône seule */
