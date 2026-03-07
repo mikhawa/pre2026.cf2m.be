@@ -30,7 +30,7 @@ security:
                 target: app_home
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: ^/profil, roles: ROLE_USER }
 
 when@test:
