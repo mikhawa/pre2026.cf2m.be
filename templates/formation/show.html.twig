@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ formation.title }} — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-formation-show{% endblock %}
+
+{% block body %}
+
+<section class="py-5">
+    <div class="container">
+
+        <nav aria-label="Fil d'ariane" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}#formations">Nos formations</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ formation.title }}
+                </li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card cf2m-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h1 class="h3 mb-0">{{ formation.title }}</h1>
+                        <span class="badge badge-status ms-2 flex-shrink-0">Ouverte</span>
+                    </div>
+
+                    <div class="card-body">
+                        {% if formation.publishedAt %}
+                            <p class="mb-3">
+                                <small style="color: #7a95aa;">
+                                    Publiée le {{ formation.publishedAt|date('d/m/Y') }}
+                                </small>
+                            </p>
+                        {% endif %}
+
+                        {% if formation.description %}
+                            <div class="cf2m-formation-description">
+                                {{ formation.description|raw }}
+                            </div>
+                        {% else %}
+                            <p class="text-muted fst-italic">Aucune description disponible.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 pb-3 d-flex gap-2">
+                        <a href="{{ path('app_home') }}#formations" class="btn btn-outline-secondary btn-sm">
+                            ← Retour aux formations
+                        </a>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            S'inscrire
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

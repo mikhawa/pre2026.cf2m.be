@@ -67,7 +67,8 @@
                                     {% else %}
                                         {% for formation in _nav_formations %}
                                             <li>
-                                                <a class="dropdown-item cf2m-dropdown-item" href="#">
+                                                <a class="dropdown-item cf2m-dropdown-item"
+                                                   href="{{ path('app_formation_show', {slug: formation.slug}) }}">
                                                     <span class="cf2m-dropdown-arrow">›</span>
                                                     {{ formation.title }}
                                                 </a>

@@ -18,6 +18,11 @@ class FormationRepository extends ServiceEntityRepository
         parent::__construct($registry, Formation::class);
     }
 
+    public function findOneBySlug(string $slug): ?Formation
+    {
+        return $this->findOneBy(['slug' => $slug]);
+    }
+
     /** @return Formation[] */
     public function findAllPublished(): array
     {

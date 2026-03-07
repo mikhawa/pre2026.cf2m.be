@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-028 (2026-03-05)
+029 (2026-03-07)
 
 ## Dernier numéro .claude-tasks
-018 (2026-03-05)
+019 (2026-03-07)
 
 ## Conventions Foundry 2.x (factories)
 - `createMany()` / `createOne()` retournent des entités directement (pas de proxies, pas de `_real()`)
