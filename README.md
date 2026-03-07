@@ -32,6 +32,10 @@ Email : mikhawa@cf2m.be
 - Rôle : ROLE_SUPER_ADMIN
 - Mot de passe : 123mikhawa
 
+En ligne il faudra installer mailjet :
+
+https://www.mailjet.com/
+
 
 ## 🛠️ Raccourcis et commandes utiles
 
@@ -126,6 +130,11 @@ open http://localhost:8080
 
 ---
 
+## Installer les fixtures en ligne
+
+```bashbash
+php bin/console doctrine:fixtures:load
+```
 
 ## 🧪 Lancer les tests
 
