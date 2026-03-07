@@ -176,9 +176,8 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     align-items: center;
     opacity: 0.75;
 }
-.cf2m-user-dropdown .dropdown-menu-end {
-    right: 0;
-    left: auto;
+.cf2m-user-dropdown {
+    min-width: 180px;
 }
 
 /* ── Navbar : badge compteur ─────────────────────────────────────────── */
@@ -199,8 +198,11 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     vertical-align: middle;
 }
 
-/* ── Dropdown formations ─────────────────────────────────────────────── */
+/* ── Dropdowns sombres (formations + utilisateur) ────────────────────── */
 .cf2m-dropdown {
+    --bs-dropdown-bg: var(--cf2m-navy);
+    --bs-dropdown-color: rgba(255, 255, 255, 0.82);
+    --bs-dropdown-border-color: transparent;
     background-color: var(--cf2m-navy);
     border: none;
     border-top: 2px solid var(--cf2m-cyan);
