@@ -769,6 +769,73 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-login-back a:hover { color: var(--cf2m-white); }
 
+/* ── Formulaire de contact ───────────────────────────────────────────── */
+.cf2m-honeypot {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cf2m-contact-form label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4a6278;
+    margin-bottom: 0.35rem;
+}
+
+.cf2m-input {
+    background: #f8fafc;
+    border: 1.5px solid #d0dce8;
+    border-radius: 0.5rem;
+    font-size: 0.92rem;
+    color: #1a2b3c;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cf2m-input:focus {
+    background: #fff;
+    border-color: var(--cf2m-cyan);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.12);
+    outline: none;
+}
+.cf2m-input.is-invalid {
+    border-color: #dc3545;
+}
+
+.cf2m-contact-form .invalid-feedback,
+.cf2m-contact-form ul.form-errors {
+    font-size: 0.8rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+    list-style: none;
+    padding: 0;
+}
+
+.cf2m-btn-submit {
+    background: var(--cf2m-cyan);
+    color: var(--cf2m-dark);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+    display: inline-block;
+}
+.cf2m-btn-submit:hover {
+    background: var(--cf2m-cyan-light);
+    color: var(--cf2m-dark);
+    transform: translateY(-1px);
+}
+
 /* ── Page profil ─────────────────────────────────────────────────────── */
 .cf2m-avatar-wrap {
     flex-shrink: 0;

@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nous contacter — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-contact{% endblock %}
+
+{% block body %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+
+                <p class="cf2m-section-label">Contact</p>
+                <h1 class="cf2m-section-title mb-2">Nous contacter</h1>
+                <p class="text-muted mb-4">
+                    Une question sur nos formations ? Contactez-nous, nous vous répondrons dans les plus brefs délais.
+                </p>
+
+                <div class="card cf2m-card">
+                    <div class="card-body p-4">
+
+                        {{ form_start(form, {attr: {novalidate: 'novalidate', class: 'cf2m-contact-form'}}) }}
+
+                            {# Champ honeypot — masqué visuellement, ne pas remplir #}
+                            <div class="cf2m-honeypot" aria-hidden="true">
+                                {{ form_row(form.url) }}
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    {{ form_label(form.nom) }}
+                                    {{ form_widget(form.nom, {attr: {class: 'form-control cf2m-input'}}) }}
+                                    {{ form_errors(form.nom) }}
+                                </div>
+                                <div class="col-sm-6">
+                                    {{ form_label(form.email) }}
+                                    {{ form_widget(form.email, {attr: {class: 'form-control cf2m-input'}}) }}
+                                    {{ form_errors(form.email) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.sujet) }}
+                                {{ form_widget(form.sujet, {attr: {class: 'form-control cf2m-input'}}) }}
+                                {{ form_errors(form.sujet) }}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form_label(form.message) }}
+                                {{ form_widget(form.message, {attr: {class: 'form-control cf2m-input'}}) }}
+                                {{ form_errors(form.message) }}
+                            </div>
+
+                            <button type="submit" class="btn cf2m-btn-submit w-100">
+                                Envoyer le message
+                            </button>
+
+                        {{ form_end(form) }}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
