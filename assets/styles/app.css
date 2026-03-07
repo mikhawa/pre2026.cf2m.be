@@ -22,6 +22,13 @@ body {
     font-family: var(--font-body);
     color: #1a2b3c;
     background: var(--cf2m-white);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6, .navbar-brand {
@@ -861,6 +868,12 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-avatar-placeholder svg {
     width: 40px;
     height: 40px;
+}
+
+/* ── Page contact : carte sans hauteur fixe ─────────────────────────── */
+.page-contact .cf2m-card {
+    height: auto;
+    overflow: visible;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────── */
