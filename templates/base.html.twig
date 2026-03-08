@@ -15,6 +15,7 @@
 
         {# ── Navigation ──────────────────────────────────────────────── #}
         {%- set _nav_formations = nav_formations() -%}
+        {%- set _nav_pages = nav_pages() -%}
         <header>
             <nav class="navbar navbar-expand-lg navbar-dark cf2m-navbar"
                  aria-label="Navigation principale">
@@ -53,9 +54,6 @@
                                    id="dropdownFormations" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     Nos formations
-                                    {% if _nav_formations|length > 0 %}
-                                        <span class="cf2m-nav-count">{{ _nav_formations|length }}</span>
-                                    {% endif %}
                                 </a>
                                 <ul class="dropdown-menu cf2m-dropdown" aria-labelledby="dropdownFormations">
                                     {% if _nav_formations is empty %}
@@ -90,8 +88,32 @@
                                    href="{{ path('app_contact') }}">Nous contacter</a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Nos activités</a>
+                            {# Dropdown Nos activités #}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   id="dropdownActivites" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Nos activités
+                                </a>
+                                <ul class="dropdown-menu cf2m-dropdown" aria-labelledby="dropdownActivites">
+                                    {% if _nav_pages is empty %}
+                                        <li>
+                                            <span class="dropdown-item-text text-muted fst-italic">
+                                                Aucune activité disponible
+                                            </span>
+                                        </li>
+                                    {% else %}
+                                        {% for page in _nav_pages %}
+                                            <li>
+                                                <a class="dropdown-item cf2m-dropdown-item"
+                                                   href="{{ path('app_page_show', {slug: page.slug}) }}">
+                                                    <span class="cf2m-dropdown-arrow">›</span>
+                                                    {{ page.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </ul>
                             </li>
 
                             <li class="nav-item">

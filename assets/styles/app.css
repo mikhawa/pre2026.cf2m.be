@@ -126,9 +126,19 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-navbar .nav-link.active::after {
     transform: scaleX(1);
 }
-/* Pas de soulignement sur le dropdown toggle */
+/* Indicateur dropdown : remplace le soulignement par un chevron */
 .cf2m-navbar .nav-link.dropdown-toggle::after {
-    display: none;
+    content: ' ▾';
+    position: static;
+    display: inline;
+    height: auto;
+    width: auto;
+    background: none;
+    transform: none;
+    transition: none;
+    border: none;
+    font-size: 0.75rem;
+    opacity: 0.7;
 }
 
 /* Bouton connexion */
