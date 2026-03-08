@@ -49,11 +49,13 @@ final class WorksFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return function (): array {
-            $title = self::faker()->unique()->randomElement(self::TITRES);
+            $title = self::faker()->randomElement(self::TITRES);
+            $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
+                . '-' . self::faker()->unique()->numberBetween(1, 99999);
 
             return [
                 'title'       => $title,
-                'slug'        => strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-')),
+                'slug'        => $slug,
                 'description' => self::faker()->realText(400),
                 'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
                 'publishedAt' => self::faker()->boolean(60)
