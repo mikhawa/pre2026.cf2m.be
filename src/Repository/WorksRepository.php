@@ -17,4 +17,21 @@ class WorksRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Works::class);
     }
+
+    /**
+     * Retourne les works publiés d'une formation, triés par date de publication DESC.
+     *
+     * @return Works[]
+     */
+    public function findPublishedByFormation(int $formationId): array
+    {
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.formation = :formation')
+            ->andWhere('w.status = :status')
+            ->setParameter('formation', $formationId)
+            ->setParameter('status', 'published')
+            ->orderBy('w.publishedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

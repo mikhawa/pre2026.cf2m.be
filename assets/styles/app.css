@@ -890,6 +890,17 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     height: 40px;
 }
 
+/* ── Liens works sur la page formation ──────────────────────────────── */
+.cf2m-works-link {
+    color: var(--cf2m-cyan);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+.cf2m-works-link:hover {
+    color: var(--cf2m-white);
+}
+
 /* ── Page contact : carte sans hauteur fixe ─────────────────────────── */
 .page-contact .cf2m-card {
     height: auto;
