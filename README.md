@@ -1,6 +1,6 @@
 # pre2026.cf2m.be
 
-Site de création du site du Centre de Formation CF2m, développé en Symfony 7.4 LTS avec PHP 8.5, MariaDB 11.4, et Docker pour l'environnement de développement local. Le projet utilise également ImportMap pour la gestion des dépendances JavaScript côté client.
+Site de création du site du **Centre de Formation CF2m**, développé en `Symfony 7.4 LTS` avec `PHP 8.5`, `MariaDB 11.4`, `Mailpit` et `Docker` pour l'**environnement de développement local**. Le projet utilise également `ImportMap` pour la gestion des dépendances `JavaScript côté client`. Des fichiers de documentation détaillent l'architecture, les conventions de code, et les processus de développement et de déploiement sont créés par **Michaël J. Pitz** ([Mikhawa](https://github.com/mikhawa)) pour assurer une maintenance facile et une évolutivité du projet avec l'**IA Claude** comme soutien.
 
 > Symfony 7.4 LTS | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap
 
@@ -15,6 +15,8 @@ Site de création du site du Centre de Formation CF2m, développé en Symfony 7.
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
+- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate)
+- php bin/console doctrine:fixtures:load --no-interaction
 
 #### URL du serveur de développement local (Docker) :
 | Service | URL | Description |

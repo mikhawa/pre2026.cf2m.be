@@ -46,4 +46,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN git config --global --add safe.directory /var/www/html
 
+# Alias shell (sh + bash)
+RUN echo "alias pbc='php bin/console'" >> /root/.shrc \
+    && echo "alias pbcc='php bin/console cache:clear'" >> /root/.shrc \
+    && echo ". /root/.shrc" >> /root/.bashrc
+ENV ENV=/root/.shrc
+
 WORKDIR /var/www/html

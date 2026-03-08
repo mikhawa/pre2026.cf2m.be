@@ -31,7 +31,7 @@ final class UserFactory extends PersistentObjectFactory
             'userName'                 => self::faker()->unique()->regexify('[a-zA-Z][a-zA-Z0-9_]{5,14}'),
             'roles'                    => [],
             'status'                   => 1,
-            'biography'                => self::faker()->optional(0.7)->paragraph(),
+            'biography'                => self::faker()->optional(0.7)->realText(200),
             'externalLink1'            => self::faker()->optional(0.3)->url(),
             'externalLink2'            => null,
             'externalLink3'            => null,

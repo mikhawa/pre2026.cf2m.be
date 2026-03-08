@@ -50,6 +50,27 @@
                         {% endif %}
                     </div>
 
+                    {% if works is not empty %}
+                        <div class="card-body border-top pt-3">
+                            <h2 class="h5 mb-3">Travaux réalisés</h2>
+                            <ul class="list-unstyled mb-0">
+                                {% for work in works %}
+                                    <li class="mb-2">
+                                        <a href="{{ path('app_works_show', {formationSlug: formation.slug, slug: work.slug}) }}" class="cf2m-works-link">
+                                            <span class="cf2m-dropdown-arrow">›</span>
+                                            {{ work.title }}
+                                        </a>
+                                        {% if work.publishedAt %}
+                                            <small class="text-muted ms-2">
+                                                — {{ work.publishedAt|date('d/m/Y') }}
+                                            </small>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
                     <div class="card-footer bg-transparent border-0 pb-3 d-flex gap-2">
                         <a href="{{ path('app_home') }}#formations" class="btn btn-outline-secondary btn-sm">
                             ← Retour aux formations

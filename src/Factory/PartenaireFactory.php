@@ -12,6 +12,24 @@ use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
  */
 final class PartenaireFactory extends PersistentObjectFactory
 {
+    private const NOMS = [
+        'Agence Pixel & Co',
+        'Studio Lumière Production',
+        'WebCraft Agency',
+        'Fondation Numérique Wallonie',
+        'Créations Grafik Pro',
+        'Imprimerie Dumont & Fils',
+        'Société Belge du Multimédia',
+        'Atelier Son & Image',
+        'Digital Campus Bruxelles',
+        'Réseau Entreprises Créatives',
+        'Forem Wallonie',
+        'ACTIRIS Formation',
+        'Fédération des Industries Créatives',
+        'Vivalia Communication',
+        'MediaLab Liège',
+    ];
+
     public function __construct()
     {
     }
@@ -26,11 +44,11 @@ final class PartenaireFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'nom'         => self::faker()->company(),
-            'description' => self::faker()->paragraph(),
-            'logo'   => null,
-            'url'    => self::faker()->optional(0.8)->url(),
-            'active' => true,
+            'nom'         => self::faker()->randomElement(self::NOMS),
+            'description' => self::faker()->realText(180),
+            'logo'        => null,
+            'url'         => self::faker()->optional(0.8)->url(),
+            'active'      => true,
         ];
     }
 

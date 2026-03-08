@@ -68,13 +68,20 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-033 (2026-03-07)
+041 (2026-03-08)
 
 ## Dernier numéro .claude-tasks
-024 (2026-03-07)
+032 (2026-03-08)
 
 ## Convention navbar (couleur uniforme)
 Sur les pages intérieures (non-home, non-login), la navbar doit avoir `background: var(--cf2m-dark)` + `backdrop-filter: none` pour rester visuellement identique à son apparence sur la home (qui flotte sur fond sombre). Ne jamais laisser le `backdrop-filter` actif sur fond blanc.
+
+## Convention CSRF (SameOriginCsrfTokenManager)
+Le projet utilise le mécanisme stateless de Symfony (`SameOriginCsrfTokenManager`) :
+- `config/packages/csrf.yaml` : `stateless_token_ids: [submit, authenticate, logout]`
+- `assets/controllers/csrf_protection_controller.js` : intercepte `submit`, remplace le token par un token base64, l'écrit dans un cookie
+- **Ce fichier DOIT être importé dans `assets/app.js`** : `import './controllers/csrf_protection_controller.js';`
+- Sans cet import, les formulaires retournent "Jeton CSRF invalide"
 
 ## Conventions Foundry 2.x (factories)
 - `createMany()` / `createOne()` retournent des entités directement (pas de proxies, pas de `_real()`)
