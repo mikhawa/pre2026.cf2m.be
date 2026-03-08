@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ work.title }} — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-works-show{% endblock %}
+
+{% block body %}
+
+{# ── Hero bannière du work ──────────────────────────────────────────── #}
+<section class="cf2m-work-hero">
+    <div class="cf2m-work-hero-bg" aria-hidden="true"></div>
+    <div class="container position-relative">
+
+        <nav aria-label="Fil d'ariane" class="cf2m-work-breadcrumb mb-4">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}#formations">Formations</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_formation_show', {slug: work.formation.slug}) }}">
+                        {{ work.formation.title }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ work.title }}
+                </li>
+            </ol>
+        </nav>
+
+        <div class="cf2m-work-hero-content">
+            <span class="cf2m-work-label">Réalisation étudiante</span>
+            <h1 class="cf2m-work-title">{{ work.title }}</h1>
+
+            <div class="cf2m-work-meta">
+                {% if work.publishedAt %}
+                    <span class="cf2m-work-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                        {{ work.publishedAt|date('d/m/Y') }}
+                    </span>
+                {% endif %}
+                <span class="cf2m-work-meta-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.81 8.985.936 8 1.783z"/>
+                    </svg>
+                    {{ work.formation.title }}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ── Corps principal ────────────────────────────────────────────────── #}
+<section class="cf2m-work-body py-5">
+    <div class="container">
+        <div class="row g-5">
+
+            {# ── Description ──────────────────────────────────────── #}
+            <div class="col-lg-8">
+                <div class="cf2m-work-description-card">
+                    <div class="cf2m-work-description-header">
+                        <span class="cf2m-work-section-label">Description du projet</span>
+                    </div>
+                    <div class="cf2m-work-description-body">
+                        {% if work.description %}
+                            {{ work.description|raw }}
+                        {% else %}
+                            <p class="text-muted fst-italic">Aucune description disponible.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# ── Sidebar ──────────────────────────────────────────── #}
+            <div class="col-lg-4">
+
+                {# Auteurs #}
+                {% if work.users is not empty %}
+                    <div class="cf2m-work-sidebar-block">
+                        <h2 class="cf2m-work-sidebar-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                            </svg>
+                            Auteur{{ work.users|length > 1 ? 's' : '' }}
+                        </h2>
+                        <ul class="cf2m-work-authors-list">
+                            {% for user in work.users %}
+                                <li class="cf2m-work-author">
+                                    <span class="cf2m-work-author-avatar" aria-hidden="true">
+                                        {{ user.userName|first|upper }}
+                                    </span>
+                                    <span class="cf2m-work-author-name">{{ user.userName }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {# Formation #}
+                <div class="cf2m-work-sidebar-block">
+                    <h2 class="cf2m-work-sidebar-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917l-7.5-3.5z"/>
+                            <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.5 4.176 9.032z"/>
+                        </svg>
+                        Formation
+                    </h2>
+                    <a href="{{ path('app_formation_show', {slug: work.formation.slug}) }}"
+                       class="cf2m-work-formation-link">
+                        {{ work.formation.title }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                {# Retour #}
+                <div class="cf2m-work-sidebar-block">
+                    <a href="{{ path('app_formation_show', {slug: work.formation.slug}) }}"
+                       class="btn cf2m-work-back-btn w-100">
+                        ← Retour à la formation
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

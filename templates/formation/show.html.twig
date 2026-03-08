@@ -56,7 +56,7 @@
                             <ul class="list-unstyled mb-0">
                                 {% for work in works %}
                                     <li class="mb-2">
-                                        <a href="#" class="cf2m-works-link">
+                                        <a href="{{ path('app_works_show', {formationSlug: formation.slug, slug: work.slug}) }}" class="cf2m-works-link">
                                             <span class="cf2m-dropdown-arrow">›</span>
                                             {{ work.title }}
                                         </a>

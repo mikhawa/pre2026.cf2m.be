@@ -901,6 +901,192 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: var(--cf2m-white);
 }
 
+/* ── Page works/show ─────────────────────────────────────────────────── */
+
+/* Hero */
+.cf2m-work-hero {
+    position: relative;
+    background: var(--cf2m-dark);
+    padding: 5rem 0 3.5rem;
+    overflow: hidden;
+}
+.cf2m-work-hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0, 180, 216, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(20, 47, 82, 0.6) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cf2m-work-breadcrumb .breadcrumb-item a {
+    color: var(--cf2m-muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+}
+.cf2m-work-breadcrumb .breadcrumb-item a:hover { color: var(--cf2m-cyan); }
+.cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+.cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.25); }
+
+.cf2m-work-label {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cf2m-cyan);
+    border: 1px solid rgba(0, 180, 216, 0.35);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    margin-bottom: 1.25rem;
+}
+.cf2m-work-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--cf2m-white);
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    max-width: 800px;
+}
+.cf2m-work-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+.cf2m-work-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--cf2m-muted);
+}
+
+/* Corps */
+.cf2m-work-body { background: var(--cf2m-light); }
+
+.cf2m-work-description-card {
+    background: var(--cf2m-white);
+    border: 1px solid rgba(0, 180, 216, 0.12);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+.cf2m-work-description-header {
+    background: linear-gradient(135deg, var(--cf2m-dark) 0%, var(--cf2m-navy-md) 100%);
+    padding: 1rem 1.5rem;
+}
+.cf2m-work-section-label {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cf2m-cyan);
+}
+.cf2m-work-description-body {
+    padding: 1.75rem;
+    color: #2a3f52;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+/* Sidebar */
+.cf2m-work-sidebar-block {
+    background: var(--cf2m-white);
+    border: 1px solid rgba(0, 180, 216, 0.12);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+.cf2m-work-sidebar-title {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7a95aa;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Auteurs */
+.cf2m-work-authors-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.cf2m-work-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.cf2m-work-author-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cf2m-navy-md), var(--cf2m-cyan));
+    color: var(--cf2m-white);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.cf2m-work-author-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a2b3c;
+}
+
+/* Lien formation */
+.cf2m-work-formation-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--cf2m-navy-md);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.4rem;
+    background: rgba(0, 180, 216, 0.06);
+    border: 1px solid rgba(0, 180, 216, 0.15);
+    transition: background 0.2s, color 0.2s;
+}
+.cf2m-work-formation-link:hover {
+    background: rgba(0, 180, 216, 0.12);
+    color: var(--cf2m-cyan);
+}
+
+/* Bouton retour */
+.cf2m-work-back-btn {
+    background: transparent;
+    border: 1.5px solid rgba(0, 180, 216, 0.35);
+    color: var(--cf2m-cyan);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.6rem 1.25rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.cf2m-work-back-btn:hover {
+    background: var(--cf2m-cyan);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-dark);
+}
+
 /* ── Page contact : carte sans hauteur fixe ─────────────────────────── */
 .page-contact .cf2m-card {
     height: auto;

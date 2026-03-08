@@ -19,6 +19,23 @@ class WorksRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne un work publié par son slug et le slug de sa formation.
+     */
+    public function findOnePublishedBySlugAndFormation(string $slug, string $formationSlug): ?Works
+    {
+        return $this->createQueryBuilder('w')
+            ->join('w.formation', 'f')
+            ->andWhere('w.slug = :slug')
+            ->andWhere('w.status = :status')
+            ->andWhere('f.slug = :formationSlug')
+            ->setParameter('slug', $slug)
+            ->setParameter('status', 'published')
+            ->setParameter('formationSlug', $formationSlug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * Retourne les works publiés d'une formation, triés par date de publication DESC.
      *
      * @return Works[]
