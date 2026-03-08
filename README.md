@@ -16,6 +16,7 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
 - Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate)
+- php bin/console doctrine:fixtures:load --no-interaction
 
 #### URL du serveur de développement local (Docker) :
 | Service | URL | Description |

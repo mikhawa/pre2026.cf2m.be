@@ -57,10 +57,11 @@ final class FormationFactory extends PersistentObjectFactory
                 'title'       => $title,
                 'slug'        => $slug,
                 'description' => self::faker()->realText(600),
-                'status'      => $status = self::faker()->randomElement(['draft', 'published', 'archived']),
-                'publishedAt' => $status === 'published'
-                    ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
-                    : null,
+                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                    self::faker()->dateTimeBetween('-3 years', '-1 year')
+                ),
+                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
+                'publishedAt' => null,
                 'createdBy'   => UserFactory::new(),
                 'updatedAt'   => null,
             ];
@@ -72,9 +73,16 @@ final class FormationFactory extends PersistentObjectFactory
      */
     public function publiee(): static
     {
+        $createdAt = \DateTimeImmutable::createFromMutable(
+            self::faker()->dateTimeBetween('-3 years', '-1 year')
+        );
+
         return $this->with([
+            'createdAt'   => $createdAt,
             'status'      => 'published',
-            'publishedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-6 months', 'now')),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween('-11 months', '-3 months')
+            ),
         ]);
     }
 
@@ -83,7 +91,13 @@ final class FormationFactory extends PersistentObjectFactory
      */
     public function brouillon(): static
     {
-        return $this->with(['status' => 'draft', 'publishedAt' => null]);
+        return $this->with([
+            'createdAt'   => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween('-3 years', '-1 year')
+            ),
+            'status'      => 'draft',
+            'publishedAt' => null,
+        ]);
     }
 
     #[\Override]

@@ -52,10 +52,11 @@ final class PageFactory extends PersistentObjectFactory
                 'title'       => $title,
                 'slug'        => $slug,
                 'content'     => '<p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(200) . '</p>',
-                'status'      => $status = self::faker()->randomElement(['draft', 'published']),
-                'publishedAt' => $status === 'published'
-                    ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
-                    : null,
+                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                    self::faker()->dateTimeBetween('-3 years', '-1 year')
+                ),
+                'status'      => self::faker()->randomElement(['draft', 'published']),
+                'publishedAt' => null,
             ];
         };
     }
@@ -66,8 +67,13 @@ final class PageFactory extends PersistentObjectFactory
     public function publiee(): static
     {
         return $this->with([
+            'createdAt'   => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween('-3 years', '-1 year')
+            ),
             'status'      => 'published',
-            'publishedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-6 months', 'now')),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween('-3 months', 'now')
+            ),
         ]);
     }
 

@@ -53,29 +53,38 @@ final class WorksFactory extends PersistentObjectFactory
             $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
                 . '-' . self::faker()->unique()->numberBetween(1, 99999);
 
-            $status = self::faker()->randomElement(['draft', 'published', 'archived']);
-
             return [
                 'title'       => $title,
                 'slug'        => $slug,
                 'description' => self::faker()->realText(400),
-                'status'      => $status,
-                'publishedAt' => $status === 'published'
-                    ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
-                    : null,
+                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                    self::faker()->dateTimeBetween('-2 months', 'now')
+                ),
+                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
+                'publishedAt' => null,
                 'formation'   => FormationFactory::new(),
             ];
         };
     }
 
     /**
-     * État : travail publié
+     * État : travail publié (createdAt et publishedAt cohérents, publishedAt > createdAt)
      */
     public function publie(): static
     {
+        $createdAt = \DateTimeImmutable::createFromMutable(
+            self::faker()->dateTimeBetween('-2 months', '-1 day')
+        );
+
         return $this->with([
             'status'      => 'published',
-            'publishedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-6 months', 'now')),
+            'createdAt'   => $createdAt,
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween(
+                    \DateTime::createFromImmutable($createdAt),
+                    'now'
+                )
+            ),
         ]);
     }
 

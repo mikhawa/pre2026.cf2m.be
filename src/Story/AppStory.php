@@ -35,11 +35,11 @@ final class AppStory extends Story
         // Works rattachés aux formations publiées
         foreach ($formations as $formation) {
             WorksFactory::new()->publie()->createMany(
-                faker()->numberBetween(2, 4),
+                random_int(2, 4),
                 ['formation' => $formation]
             );
             WorksFactory::new()->brouillon()->createMany(
-                faker()->numberBetween(1, 2),
+                random_int(1, 2),
                 ['formation' => $formation]
             );
         }
