@@ -12,6 +12,29 @@ use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
  */
 final class FormationFactory extends PersistentObjectFactory
 {
+    private const TITRES = [
+        'Développement web fullstack',
+        'Design graphique avancé',
+        'Photographie numérique',
+        'Marketing digital et réseaux sociaux',
+        'Animation 3D et motion design',
+        'Montage vidéo professionnel',
+        'Intégration HTML/CSS responsive',
+        'UX/UI Design et prototypage',
+        'Infographie et identité visuelle',
+        'Audio et prise de son studio',
+        'Illustration numérique',
+        'Développement d\'applications mobiles',
+        'Rédaction web et copywriting',
+        'E-commerce et stratégie de vente en ligne',
+        'Cybersécurité pour non-spécialistes',
+        'Gestion de projet agile',
+        'Production audiovisuelle',
+        'Accessibilité numérique',
+        'WordPress et CMS open source',
+        'Photographie de studio et éclairage',
+    ];
+
     public function __construct()
     {
     }
@@ -26,13 +49,12 @@ final class FormationFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return function (): array {
-            $title = self::faker()->unique()->sentence(5);
-            $title = rtrim($title, '.');
+            $title = self::faker()->unique()->randomElement(self::TITRES);
 
             return [
                 'title'       => $title,
                 'slug'        => strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-')),
-                'description' => self::faker()->paragraphs(3, true),
+                'description' => self::faker()->realText(600),
                 'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
                 'publishedAt' => self::faker()->boolean(70)
                     ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))

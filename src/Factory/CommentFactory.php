@@ -26,7 +26,7 @@ final class CommentFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'content'  => self::faker()->paragraph(),
+            'content'  => self::faker()->realText(180),
             'approved' => false,
             'user'     => UserFactory::new(),
             'works'    => WorksFactory::new(),

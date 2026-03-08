@@ -12,6 +12,24 @@ use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
  */
 final class ContactMessageFactory extends PersistentObjectFactory
 {
+    private const SUJETS = [
+        'Demande d\'information sur les formations',
+        'Question relative aux modalités d\'inscription',
+        'Renseignements sur les frais de scolarité',
+        'Demande de rendez-vous avec un conseiller',
+        'Question sur les débouchés professionnels',
+        'Signalement d\'un problème technique sur le site',
+        'Demande de documentation sur le programme',
+        'Information sur les dates de rentrée',
+        'Question sur la prise en charge par un organisme',
+        'Candidature spontanée pour un poste de formateur',
+        'Partenariat potentiel avec notre entreprise',
+        'Demande de devis pour une formation en entreprise',
+        'Réclamation suite à une inscription',
+        'Félicitations pour la qualité de l\'enseignement',
+        'Question sur l\'accessibilité des locaux',
+    ];
+
     public function __construct()
     {
     }
@@ -28,8 +46,8 @@ final class ContactMessageFactory extends PersistentObjectFactory
         return [
             'nom'     => self::faker()->lastName() . ' ' . self::faker()->firstName(),
             'email'   => self::faker()->safeEmail(),
-            'sujet'   => self::faker()->sentence(6),
-            'message' => self::faker()->paragraphs(2, true),
+            'sujet'   => self::faker()->randomElement(self::SUJETS),
+            'message' => self::faker()->realText(350),
             'read'    => false,
         ];
     }
