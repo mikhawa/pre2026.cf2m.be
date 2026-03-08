@@ -1,0 +1,81 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+<div class="row g-4 mt-1">
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">🎓</div>
+                <h5 class="mb-1">Formations</h5>
+                <p class="text-muted small mb-3">Gérer le catalogue de formations</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\FormationCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les formations</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">✉️</div>
+                <h5 class="mb-1">Messages de contact</h5>
+                <p class="text-muted small mb-3">Consulter les demandes reçues</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ContactMessageCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les messages</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">👥</div>
+                <h5 class="mb-1">Utilisateurs</h5>
+                <p class="text-muted small mb-3">Gérer les comptes et les rôles</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les utilisateurs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">📋</div>
+                <h5 class="mb-1">Inscriptions</h5>
+                <p class="text-muted small mb-3">Traiter les demandes d'inscription</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\InscriptionCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les inscriptions</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">🤝</div>
+                <h5 class="mb-1">Partenaires</h5>
+                <p class="text-muted small mb-3">Gérer les partenaires affichés</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\PartenaireCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les partenaires</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">💬</div>
+                <h5 class="mb-1">Commentaires</h5>
+                <p class="text-muted small mb-3">Modérer les commentaires</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\CommentCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les commentaires</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

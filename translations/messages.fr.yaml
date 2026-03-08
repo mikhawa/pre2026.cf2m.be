@@ -1,0 +1,103 @@
+# Traductions françaises — domaine messages
+# Utilisé par EasyAdmin (setTranslationDomain('messages')) et les formulaires frontend
+
+# ── Dashboard ─────────────────────────────────────────────────────────────
+'Tableau de bord': 'Tableau de bord'
+'← Site public': '← Site public'
+'Contenu': 'Contenu'
+'Utilisateurs': 'Utilisateurs'
+'Interactions': 'Interactions'
+'Communication': 'Communication'
+
+# ── Labels entités (singular / plural) ────────────────────────────────────
+'Utilisateur': 'Utilisateur'
+'Formation': 'Formation'
+'Formations': 'Formations'
+'Message de contact': 'Message de contact'
+'Messages de contact': 'Messages de contact'
+'Work': 'Work'
+'Works': 'Works'
+'Page': 'Page'
+'Pages': 'Pages'
+'Inscription': 'Inscription'
+'Inscriptions': 'Inscriptions'
+'Commentaire': 'Commentaire'
+'Commentaires': 'Commentaires'
+'Note': 'Note'
+'Notes': 'Notes'
+'Partenaire': 'Partenaire'
+'Partenaires': 'Partenaires'
+
+# ── Champs communs ────────────────────────────────────────────────────────
+'Nom': 'Nom'
+'Prénom': 'Prénom'
+'E-mail': 'E-mail'
+'Sujet': 'Sujet'
+'Message': 'Message'
+'Titre': 'Titre'
+'Slug': 'Slug'
+'Statut': 'Statut'
+'Description': 'Description'
+'Créé le': 'Créé le'
+'Créée le': 'Créée le'
+
+# ── Statuts ───────────────────────────────────────────────────────────────
+'Brouillon': 'Brouillon'
+'Publié': 'Publié'
+'Publiée': 'Publiée'
+'Archivé': 'Archivé'
+'Archivée': 'Archivée'
+'Recrutement': 'Recrutement'
+
+# ── Utilisateur ───────────────────────────────────────────────────────────
+'Nom d''utilisateur': 'Nom d''utilisateur'
+'Rôles': 'Rôles'
+'Administrateur': 'Administrateur'
+'Super Admin': 'Super Admin'
+'Formateur': 'Formateur'
+'Biographie': 'Biographie'
+'Lien externe 1': 'Lien externe 1'
+'Lien externe 2': 'Lien externe 2'
+'Lien externe 3': 'Lien externe 3'
+
+# ── Formation ─────────────────────────────────────────────────────────────
+'Publiée le': 'Publiée le'
+'Créée par': 'Créée par'
+'Responsables': 'Responsables'
+
+# ── ContactMessage ────────────────────────────────────────────────────────
+'Reçu le': 'Reçu le'
+'Lu': 'Lu'
+'Lu par': 'Lu par'
+
+# ── Works ─────────────────────────────────────────────────────────────────
+'Publié le': 'Publié le'
+'Étudiants': 'Étudiants'
+
+# ── Page ──────────────────────────────────────────────────────────────────
+'Auteurs': 'Auteurs'
+
+# ── Inscription ───────────────────────────────────────────────────────────
+'Reçue le': 'Reçue le'
+'Traitée': 'Traitée'
+'Traitée le': 'Traitée le'
+'Traitée par': 'Traitée par'
+
+# ── Commentaire ───────────────────────────────────────────────────────────
+'Approuvé': 'Approuvé'
+
+# ── Rating ────────────────────────────────────────────────────────────────
+'Note (1-5)': 'Note (1-5)'
+
+# ── Partenaire ────────────────────────────────────────────────────────────
+'Actif': 'Actif'
+'Site web': 'Site web'
+'Logo (nom fichier)': 'Logo (nom fichier)'
+
+# ── Formulaire de contact (frontend) ──────────────────────────────────────
+'Votre nom': 'Votre nom'
+'Jean Dupont': 'Jean Dupont'
+'Votre adresse e-mail': 'Votre adresse e-mail'
+'jean@exemple.be': 'jean@exemple.be'
+'Renseignements sur une formation': 'Renseignements sur une formation'
+'Votre message…': 'Votre message…'

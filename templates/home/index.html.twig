@@ -115,7 +115,8 @@
                                 {% endif %}
                             </div>
                             <div class="card-footer bg-transparent border-0 pb-3">
-                                <a href="#" class="btn btn-outline-secondary btn-sm w-100"
+                                <a href="{{ path('app_formation_show', {slug: formation.slug}) }}"
+                                   class="btn btn-outline-secondary btn-sm w-100"
                                    aria-label="Voir la formation {{ formation.title }}">
                                     En savoir plus
                                 </a>

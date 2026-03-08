@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Message envoyé — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-contact{% endblock %}
+
+{% block body %}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+
+                <div class="card cf2m-card p-5">
+                    <div class="mb-4" style="color: var(--cf2m-cyan);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h1 class="h3 mb-3">Message envoyé !</h1>
+                    <p class="text-muted mb-4">
+                        Merci de nous avoir contactés. Nous vous répondrons dans les meilleurs délais.
+                    </p>
+                    <a href="{{ path('app_home') }}" class="btn cf2m-btn-submit">
+                        Retour à l'accueil
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil — CF2m{% endblock %}
+
+{% block body_class %}page-profil{% endblock %}
+
+{% block body %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card cf2m-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h1 class="h3 mb-0">Mon profil</h1>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="/admin" class="badge badge-status text-decoration-none">Administration</a>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+
+                        {# Avatar + identité #}
+                        <div class="d-flex align-items-center gap-4 mb-4">
+                            <div class="cf2m-avatar-wrap">
+                                {% if user.avatarName %}
+                                    <img src="{{ asset('uploads/avatars/' ~ user.avatarName) }}"
+                                         alt="Avatar de {{ user.userName }}"
+                                         class="cf2m-avatar-img">
+                                {% else %}
+                                    <div class="cf2m-avatar-placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="1.2"
+                                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <circle cx="12" cy="8" r="4"/>
+                                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <h2 class="h4 mb-1">{{ user.userName }}</h2>
+                                <p class="text-muted mb-1">{{ user.email }}</p>
+                                {% if user.createdAt %}
+                                    <small style="color: #7a95aa;">
+                                        Membre depuis le {{ user.createdAt|date('d/m/Y') }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Biographie #}
+                        {% if user.biography %}
+                            <div class="mb-4">
+                                <h3 class="h6 text-uppercase mb-2" style="color: #7a95aa; letter-spacing: .05em;">Présentation</h3>
+                                <p class="mb-0">{{ user.biography }}</p>
+                            </div>
+                        {% endif %}
+
+                        {# Formations #}
+                        {% if user.formations is not empty %}
+                            <div class="mb-4">
+                                <h3 class="h6 text-uppercase mb-2" style="color: #7a95aa; letter-spacing: .05em;">Formations</h3>
+                                <ul class="list-unstyled mb-0">
+                                    {% for formation in user.formations %}
+                                        <li class="mb-1">
+                                            <a href="{{ path('app_formation_show', {slug: formation.slug}) }}"
+                                               class="text-decoration-none">
+                                                › {{ formation.title }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {# Liens externes #}
+                        {% set liens = [user.externalLink1, user.externalLink2, user.externalLink3]|filter(l => l is not null) %}
+                        {% if liens is not empty %}
+                            <div>
+                                <h3 class="h6 text-uppercase mb-2" style="color: #7a95aa; letter-spacing: .05em;">Liens</h3>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for lien in liens %}
+                                        <a href="{{ lien }}" target="_blank" rel="noopener noreferrer"
+                                           class="btn btn-outline-secondary btn-sm cf2m-nav-external">
+                                            {{ lien|replace({'https://': '', 'http://': ''})|split('/')[0] }}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                                 aria-hidden="true" class="cf2m-external-icon">
+                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                <polyline points="15 3 21 3 21 9"/>
+                                                <line x1="10" y1="14" x2="21" y2="3"/>
+                                            </svg>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

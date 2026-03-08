@@ -6,6 +6,8 @@
 
 https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
+- [Raccourcis de développement](RACCOURCIS.md)
+
 > Symfony 7.4 LTS | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap
 
 - 2026-06-10 : mise à jour du README avec les liens vers la documentation d'architecture, devops, et les règles d'utilisation des modèles Claude.
@@ -31,6 +33,10 @@ Email : mikhawa@cf2m.be
 - userName : Mikhawa
 - Rôle : ROLE_SUPER_ADMIN
 - Mot de passe : 123mikhawa
+
+En ligne il faudra installer mailjet :
+
+https://www.mailjet.com/
 
 
 ## 🛠️ Raccourcis et commandes utiles
@@ -126,6 +132,11 @@ open http://localhost:8080
 
 ---
 
+## Installer les fixtures en ligne
+
+```bashbash
+php bin/console doctrine:fixtures:load
+```
 
 ## 🧪 Lancer les tests
 

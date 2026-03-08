@@ -18,7 +18,9 @@ framework:
             messenger.bus.default: []
 
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            # SendEmailMessage non routé → envoi synchrone direct via MAILER_DSN (Mailpit en dev)
+            # En production avec worker : décommenter la ligne ci-dessous et lancer messenger:consume
+            # Symfony\Component\Mailer\Messenger\SendEmailMessage: async
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 
