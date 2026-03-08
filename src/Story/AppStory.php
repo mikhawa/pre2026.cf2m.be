@@ -5,6 +5,7 @@ namespace App\Story;
 use App\Factory\FormationFactory;
 use App\Factory\InscriptionFactory;
 use App\Factory\UserFactory;
+use App\Factory\WorksFactory;
 use Zenstruck\Foundry\Attribute\AsFixture;
 use Zenstruck\Foundry\Story;
 
@@ -28,8 +29,20 @@ final class AppStory extends Story
         UserFactory::createMany(20);
 
         // Formations
-        FormationFactory::new()->publiee()->createMany(8);
+        $formations = FormationFactory::new()->publiee()->createMany(8);
         FormationFactory::new()->brouillon()->createMany(4);
+
+        // Works rattachés aux formations publiées
+        foreach ($formations as $formation) {
+            WorksFactory::new()->publie()->createMany(
+                faker()->numberBetween(2, 4),
+                ['formation' => $formation]
+            );
+            WorksFactory::new()->brouillon()->createMany(
+                faker()->numberBetween(1, 2),
+                ['formation' => $formation]
+            );
+        }
 
         // Inscriptions de test
         InscriptionFactory::createMany(30);

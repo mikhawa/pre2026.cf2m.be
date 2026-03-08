@@ -52,8 +52,8 @@ final class PageFactory extends PersistentObjectFactory
                 'title'       => $title,
                 'slug'        => $slug,
                 'content'     => '<p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(200) . '</p>',
-                'status'      => self::faker()->randomElement(['draft', 'published']),
-                'publishedAt' => self::faker()->boolean(70)
+                'status'      => $status = self::faker()->randomElement(['draft', 'published']),
+                'publishedAt' => $status === 'published'
                     ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
                     : null,
             ];

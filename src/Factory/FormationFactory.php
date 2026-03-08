@@ -57,8 +57,8 @@ final class FormationFactory extends PersistentObjectFactory
                 'title'       => $title,
                 'slug'        => $slug,
                 'description' => self::faker()->realText(600),
-                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
-                'publishedAt' => self::faker()->boolean(70)
+                'status'      => $status = self::faker()->randomElement(['draft', 'published', 'archived']),
+                'publishedAt' => $status === 'published'
                     ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
                     : null,
                 'createdBy'   => UserFactory::new(),

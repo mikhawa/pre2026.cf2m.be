@@ -53,12 +53,14 @@ final class WorksFactory extends PersistentObjectFactory
             $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
                 . '-' . self::faker()->unique()->numberBetween(1, 99999);
 
+            $status = self::faker()->randomElement(['draft', 'published', 'archived']);
+
             return [
                 'title'       => $title,
                 'slug'        => $slug,
                 'description' => self::faker()->realText(400),
-                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
-                'publishedAt' => self::faker()->boolean(60)
+                'status'      => $status,
+                'publishedAt' => $status === 'published'
                     ? \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now'))
                     : null,
                 'formation'   => FormationFactory::new(),
@@ -75,6 +77,14 @@ final class WorksFactory extends PersistentObjectFactory
             'status'      => 'published',
             'publishedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-6 months', 'now')),
         ]);
+    }
+
+    /**
+     * État : travail en brouillon
+     */
+    public function brouillon(): static
+    {
+        return $this->with(['status' => 'draft', 'publishedAt' => null]);
     }
 
     #[\Override]
