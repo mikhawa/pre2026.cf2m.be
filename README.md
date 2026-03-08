@@ -15,6 +15,7 @@ Site de création du site du Centre de Formation CF2m, développé en Symfony 7.
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
+- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear)
 
 #### URL du serveur de développement local (Docker) :
 | Service | URL | Description |

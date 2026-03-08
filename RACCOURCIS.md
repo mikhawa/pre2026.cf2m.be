@@ -21,13 +21,7 @@ alias asset='php bin/console asset-map:compile'
 ### ----------------------
 ```bash
 alias pbc='php bin/console'
-alias ddc='php bin/console doctrine:database:create'
-alias sssd='symfony serve -d'
-alias sss='symfony server:stop'
-alias dfl='php bin/console doctrine:fixture:load'
-alias test='vendor/bin/phpunit --testdox'
-alias csfix='./vendor/bin/php-cs-fixer fix'
-alias wind='php bin/console tailwind:build'
+alias pbcc='php bin/console cache:clear'
 ```
 
 ### ----------------------
