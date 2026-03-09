@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 284.51 172.66">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+      }
+
+      .st0, .st1 {
+        fill: #00589a;
+      }
+
+      .st2 {
+        fill: url(#Dégradé_sans_nom_7);
+      }
+
+      .st3 {
+        fill: url(#Dégradé_sans_nom_3);
+      }
+
+      .st4 {
+        fill: #05b7e9;
+      }
+
+      .st4, .st1 {
+        font-family: MyriadPro-Bold, 'Myriad Pro';
+        font-weight: 700;
+      }
+
+      .st5 {
+        font-size: 12px;
+      }
+
+      .st6 {
+        fill: url(#Dégradé_sans_nom_72);
+      }
+
+      .st7 {
+        fill: url(#Dégradé_sans_nom_71);
+      }
+    </style>
+    <linearGradient id="Dégradé_sans_nom_3" data-name="Dégradé sans nom 3" x1="19.27" y1="16.57" x2="100.22" y2="16.57" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#05b7e9"/>
+      <stop offset=".99" stop-color="#00589a"/>
+      <stop offset="1" stop-color="#1d1d1b"/>
+    </linearGradient>
+    <linearGradient id="Dégradé_sans_nom_7" data-name="Dégradé sans nom 7" x1="19.27" y1="31.2" x2="100.22" y2="31.2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00589a"/>
+      <stop offset="1" stop-color="#05b7e9"/>
+    </linearGradient>
+    <linearGradient id="Dégradé_sans_nom_71" data-name="Dégradé sans nom 7" y1="82.32" x2="144.91" y2="82.32" xlink:href="#Dégradé_sans_nom_7"/>
+    <linearGradient id="Dégradé_sans_nom_72" data-name="Dégradé sans nom 7" x1="229.85" y1="408.6" x2="355.48" y2="408.6" gradientTransform="translate(-210.57 -270.14)" xlink:href="#Dégradé_sans_nom_7"/>
+  </defs>
+  <rect class="st3" x="19.27" y="11.7" width="80.94" height="9.75"/>
+  <rect class="st2" x="19.27" y="26.33" width="80.94" height="9.75"/>
+  <rect class="st7" x="19.27" y="63.52" width="125.63" height="37.61" rx="15.9" ry="15.9"/>
+  <rect class="st6" x="19.27" y="119.65" width="125.63" height="37.61" rx="15.9" ry="15.9" transform="translate(164.18 276.91) rotate(180)"/>
+  <text class="st5" transform="translate(183.34 71.57)"><tspan class="st1"><tspan x="0" y="0">Bleu foncé :</tspan></tspan><tspan class="st0"><tspan x="0" y="14.4">RVB : 0 - 88 - 54</tspan></tspan><tspan class="st0"><tspan x="0" y="28.8">hex : 00589a</tspan></tspan><tspan class="st4"><tspan x="0" y="57.6">Bleu clair :</tspan></tspan><tspan class="st0"><tspan x="0" y="72">RVB : 5 - 83 - 233</tspan></tspan><tspan class="st0"><tspan x="0" y="86.4">hex : 05b7e9</tspan></tspan></text>
+</svg>
