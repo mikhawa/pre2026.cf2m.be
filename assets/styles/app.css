@@ -63,6 +63,56 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     transition: background 0.3s;
 }
 
+/* Menu responsive (collapsed) : glassmorphisme + styles cohérents */
+@media (max-width: 991.98px) {
+
+    /* Panneau collapse : transparent, la navbar gère déjà le verre */
+    .cf2m-navbar .navbar-collapse.show,
+    .cf2m-navbar .navbar-collapse.collapsing {
+        background: transparent;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0.5rem 0 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Liens nav : identiques au desktop, adaptés en vertical */
+    .cf2m-navbar .nav-link {
+        padding: 0.55rem 1rem !important;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Soulignement remplacé par un fond hover en mobile (l'absolu ne convient pas) */
+    .cf2m-navbar .nav-link::after {
+        display: none;
+    }
+    .cf2m-navbar .nav-link:hover,
+    .cf2m-navbar .nav-link.active {
+        background: rgba(0, 180, 216, 0.1);
+        color: var(--cf2m-cyan) !important;
+    }
+    .cf2m-navbar .nav-link.active {
+        border-left: 2px solid var(--cf2m-cyan);
+    }
+
+    /* Séparateur avant la section auth */
+    .cf2m-navbar .navbar-nav + .d-flex,
+    .cf2m-navbar .navbar-nav + .ms-lg-auto {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Bouton connexion centré en mobile */
+    .cf2m-btn-connexion {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
 /* Sur les pages à fond plein (home, connexion…) : flotte par-dessus le contenu */
 .page-home .cf2m-navbar,
 .page-login .cf2m-navbar {
@@ -74,29 +124,30 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     width: 100%;
 }
 
-/* Sur pages intérieures : sticky, fond opaque identique à l'apparence sur la home */
+/* Sur pages intérieures : sticky, même glassmorphisme que la home */
 body:not(.page-home):not(.page-login) .cf2m-navbar {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: var(--cf2m-dark);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: rgba(6, 14, 26, 0.45);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
 }
 
-/* Logo : icône seule */
+/* Logo : icône seule — déborde sans agrandir la navbar */
 .cf2m-navbar .navbar-brand {
     padding: 0;
     line-height: 1;
+    width: 42px;   /* réserve la place d'origine */
+    position: relative;
+    overflow: visible;
 }
 .cf2m-logo-img {
     display: block;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
-    transform-origin: left center;
-}
-.cf2m-logo-img:hover {
-    transform: scale(1.8);
-    filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.7));
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
 }
 
 /* Liens de navigation */
@@ -209,6 +260,21 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
         right: auto !important;
         transform: none !important;
     }
+
+    /* Dropdowns formations/activités : inline sur mobile → fond opaque cohérent */
+    .navbar-nav .cf2m-dropdown {
+        position: static !important;
+        background: rgba(6, 14, 26, 0.45);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        border-left: 2px solid rgba(0, 180, 216, 0.4);
+        border-radius: 0 0.5rem 0.5rem 0;
+        box-shadow: none;
+        min-width: 100%;
+        margin: 0.25rem 0 0.5rem 1rem;
+        padding: 0.25rem 0;
+    }
 }
 
 /* ── Navbar : badge compteur ─────────────────────────────────────────── */
@@ -229,19 +295,21 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     vertical-align: middle;
 }
 
-/* ── Dropdowns sombres (formations + utilisateur) ────────────────────── */
+/* ── Dropdowns (formations + utilisateur) ────────────────────────────── */
 .cf2m-dropdown {
-    --bs-dropdown-bg: var(--cf2m-navy);
+    --bs-dropdown-bg: transparent;
     --bs-dropdown-color: rgba(255, 255, 255, 0.82);
     --bs-dropdown-border-color: transparent;
-    background-color: var(--cf2m-navy);
+    background: rgba(6, 14, 26, 0.45);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border: none;
-    border-top: 2px solid var(--cf2m-cyan);
-    border-radius: 0 0 0.5rem 0.5rem;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0 0 0.75rem 0.75rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     min-width: 300px;
     padding: 0.5rem 0;
-    animation: dropdownFadeIn 0.16s ease;
+    animation: dropdownFadeIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes dropdownFadeIn {
