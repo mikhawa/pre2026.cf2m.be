@@ -53,16 +53,21 @@
 
             {# ── Colonne droite : portrait circulaire ── #}
             <div class="col-lg-6 d-none d-lg-flex cf2m-hero-portrait-wrap">
-                <div class="cf2m-hero-portrait">
-                    {#
-                        Déposer une photo de formateur/trice à :
-                        public/images/hero-portrait.jpg
-                        (format portrait, cadrage visage + buste)
-                    #}
-                    <img src="{{ asset('images/hero-portrait.jpg') }}"
-                         alt="Étudiante CF2m"
-                         width="340" height="340"
-                         style="object-position: 80% center;">
+                <div class="cf2m-hero-portrait-outer">
+                    <img class="cf2m-hero-portrait-ring"
+                         src="{{ asset('images/cercle-contour-blanc.svg') }}"
+                         alt="" aria-hidden="true">
+                    <div class="cf2m-hero-portrait">
+                        {#
+                            Déposer une photo de formateur/trice à :
+                            public/images/hero-portrait.jpg
+                            (format portrait, cadrage visage + buste)
+                        #}
+                        <img src="{{ asset('images/hero-portrait.jpg') }}"
+                             alt="Étudiante CF2m"
+                             width="340" height="340"
+                             style="object-position: 80% center;">
+                    </div>
                 </div>
             </div>
 

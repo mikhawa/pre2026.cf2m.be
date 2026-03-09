@@ -389,6 +389,26 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     align-items: center;
 }
 
+.cf2m-hero-portrait-outer {
+    position: relative;
+    width: clamp(220px, 28vw, 340px);
+    height: clamp(220px, 28vw, 340px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cf2m-hero-portrait-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 148%;
+    height: 148%;
+    transform: translate(calc(-50% + 3px), calc(-50% + 7px));
+    pointer-events: none;
+    z-index: 2;
+}
+
 .cf2m-hero-portrait {
     width: clamp(220px, 28vw, 340px);
     height: clamp(220px, 28vw, 340px);
@@ -400,6 +420,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
         0 0 0 20px rgba(0, 180, 216, 0.04),
         0 20px 60px rgba(0, 0, 0, 0.5);
     position: relative;
+    z-index: 1;
 }
 
 .cf2m-hero-portrait img {
