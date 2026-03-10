@@ -44,6 +44,16 @@ Email : mikhawa@cf2m.be
 - Rôle : ROLE_SUPER_ADMIN
 - Mot de passe : 123mikhawa
 
+Email : thejoe@cf2m.be
+- userName : TheJoe
+- Rôle : ROLE_ADMIN
+- Mot de passe : 123mikhawa
+
+Email : mikhawa@cf2m.be
+- userName : Mikhawa
+- Rôle : ROLE_SUPER_ADMIN
+- Mot de passe : 123mikhawa
+
 
 ---
 

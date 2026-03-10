@@ -35,6 +35,23 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123mikhawa',
         ]);
+        // ── Administrateur ────────────────────────────────────────
+        UserFactory::createOne([
+            'email'         => 'thejoe@cf2m.be',
+            'userName'      => 'TheJoe',
+            'roles'         => ['ROLE_ADMIN'],
+            'status'        => 1,
+            'plainPassword' => '123joie',
+        ]);
+        // ── Formateur ────────────────────────────────────────
+        UserFactory::createOne([
+            'email'         => 'piet@cf2m.be',
+            'userName'      => 'ThePiet',
+            'roles'         => ['ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123piet',
+        ]);
+
 
         // ── Utilisateurs ────────────────────────────────────────────────
         $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
