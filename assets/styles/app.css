@@ -58,8 +58,8 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: none;
-    padding-top: 0.9rem;
-    padding-bottom: 0.9rem;
+    padding-top: calc(0.55rem - 5px);
+    padding-bottom: calc(0.55rem - 5px);
     transition: background 0.3s;
 }
 
@@ -79,7 +79,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     .cf2m-navbar .nav-link {
         padding: 0.55rem 1rem !important;
         border-radius: 0.5rem;
-        font-size: 0.9rem;
+        font-size: 1.17rem;
     }
 
     /* Soulignement remplacé par un fond hover en mobile (l'absolu ne convient pas) */
@@ -134,26 +134,20 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
 }
 
-/* Logo : icône seule — déborde sans agrandir la navbar */
+/* Logo : centré verticalement dans la navbar */
 .cf2m-navbar .navbar-brand {
     padding: 0;
-    line-height: 1;
-    width: 42px;   /* réserve la place d'origine */
-    position: relative;
-    overflow: visible;
+    display: flex;
+    align-items: center;
 }
 .cf2m-logo-img {
     display: block;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
 }
 
 /* Liens de navigation */
 .cf2m-navbar .nav-link {
     font-family: var(--font-display);
-    font-size: 0.88rem;
+    font-size: 1.14rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.82) !important;
     letter-spacing: 0.3px;
@@ -192,7 +186,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     transform: none;
     transition: none;
     border: none;
-    font-size: 0.75rem;
+    font-size: 0.98rem;
     opacity: 0.7;
 }
 
@@ -203,7 +197,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 0.82rem;
+    font-size: 1.07rem;
     padding: 0.38rem 1rem;
     border-radius: 2rem;
     letter-spacing: 0.3px;
@@ -216,6 +210,11 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     background: rgba(0, 180, 216, 0.08);
 }
 
+/* Alignement vertical de la flèche Bootstrap sur les nav-links dropdown */
+.nav-link.dropdown-toggle::after {
+    vertical-align: middle;
+}
+
 /* Dropdown utilisateur connecté */
 .cf2m-user-dropdown-toggle {
     display: inline-flex;
@@ -226,7 +225,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 0.82rem;
+    font-size: 1.07rem;
     padding: 0.38rem 1rem;
     border-radius: 2rem;
     letter-spacing: 0.3px;
@@ -452,6 +451,9 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
         padding: 2rem 1.75rem;
         border-radius: 1.25rem;
     }
+    .cf2m-hero {
+        background-position: center, center, center, 70% 60%;
+    }
 }
 
 /* ── Portrait circulaire (colonne droite du hero) ────────────────────── */
@@ -524,7 +526,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 
 .cf2m-hero-label {
     font-family: var(--font-display);
-    font-size: 0.75rem;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -533,7 +535,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 
 .cf2m-hero h1 {
-    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-size: clamp(1.98rem, 4.5vw, 3.42rem);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.5px;
@@ -579,7 +581,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: var(--cf2m-dark);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1.14rem;
     letter-spacing: 0.5px;
     padding: 0.85rem 2.2rem;
     border-radius: 0.4rem;

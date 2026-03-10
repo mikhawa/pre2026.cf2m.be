@@ -26,7 +26,7 @@
                         <h1 class="h3 mb-0">Mon profil</h1>
                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                             {% if is_granted('ROLE_ADMIN') %}
-                                <a href="/admin" class="badge badge-status text-decoration-none">Administration</a>
+                                <a href="/admin" class="btn btn-outline-secondary btn-sm">Administration</a>
                             {% endif %}
                             <a href="{{ path('app_profile_edit') }}"
                                class="btn btn-outline-secondary btn-sm">
