@@ -112,10 +112,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#00a199',
-            'colorSecondary' => '#FFF95B',
+            'colorSecondary' => '#00589a',
         ]);
         // AM
         $formations[] = FormationFactory::createOne([
@@ -126,10 +128,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#532482',
-            'colorSecondary' => '#FFF95B',
+            'colorSecondary' => '#00589a',
         ]);
         // TR
         $formations[] = FormationFactory::createOne([
@@ -140,10 +144,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#e62c25',
-            'colorSecondary' => '#FFF95B',
+            'colorSecondary' => '#00589a',
         ]);
         // DD
         $formations[] = FormationFactory::createOne([
@@ -154,10 +160,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#d40b7d',
-            'colorSecondary' => '#FFF95B',
+            'colorPrimary' => '#05b7e9',
+            'colorSecondary' => '#00589a',
         ]);
         // Web Dev
         $formations[] = FormationFactory::createOne([
@@ -168,10 +176,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#418a9e',
-            'colorSecondary' => '#FFF95B',
+            'colorSecondary' => '#00589a',
         ]);
         // Chèques TIC
         $formations[] = FormationFactory::createOne([
@@ -182,17 +192,19 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#0033a1',
-            'colorSecondary' => '#FFF95B',
+            'colorSecondary' => '#00589a',
         ]);
 
         FormationFactory::createMany(2, fn () => [
             'status'    => 'draft',
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#FF5733',
-            'colorSecondary' => '#C70039',
+            'colorSecondary' => '#00589a',
         ]);
 
         // Associer des responsables (formateurs) à chaque formation
