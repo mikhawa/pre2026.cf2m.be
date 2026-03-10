@@ -623,11 +623,16 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     margin: 0.6rem auto 0;
 }
 
+/* ── Titres de sections (accueil) ────────────────────────────────────── */
+
 /* ── Cards formations ────────────────────────────────────────────────── */
 .cf2m-card {
-    border: 1px solid rgba(0, 180, 216, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 0.75rem;
-    box-shadow: 0 2px 12px rgba(13, 30, 53, 0.07);
+    box-shadow: 0 4px 24px rgba(13, 30, 53, 0.10), inset 0 1px 0 rgba(255,255,255,0.6);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
     height: 100%;
     overflow: hidden;
@@ -649,7 +654,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-card .card-body,
 .cf2m-card .card-footer {
-    background: color-mix(in srgb, var(--card-color-primary, var(--cf2m-dark)) 30%, transparent);
+    background: #e3ecf7;
 }
 .cf2m-card .badge-status {
     background-color: var(--cf2m-cyan);
@@ -669,18 +674,22 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-card .btn-outline-secondary {
     background: var(--cf2m-white);
-    border-color: var(--cf2m-white);
+    border: 1px solid rgba(0, 180, 216, 0.2);
+    border-radius: 0.6rem;
     color: var(--card-color-secondary, var(--cf2m-dark));
     font-family: var(--font-display);
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.3px;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
 }
 .cf2m-card .btn-outline-secondary:hover {
-    background: var(--cf2m-cyan);
+    box-shadow: 0 6px 18px rgba(0, 180, 216, 0.2);
     border-color: var(--cf2m-cyan);
-    color: var(--cf2m-dark);
+    color: var(--cf2m-cyan);
+    transform: translateY(-2px);
+    background: var(--cf2m-white);
 }
 
 /* ── Section partenaires ─────────────────────────────────────────────── */

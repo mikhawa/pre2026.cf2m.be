@@ -116,7 +116,7 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#00a199',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
         // AM
@@ -132,7 +132,7 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#532482',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
         // TR
@@ -148,7 +148,7 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#e62c25',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
         // DD
@@ -164,7 +164,7 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#05b7e9',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
         // Web Dev
@@ -180,7 +180,7 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#418a9e',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
         // Chèques TIC
@@ -196,14 +196,14 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#0033a1',
+            'colorPrimary' => '#25365f',
             'colorSecondary' => '#00589a',
         ]);
 
         FormationFactory::createMany(2, fn () => [
             'status'    => 'draft',
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#FF5733',
+            'colorPrimary' => '#00589a',
             'colorSecondary' => '#00589a',
         ]);
 
