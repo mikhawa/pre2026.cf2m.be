@@ -15,11 +15,18 @@ use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use faker\Factory as Faker;
 
 class AppFixtures extends Fixture
 {
+
+
+
     public function load(ObjectManager $manager): void
     {
+        // Initialiser Faker pour générer du contenu réaliste
+        $faker = Faker::create('fr_FR');
+
         // ── Super administrateur ────────────────────────────────────────
         UserFactory::createOne([
             'email'         => 'mikhawa@cf2m.be',
@@ -44,25 +51,35 @@ class AppFixtures extends Fixture
         PageFactory::createOne([
             'title'       => 'Notre centre',
             'slug'        => 'about',
+            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
             'status'      => 'published',
-            'publishedAt' => new \DateTimeImmutable('-1 month'),
+            'publishedAt' => new \DateTimeImmutable('-3 month'),
         ]);
         PageFactory::createOne([
             'title'       => 'RGPD et confidentialité',
             'slug'        => 'rgpd',
+            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
             'status'      => 'published',
             'publishedAt' => new \DateTimeImmutable('-2 months'),
         ]);
         PageFactory::createOne([
-            'title'  => 'Contact',
-            'slug'   => 'contact',
-            'status' => 'draft',
+            'title'  => 'Nos valeurs et notre mission',
+            'slug'   => 'nos-valeurs-et-notre-mission',
+            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
+            'status' => 'published',
+            'publishedAt' => new \DateTimeImmutable('-2 months'),
         ]);
-        PageFactory::createMany(3);
+        // PageFactory::createMany(3);
 
         // ── Formations ──────────────────────────────────────────────────
-        $formations = FormationFactory::createMany(8, fn () => [
-            'status'    => 'published',
+        $createdAt = \DateTimeImmutable::createFromMutable(
+            $faker->dateTimeBetween('-3 years', '-1 year')
+        );
+        $formations[] = FormationFactory::createOne([
+            'title'  => 'Nos valeurs et notre mission',
+            'slug'   => 'nos-valeurs-et-notre-mission',
+            'status' => 'published',
+            'publishedAt' => new \DateTimeImmutable('-2 months'),
             'createdBy' => $formateurs[array_rand($formateurs)],
         ]);
 
