@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+{% endblock %}
+
 {% block title %}Connexion — CF2m Centre de Formation{% endblock %}
 
 {% block body_class %}page-login{% endblock %}
@@ -85,6 +90,11 @@
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="cf-turnstile mb-3"
+                     data-sitekey="{{ turnstile_site_key }}"
+                     data-theme="dark"
+                     data-language="fr"></div>
 
                 <button type="submit" class="cf2m-login-btn">
                     Se connecter

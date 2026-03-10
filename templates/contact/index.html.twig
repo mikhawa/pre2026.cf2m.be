@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+{% endblock %}
+
 {% block title %}Nous contacter — CF2m Centre de Formation{% endblock %}
 
 {% block body_class %}page-contact{% endblock %}
@@ -52,6 +57,15 @@
                                 {{ form_widget(form.message, {attr: {class: 'form-control cf2m-input'}}) }}
                                 {{ form_errors(form.message) }}
                             </div>
+
+                            <div class="cf-turnstile mb-3"
+                                 data-sitekey="{{ turnstile_site_key }}"
+                                 data-theme="light"
+                                 data-language="fr"></div>
+
+                            {% for message in app.flashes('error') %}
+                                <div class="alert alert-danger py-2 mb-3" role="alert">{{ message }}</div>
+                            {% endfor %}
 
                             <button type="submit" class="btn cf2m-btn-submit w-100">
                                 Envoyer le message
