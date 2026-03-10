@@ -636,7 +636,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     border-color: rgba(0, 180, 216, 0.4);
 }
 .cf2m-card .card-header {
-    background: linear-gradient(135deg, var(--cf2m-dark) 0%, var(--cf2m-navy-md) 100%);
+    background: var(--card-color-primary, var(--cf2m-dark));
     color: var(--cf2m-white);
     border-bottom: none;
     font-family: var(--font-display);
@@ -644,6 +644,9 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     font-size: 0.95rem;
     padding: 1rem 1.25rem;
     line-height: 1.4;
+}
+.cf2m-card .card-body {
+    background: color-mix(in srgb, var(--card-color-primary, var(--cf2m-dark)) 30%, transparent);
 }
 .cf2m-card .badge-status {
     background-color: var(--cf2m-cyan);

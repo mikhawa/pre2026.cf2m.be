@@ -90,7 +90,7 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {% for formation in formations %}
                     <div class="col">
-                        <div class="card cf2m-card">
+                        <div class="card cf2m-card"{% if formation.colorPrimary %} style="--card-color-primary: {{ formation.colorPrimary }}"{% endif %}>
                             <div class="card-header d-flex justify-content-between align-items-start">
                                 <span>{{ formation.title }}</span>
                                 <span class="badge badge-status ms-2 flex-shrink-0">Ouverte</span>
