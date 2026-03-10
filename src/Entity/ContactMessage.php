@@ -20,19 +20,23 @@ class ContactMessage
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: 'Le nom ne peut pas être vide.')]
+    #[Assert\Length(max: 100, maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message: 'L\'email ne peut pas être vide.')]
     #[Assert\Email(message: 'L\'email "{{ value }}" n\'est pas une adresse email valide.')]
+    #[Assert\Length(max: 180, maxMessage: 'L\'adresse e-mail ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le sujet ne peut pas être vide.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le sujet ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $sujet = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: 'Le message ne peut pas être vide.')]
+    #[Assert\Length(max: 3000, maxMessage: 'Le message ne peut pas dépasser {{ limit }} caractères.')]
     private ?string $message = null;
 
     #[ORM\Column]

@@ -35,12 +35,24 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 - [Raccourcis de développement](RACCOURCIS.md)
 
-## Utilisateurs et rôles
+
+
+## Utilisateurs et rôles (fixtures de test)
 
 Email : mikhawa@cf2m.be
 - userName : Mikhawa
 - Rôle : ROLE_SUPER_ADMIN
 - Mot de passe : 123mikhawa
+
+Email : thejoe@cf2m.be
+- userName : TheJoe
+- Rôle : ROLE_ADMIN
+- Mot de passe : 123joe
+
+Email : piet@cf2m.be
+- userName : ThePiet
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123piet
 
 
 ---

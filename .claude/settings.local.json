@@ -3,7 +3,16 @@
     "allow": [
       "Bash(docker compose:*)",
       "Bash(curl:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(composer audit:*)",
+      "Bash(grep -rn \"getenv\\\\|$_GET\\\\|$_POST\\\\|$_REQUEST\\\\|$_SERVER\\\\|shell_exec\\\\|exec\\\\|system\\\\|passthru\\\\|eval\\\\b\" /home/mikhawa/pre2026.cf2m.be/src --include=\"*.php\" 2>&1)",
+      "Bash(ls /home/mikhawa/pre2026.cf2m.be/.env* 2>&1 && cat /home/mikhawa/pre2026.cf2m.be/.env 2>&1 | head -40)",
+      "Bash(composer show:*)",
+      "Bash(php bin/console debug:router 2>&1 | grep -v \"^$\" | head -50)",
+      "Bash(composer require:*)",
+      "Bash(cat /home/mikhawa/pre2026.cf2m.be/Makefile 2>/dev/null | head -40 || ls /home/mikhawa/pre2026.cf2m.be/*.mk 2>/dev/null | head -5)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)"
     ]
   }
 }
