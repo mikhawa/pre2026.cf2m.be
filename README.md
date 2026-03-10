@@ -35,9 +35,9 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 - [Raccourcis de développement](RACCOURCIS.md)
 
-# to do fixtures à améliorer
 
-## Utilisateurs et rôles
+
+## Utilisateurs et rôles (fixtures de test)
 
 Email : mikhawa@cf2m.be
 - userName : Mikhawa
