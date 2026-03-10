@@ -47,12 +47,12 @@ Email : mikhawa@cf2m.be
 Email : thejoe@cf2m.be
 - userName : TheJoe
 - Rôle : ROLE_ADMIN
-- Mot de passe : 123mikhawa
+- Mot de passe : 123joe
 
-Email : mikhawa@cf2m.be
-- userName : Mikhawa
-- Rôle : ROLE_SUPER_ADMIN
-- Mot de passe : 123mikhawa
+Email : piet@cf2m.be
+- userName : ThePiet
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123piet
 
 
 ---

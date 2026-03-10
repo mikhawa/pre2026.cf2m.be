@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
             'userName'      => 'TheJoe',
             'roles'         => ['ROLE_ADMIN'],
             'status'        => 1,
-            'plainPassword' => '123joie',
+            'plainPassword' => '123joe',
         ]);
         // ── Formateur ────────────────────────────────────────
         UserFactory::createOne([
