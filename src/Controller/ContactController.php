@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\ContactMessage;
 use App\Form\ContactType;
+use App\Service\TurnstileVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +24,7 @@ class ContactController extends AbstractController
         private readonly string $mailAdmin,
         #[Autowire(env: 'MAIL_FORM')]
         private readonly string $mailForm,
+        private readonly TurnstileVerifier $turnstile,
     ) {
     }
 
@@ -40,6 +42,14 @@ class ContactController extends AbstractController
             // Si le champ honeypot est rempli, on simule un succès sans rien enregistrer
             if (!empty($form->get('url')->getData())) {
                 return $this->redirectToRoute('app_contact_success');
+            }
+
+            // Vérification Cloudflare Turnstile
+            $token = (string) $request->request->get('cf-turnstile-response', '');
+            if (!$this->turnstile->verify($token, $request->getClientIp())) {
+                $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+
+                return $this->render('contact/index.html.twig', ['form' => $form]);
             }
 
             $em->persist($message);
