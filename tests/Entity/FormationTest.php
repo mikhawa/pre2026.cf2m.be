@@ -31,6 +31,8 @@ class FormationTest extends TestCase
         self::assertNull($this->formation->getCreatedBy());
         self::assertNull($this->formation->getUpdatedBy());
         self::assertSame('draft', $this->formation->getStatus());
+        self::assertNull($this->formation->getColorPrimary());
+        self::assertNull($this->formation->getColorSecondary());
     }
 
     public function testCollectionsInitialized(): void
@@ -50,6 +52,23 @@ class FormationTest extends TestCase
         self::assertSame($this->formation, $this->formation->setUpdatedAt(new \DateTimeImmutable()));
         self::assertSame($this->formation, $this->formation->setCreatedBy(new User()));
         self::assertSame($this->formation, $this->formation->setUpdatedBy(new User()));
+        self::assertSame($this->formation, $this->formation->setColorPrimary('#1a2e4a'));
+        self::assertSame($this->formation, $this->formation->setColorSecondary('#00b4d8'));
+    }
+
+    public function testColorFields(): void
+    {
+        $this->formation->setColorPrimary('#1a2e4a');
+        self::assertSame('#1a2e4a', $this->formation->getColorPrimary());
+
+        $this->formation->setColorSecondary('#00b4d8');
+        self::assertSame('#00b4d8', $this->formation->getColorSecondary());
+
+        $this->formation->setColorPrimary(null);
+        self::assertNull($this->formation->getColorPrimary());
+
+        $this->formation->setColorSecondary(null);
+        self::assertNull($this->formation->getColorSecondary());
     }
 
     public function testToStringEmpty(): void
