@@ -42,14 +42,14 @@ class AppFixtures extends Fixture
 
         // ── Pages CMS ───────────────────────────────────────────────────
         PageFactory::createOne([
-            'title'       => 'Accueil',
-            'slug'        => 'accueil',
+            'title'       => 'Notre centre',
+            'slug'        => 'about',
             'status'      => 'published',
             'publishedAt' => new \DateTimeImmutable('-1 month'),
         ]);
         PageFactory::createOne([
-            'title'       => 'À propos',
-            'slug'        => 'a-propos',
+            'title'       => 'RGPD et confidentialité',
+            'slug'        => 'rgpd',
             'status'      => 'published',
             'publishedAt' => new \DateTimeImmutable('-2 months'),
         ]);
