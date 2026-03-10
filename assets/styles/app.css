@@ -987,6 +987,24 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     height: 40px;
 }
 
+/* ── Formulaire de modification du profil ───────────────────────────── */
+.cf2m-form-label {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #7a95aa;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+.cf2m-avatar-upload .cf2m-avatar-img,
+.cf2m-avatar-upload .cf2m-avatar-placeholder {
+    width: 72px;
+    height: 72px;
+}
+
+
 /* ── Liens works sur la page formation ──────────────────────────────── */
 .cf2m-works-link {
     color: var(--cf2m-cyan);

@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil — CF2m{% endblock %}
+
+{% block body_class %}page-profil{% endblock %}
+
+{% block body %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card cf2m-card mb-0">
+                    <div class="card-header d-flex justify-content-between align-items-center gap-2">
+                        <h1 class="h3 mb-0">Modifier mon profil</h1>
+                        <a href="{{ path('app_profile') }}"
+                           class="btn btn-outline-secondary btn-sm">
+                            ← Mon profil
+                        </a>
+                    </div>
+                    <div class="card-body p-4">
+
+                        {{ form_start(form, {attr: {
+                            novalidate: 'novalidate',
+                            enctype: 'multipart/form-data',
+                            class: 'cf2m-profile-form'
+                        }}) }}
+
+                            {# Avatar #}
+                            <div class="mb-4">
+                                <label class="cf2m-form-label">{{ form_label(form.avatarFile) }}</label>
+                                <div class="cf2m-avatar-upload d-flex align-items-center gap-3">
+                                    <div class="cf2m-avatar-wrap flex-shrink-0">
+                                        {% if user.avatarName %}
+                                            <img src="{{ asset('uploads/avatars/' ~ user.avatarName) }}"
+                                                 alt="" class="cf2m-avatar-img" id="avatar-preview">
+                                        {% else %}
+                                            <div class="cf2m-avatar-placeholder" id="avatar-preview-placeholder">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                     fill="none" stroke="currentColor" stroke-width="1.2"
+                                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <circle cx="12" cy="8" r="4"/>
+                                                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                                </svg>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        {{ form_widget(form.avatarFile, {attr: {class: 'form-control cf2m-input cf2m-file-input', id: 'avatar-file-input'}}) }}
+                                        {{ form_errors(form.avatarFile) }}
+                                        <small class="text-muted d-block mt-1">JPEG, PNG ou WebP — 10 Mo max.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {# Biographie #}
+                            <div class="mb-4">
+                                {{ form_label(form.biography, null, {label_attr: {class: 'cf2m-form-label'}}) }}
+                                {{ form_widget(form.biography, {attr: {class: 'form-control cf2m-input'}}) }}
+                                {{ form_errors(form.biography) }}
+                                <small class="text-muted">600 caractères maximum.</small>
+                            </div>
+
+                            {# Liens #}
+                            <div class="mb-4">
+                                <p class="cf2m-form-label mb-2">Liens externes <small class="text-muted fw-normal">(3 maximum)</small></p>
+                                <div class="d-flex flex-column gap-2">
+                                    {{ form_widget(form.externalLink1, {attr: {class: 'form-control cf2m-input'}}) }}
+                                    {{ form_errors(form.externalLink1) }}
+                                    {{ form_widget(form.externalLink2, {attr: {class: 'form-control cf2m-input'}}) }}
+                                    {{ form_errors(form.externalLink2) }}
+                                    {{ form_widget(form.externalLink3, {attr: {class: 'form-control cf2m-input'}}) }}
+                                    {{ form_errors(form.externalLink3) }}
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn cf2m-btn-submit w-100">
+                                Enregistrer les modifications
+                            </button>
+
+                        {{ form_end(form) }}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('avatar-file-input');
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file || !file.type.startsWith('image/')) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            let preview = document.getElementById('avatar-preview');
+            const placeholder = document.getElementById('avatar-preview-placeholder');
+            if (!preview) {
+                preview = document.createElement('img');
+                preview.id = 'avatar-preview';
+                preview.className = 'cf2m-avatar-img';
+                preview.alt = '';
+                if (placeholder) placeholder.replaceWith(preview);
+            }
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+});
+</script>
+
+{% endblock %}
