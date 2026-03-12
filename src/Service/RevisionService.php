@@ -329,6 +329,7 @@ class RevisionService
         $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
         $entity->setColorPrimary($data['colorPrimary'] ?? null);
         $entity->setColorSecondary($data['colorSecondary'] ?? null);
+        $entity->setUpdatedAt(new \DateTimeImmutable());
     }
 
     /**
