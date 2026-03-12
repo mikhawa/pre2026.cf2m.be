@@ -172,6 +172,7 @@ class RevisionCrudController extends AbstractCrudController
         $revision->setReviewedAt(new \DateTimeImmutable());
 
         $this->revisionService->applyRevision($revision, $reviewer);
+        $this->revisionService->notifyAuthor($revision, true);
 
         $this->addFlash('success', sprintf('La révision « %s » a été approuvée et appliquée.', $revision->getEntityTitle()));
 
@@ -192,6 +193,7 @@ class RevisionCrudController extends AbstractCrudController
         $revision->setReviewedAt(new \DateTimeImmutable());
 
         $this->em->flush();
+        $this->revisionService->notifyAuthor($revision, false);
 
         $this->addFlash('warning', sprintf('La révision « %s » a été rejetée.', $revision->getEntityTitle()));
 

@@ -231,6 +231,37 @@ class RevisionService
     }
 
     /**
+     * Envoie un email à l'auteur de la révision pour l'informer
+     * de l'approbation ou du rejet de sa demande.
+     */
+    public function notifyAuthor(Revision $revision, bool $approved): void
+    {
+        $author = $revision->getCreatedBy();
+        $authorEmail = $author?->getEmail();
+
+        if (null === $authorEmail || '' === $authorEmail) {
+            return;
+        }
+
+        $subject = $approved
+            ? '[CF2m] Votre révision a été approuvée — ' . $revision->getEntityTitle()
+            : '[CF2m] Votre révision a été rejetée — ' . $revision->getEntityTitle();
+
+        $email = (new TemplatedEmail())
+            ->from(new Address($this->mailFrom, 'CF2m — Révisions'))
+            ->to($authorEmail)
+            ->subject($subject)
+            ->htmlTemplate('emails/revision_decision.html.twig')
+            ->context([
+                'revision' => $revision,
+                'approved' => $approved,
+            ])
+        ;
+
+        $this->mailer->send($email);
+    }
+
+    /**
      * Envoie un email de notification à tous les administrateurs
      * pour une révision en attente.
      */
