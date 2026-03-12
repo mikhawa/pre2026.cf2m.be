@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Works;
+use App\Service\RevisionService;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -17,6 +19,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 class WorksCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly RevisionService $revisionService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Works::class;
@@ -77,5 +84,18 @@ class WorksCrudController extends AbstractCrudController
                 'Archivé'    => 'archived',
             ]))
         ;
+    }
+
+    /**
+     * Intercepte la mise à jour pour créer une révision.
+     * Works : toujours auto-approuvée, contenu live mis à jour normalement.
+     */
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Works $entityInstance */
+        $user = $this->getUser();
+
+        $this->revisionService->createRevision($entityInstance, $user, true);
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

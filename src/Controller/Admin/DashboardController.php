@@ -47,6 +47,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Interactions');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkTo(RevisionCrudController::class, 'Révisions', 'fa fa-history')->setPermission('ROLE_ADMIN');
 
         yield MenuItem::section('Communication');
         yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope');

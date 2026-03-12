@@ -12,7 +12,9 @@
       "Bash(composer require:*)",
       "Bash(cat /home/mikhawa/pre2026.cf2m.be/Makefile 2>/dev/null | head -40 || ls /home/mikhawa/pre2026.cf2m.be/*.mk 2>/dev/null | head -5)",
       "Bash(docker ps:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(ls /home/mikhawa/pre2026_cf2m_be/.claude-tasks/*/  2>/dev/null | tail -5)",
+      "Bash(ls /home/mikhawa/pre2026_cf2m_be/.claude-tasks/*/ 2>/dev/null | sort | tail -3)"
     ]
   }
 }
