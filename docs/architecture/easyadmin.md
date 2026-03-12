@@ -17,7 +17,7 @@ php bin/console importmap:require suneditor
 - Configuration dans `config/packages/security.yaml` :
 ```yaml
 access_control:
-    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/admin, roles: ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_FORMATEUR }
 ```
 
 ## Structure des fichiers
