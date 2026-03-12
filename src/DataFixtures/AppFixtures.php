@@ -52,6 +52,14 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123piet',
         ]);
+        // ── Utilisateur de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'magib@cf2m.be',
+            'userName'      => 'TheMagib',
+            'roles'         => ['ROLE_USER'],
+            'status'        => 1,
+            'plainPassword' => '123magib',
+        ]);
 
 
         // ── Fakers Utilisateurs ────────────────────────────────────────────────

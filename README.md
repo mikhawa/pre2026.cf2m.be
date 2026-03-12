@@ -55,6 +55,11 @@ Email : piet@cf2m.be
 - Rôle : ROLE_FORMATEUR
 - Mot de passe : 123piet
 
+Email : magib@cf2m.be
+- userName : TheMagib
+- Rôle : ROLE_USER
+- Mot de passe : 123magib
+
 
 ---
 
