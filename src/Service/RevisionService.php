@@ -12,6 +12,7 @@ use App\Entity\Works;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
@@ -24,6 +25,8 @@ class RevisionService
         private readonly EntityManagerInterface $em,
         private readonly MailerInterface $mailer,
         private readonly UserRepository $userRepository,
+        #[Autowire(env: 'MAIL_FORM')]
+        private readonly string $mailFrom,
     ) {
     }
 
@@ -239,7 +242,7 @@ class RevisionService
             return;
         }
 
-        $sender = 'noreply@cf2m.be';
+        $sender = $this->mailFrom;
 
         foreach ($admins as $admin) {
             $adminEmail = $admin->getEmail();
