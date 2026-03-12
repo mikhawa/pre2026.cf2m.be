@@ -13,7 +13,7 @@ php bin/console importmap:require suneditor
 
 ## Accès
 - URL : `/admin`
-- Rôles autorisés : `ROLE_ADMIN`, `ROLE_SUPER_ADMIN`
+- Rôles autorisés : `ROLE_ADMIN`, `ROLE_SUPER_ADMIN`, `ROLE_FORMATEUR`
 - Configuration dans `config/packages/security.yaml` :
 ```yaml
 access_control:
