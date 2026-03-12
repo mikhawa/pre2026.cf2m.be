@@ -16,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -75,10 +74,13 @@ class RevisionCrudController extends AbstractCrudController
             // Permissions : INDEX et DETAIL réservés aux ROLE_ADMIN
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
-            // Ajouter les actions custom sur la page DETAIL et INDEX
+            // Lien "Voir" sur la liste → page détail (EDIT étant désactivé)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            // Actions custom sur la page DETAIL
             ->add(Crud::PAGE_DETAIL, $approuver)
             ->add(Crud::PAGE_DETAIL, $rejeter)
             ->add(Crud::PAGE_DETAIL, $restaurer)
+            // Actions custom sur la liste (accès rapide)
             ->add(Crud::PAGE_INDEX, $approuver)
             ->add(Crud::PAGE_INDEX, $rejeter)
             ->add(Crud::PAGE_INDEX, $restaurer)
@@ -124,9 +126,10 @@ class RevisionCrudController extends AbstractCrudController
             ->hideOnIndex()
         ;
 
-        // Tableau de comparaison : valeur actuelle vs valeur proposée
+        // Tableau de comparaison : valeur actuelle vs valeur proposée (page détail uniquement)
+        // Utilise getDiffDisplay() (string vide) comme accroche car EasyAdmin rejette array sur TextField
         $revisionService = $this->revisionService;
-        yield TextareaField::new('data', 'Comparaison des modifications')
+        yield TextField::new('diffDisplay', 'Comparaison des modifications')
             ->hideOnIndex()
             ->hideOnForm()
             ->renderAsHtml()

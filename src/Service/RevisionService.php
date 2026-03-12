@@ -139,6 +139,9 @@ class RevisionService
             $current = [];
         }
 
+        /** Champs dont le contenu HTML doit être affiché intégralement (pas de truncature). */
+        $richFields = ['description', 'content'];
+
         $proposed = $revision->getData();
         $rows = '';
 
@@ -147,23 +150,36 @@ class RevisionService
             $oldVal  = $current[$key] ?? null;
             $changed = $oldVal !== $newVal;
 
-            $oldStr = $this->truncateForDisplay((string) ($oldVal ?? '—'));
-            $newStr = $this->truncateForDisplay((string) ($newVal ?? '—'));
-
+            $isRich  = in_array($key, $richFields, true);
             $rowBg   = $changed ? 'background:#fff3cd;' : '';
             $newBold = $changed ? 'font-weight:bold;' : '';
 
+            if ($isRich) {
+                // Affichage HTML complet dans un conteneur scrollable
+                $oldCell = sprintf(
+                    '<div style="max-height:200px;overflow:auto;font-size:12px;border:1px solid #e0e0e0;padding:6px;background:#fff">%s</div>',
+                    (string) ($oldVal ?? '<em>—</em>')
+                );
+                $newCell = sprintf(
+                    '<div style="max-height:200px;overflow:auto;font-size:12px;border:1px solid #e0e0e0;padding:6px;background:#fff">%s</div>',
+                    (string) ($newVal ?? '<em>—</em>')
+                );
+            } else {
+                $oldCell = nl2br(htmlspecialchars($this->truncateForDisplay((string) ($oldVal ?? '—'))));
+                $newCell = nl2br(htmlspecialchars($this->truncateForDisplay((string) ($newVal ?? '—'))));
+            }
+
             $rows .= sprintf(
                 '<tr style="%s">'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;font-weight:bold;white-space:nowrap">%s</td>'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;color:#6c757d;word-break:break-word">%s</td>'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;%sword-break:break-word">%s</td>'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;font-weight:bold;white-space:nowrap;vertical-align:top">%s</td>'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;color:#6c757d;word-break:break-word;vertical-align:top">%s</td>'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;%sword-break:break-word;vertical-align:top">%s</td>'
                 . '</tr>',
                 $rowBg,
                 htmlspecialchars($label),
-                nl2br(htmlspecialchars($oldStr)),
+                $oldCell,
                 $newBold,
-                nl2br(htmlspecialchars($newStr)),
+                $newCell,
             );
         }
 

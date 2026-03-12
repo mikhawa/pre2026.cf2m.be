@@ -72,6 +72,16 @@ class Revision
         return $this->entityTitle ?? '';
     }
 
+    /**
+     * Getter virtuel retournant une chaîne vide.
+     * Utilisé comme accroche par RevisionCrudController pour afficher
+     * le tableau de diff via formatValue (EasyAdmin ne supporte pas array sur TextField).
+     */
+    public function getDiffDisplay(): string
+    {
+        return '';
+    }
+
     public function getId(): ?int
     {
         return $this->id;
