@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Revision;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -158,6 +159,7 @@ class RevisionCrudController extends AbstractCrudController
     /**
      * Approuve une révision PENDING : applique le snapshot au contenu live.
      */
+    #[AdminRoute(path: '/{entityId}/approuver', name: 'approuver_revision')]
     public function approuverRevision(AdminContext $context): Response
     {
         /** @var Revision $revision */
@@ -179,6 +181,7 @@ class RevisionCrudController extends AbstractCrudController
     /**
      * Rejette une révision PENDING : le contenu live n'est pas modifié.
      */
+    #[AdminRoute(path: '/{entityId}/rejeter', name: 'rejeter_revision')]
     public function rejeterRevision(AdminContext $context): Response
     {
         /** @var Revision $revision */
@@ -198,6 +201,7 @@ class RevisionCrudController extends AbstractCrudController
     /**
      * Restaure une révision APPROVED : réapplique son snapshot au contenu live.
      */
+    #[AdminRoute(path: '/{entityId}/restaurer', name: 'restaurer_revision')]
     public function restaurerRevision(AdminContext $context): Response
     {
         /** @var Revision $revision */
