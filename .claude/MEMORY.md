@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-052 (2026-03-12)
+065 (2026-03-12)
 
 ## Dernier numéro .claude-tasks
-044 (2026-03-12)
+057 (2026-03-12)
 
 ## Convention navbar (couleur uniforme)
 Sur les pages intérieures (non-home, non-login), la navbar doit avoir `background: var(--cf2m-dark)` + `backdrop-filter: none` pour rester visuellement identique à son apparence sur la home (qui flotte sur fond sombre). Ne jamais laisser le `backdrop-filter` actif sur fond blanc.

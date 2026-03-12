@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -17,12 +21,39 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->setPermission(Action::INDEX, 'ROLE_ADMIN')
+            ->setPermission(Action::NEW, 'ROLE_ADMIN')
+            ->setPermission(Action::EDIT, 'ROLE_ADMIN')
+            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+        ;
+    }
+
+    public function edit(AdminContext $context): KeyValueStore|Response
+    {
+        /** @var User|null $userToEdit */
+        $userToEdit = $context->getEntity()->getInstance();
+
+        if ($userToEdit !== null
+            && in_array('ROLE_SUPER_ADMIN', $userToEdit->getRoles(), true)
+            && !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier un Super Administrateur.');
+        }
+
+        return parent::edit($context);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -54,6 +85,7 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_FORMATEUR'   => 'info',
                 'ROLE_USER'        => 'secondary',
             ])
+            ->setPermission('ROLE_SUPER_ADMIN')
         ;
         yield IntegerField::new('status', 'Statut')
             ->hideOnIndex()

@@ -1271,3 +1271,10 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-footer .text-muted {
     color: var(--cf2m-muted) !important;
 }
+.cf2m-footer-link {
+    color: var(--cf2m-muted);
+    transition: color 0.2s;
+}
+.cf2m-footer-link:hover {
+    color: var(--cf2m-light) !important;
+}

@@ -17,4 +17,17 @@ class InscriptionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Inscription::class);
     }
+
+    /**
+     * Compte le nombre d'inscriptions non traitées.
+     */
+    public function findUntreatedCount(): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->where('i.treat = :treat')
+            ->setParameter('treat', false)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

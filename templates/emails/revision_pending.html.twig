@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Révision en attente — CF2m</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f6fa;">
+
+    {# Wrapper #}
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0f6fa;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+
+                {# Card #}
+                <table width="600" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color: #ffffff; border-collapse: collapse;">
+
+                    {# Header #}
+                    <tr>
+                        <td style="background-color: #08111e; padding: 28px 32px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td>
+                                        <span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #ffffff;">CF</span><span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #00b4d8;">2m</span>
+                                    </td>
+                                    <td align="right">
+                                        <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">Révision en attente</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {# Body #}
+                    <tr>
+                        <td style="padding: 32px;">
+
+                            {# Auteur #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; padding-bottom: 4px;">
+                                        MODIFIÉ PAR
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 15px; color: #1a2b3c;">
+                                        {{ revision.createdBy.userName }} ({{ revision.createdBy.email }})
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Type d'entité #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; padding-bottom: 4px;">
+                                        TYPE
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 15px; color: #1a2b3c;">
+                                        {{ revision.entityType|capitalize }}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Titre de l'entité #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; padding-bottom: 4px;">
+                                        ÉLÉMENT MODIFIÉ
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 15px; color: #1a2b3c;">
+                                        {{ revision.entityTitle }}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Message #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+                                <tr>
+                                    <td style="background-color: #f8fafc; border-left: 3px solid #00b4d8; padding: 16px 20px;">
+                                        <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1a2b3c; line-height: 1.7;">
+                                            Une modification a été soumise et attend votre validation.
+                                            Connectez-vous à l'administration pour approuver ou rejeter cette révision.
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Bouton #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ url('admin') }}"
+                                           style="display: inline-block; background-color: #00b4d8; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; padding: 12px 28px; border-radius: 4px;">
+                                            Accéder à l'administration
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    {# Footer #}
+                    <tr>
+                        <td style="background-color: #f0f6fa; border-top: 1px solid #dde8f0; padding: 16px 32px;">
+                            <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">
+                                Soumis le {{ revision.createdAt|date('d/m/Y à H:i') }} &mdash; CF2m Centre de Formation
+                            </span>
+                        </td>
+                    </tr>
+
+                </table>
+                {# /Card #}
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

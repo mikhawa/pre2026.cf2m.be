@@ -20,12 +20,27 @@
                     </div>
                 {% endfor %}
 
+                {# ── Révisions en attente (admins) ─────────────────────── #}
+                {% if is_granted('ROLE_ADMIN') and pending_revisions_count() > 0 %}
+                    <a href="/admin/revision" class="alert alert-warning alert-dismissible fade show mb-4 text-decoration-none d-flex align-items-center gap-2" role="alert">
+                        <span class="badge rounded-pill bg-danger">{{ pending_revisions_count() }}</span>
+                        <span>
+                            {% if pending_revisions_count() == 1 %}
+                                1 révision en attente de validation
+                            {% else %}
+                                {{ pending_revisions_count() }} révisions en attente de validation
+                            {% endif %}
+                        </span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </a>
+                {% endif %}
+
                 {# ── Carte profil (lecture) ────────────────────────────── #}
                 <div class="card cf2m-card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center gap-2">
                         <h1 class="h3 mb-0">Mon profil</h1>
                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                            {% if is_granted('ROLE_ADMIN') %}
+                            {% if is_granted('ROLE_FORMATEUR') %}
                                 <a href="/admin" class="btn btn-outline-secondary btn-sm">Administration</a>
                             {% endif %}
                             <a href="{{ path('app_profile_edit') }}"
