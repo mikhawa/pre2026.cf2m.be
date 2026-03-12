@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-#[IsGranted('ROLE_SUPER_ADMIN')]
+#[IsGranted('ROLE_FORMATEUR')]
 class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
@@ -38,18 +38,18 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Contenu');
         yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap');
         yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open');
-        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt');
+        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')->setPermission('ROLE_ADMIN');
 
-        yield MenuItem::section('Utilisateurs');
-        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users');
-        yield MenuItem::linkTo(InscriptionCrudController::class, 'Inscriptions', 'fa fa-clipboard-list');
+        yield MenuItem::section('Utilisateurs')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkTo(InscriptionCrudController::class, 'Inscriptions', 'fa fa-clipboard-list')->setPermission('ROLE_ADMIN');
 
         yield MenuItem::section('Interactions');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments');
-        yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star');
+        yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
 
         yield MenuItem::section('Communication');
         yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope');
-        yield MenuItem::linkTo(PartenaireCrudController::class, 'Partenaires', 'fa fa-handshake');
+        yield MenuItem::linkTo(PartenaireCrudController::class, 'Partenaires', 'fa fa-handshake')->setPermission('ROLE_ADMIN');
     }
 }
