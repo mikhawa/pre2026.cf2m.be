@@ -1,7 +1,7 @@
 # Contexte technique complet du projet
 
 ## Entités principales
-- User (roles: ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER)
+- User (roles: ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_FORMATEUR, ROLE_USER)
 - Formation — relation ManyToOne avec User
 - Works — relation ManyToOne avec Formation et ManyToMany avec User, permet de mettre des travaux d'élèves de la Formation, éventuellement des CV, gestion des fichiers uploadés
 - Comment - Messages laissés par les utilisateurs sur les pages de Works, avec modération obligatoire
