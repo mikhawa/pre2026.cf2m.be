@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -122,6 +123,17 @@ class RevisionCrudController extends AbstractCrudController
             ->setFormat('dd/MM/yyyy HH:mm')
             ->hideOnIndex()
         ;
+
+        // Tableau de comparaison : valeur actuelle vs valeur proposée
+        $revisionService = $this->revisionService;
+        yield TextareaField::new('data', 'Comparaison des modifications')
+            ->hideOnIndex()
+            ->hideOnForm()
+            ->renderAsHtml()
+            ->formatValue(static function (mixed $value, Revision $revision) use ($revisionService): string {
+                return $revisionService->buildDiffHtml($revision);
+            })
+        ;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -148,11 +160,13 @@ class RevisionCrudController extends AbstractCrudController
         /** @var Revision $revision */
         $revision = $context->getEntity()->getInstance();
 
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
         $revision->setStatus(Revision::STATUS_APPROVED);
-        $revision->setReviewedBy($this->getUser());
+        $revision->setReviewedBy($reviewer);
         $revision->setReviewedAt(new \DateTimeImmutable());
 
-        $this->revisionService->applyRevision($revision);
+        $this->revisionService->applyRevision($revision, $reviewer);
 
         $this->addFlash('success', sprintf('La révision « %s » a été approuvée et appliquée.', $revision->getEntityTitle()));
 
@@ -186,7 +200,9 @@ class RevisionCrudController extends AbstractCrudController
         /** @var Revision $revision */
         $revision = $context->getEntity()->getInstance();
 
-        $this->revisionService->applyRevision($revision);
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->applyRevision($revision, $reviewer);
 
         $this->addFlash('success', sprintf('La révision « %s » a été restaurée et appliquée.', $revision->getEntityTitle()));
 

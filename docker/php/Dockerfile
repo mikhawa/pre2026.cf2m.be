@@ -33,7 +33,8 @@ RUN echo "apc.enable_cli=1" > /usr/local/etc/php/conf.d/apcu.ini
 
 # Configuration PHP
 RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini
+    && echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/uploads.ini
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

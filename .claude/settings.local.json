@@ -14,7 +14,8 @@
       "Bash(docker ps:*)",
       "Bash(docker exec:*)",
       "Bash(ls /home/mikhawa/pre2026_cf2m_be/.claude-tasks/*/  2>/dev/null | tail -5)",
-      "Bash(ls /home/mikhawa/pre2026_cf2m_be/.claude-tasks/*/ 2>/dev/null | sort | tail -3)"
+      "Bash(ls /home/mikhawa/pre2026_cf2m_be/.claude-tasks/*/ 2>/dev/null | sort | tail -3)",
+      "Bash(ls /home/mikhawa/pre2026_cf2m_be/docker/ 2>/dev/null || find /home/mikhawa/pre2026_cf2m_be -name \"*.ini\" -path \"*/docker/*\" 2>/dev/null | head -10)"
     ]
   }
 }

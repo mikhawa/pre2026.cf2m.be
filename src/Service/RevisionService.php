@@ -69,10 +69,14 @@ class RevisionService
     }
 
     /**
-     * Applique le snapshot d'une révision à l'entité live correspondante, puis flush.
+     * Applique le snapshot d'une révision à l'entité live correspondante.
+     * Sauvegarde d'abord l'état actuel comme révision de sauvegarde, puis flush.
      */
-    public function applyRevision(Revision $revision): void
+    public function applyRevision(Revision $revision, User $reviewer): void
     {
+        // Sauvegarde de l'état actuel avant modification
+        $this->saveCurrentAsBackup($revision, $reviewer);
+
         $data = $revision->getData();
         $type = $revision->getEntityType();
         $entityId = $revision->getEntityId();
@@ -85,6 +89,126 @@ class RevisionService
         };
 
         $this->em->flush();
+    }
+
+    /**
+     * Retourne le snapshot actuel de l'entité ciblée par une révision.
+     *
+     * @return array<string, mixed>
+     */
+    public function getCurrentSnapshot(Revision $revision): array
+    {
+        return match ($revision->getEntityType()) {
+            'formation' => $this->snapshotFormation(
+                $this->em->getRepository(Formation::class)->find($revision->getEntityId())
+                ?? throw new \RuntimeException(sprintf('Formation #%d introuvable.', $revision->getEntityId()))
+            ),
+            'page' => $this->snapshotPage(
+                $this->em->getRepository(Page::class)->find($revision->getEntityId())
+                ?? throw new \RuntimeException(sprintf('Page #%d introuvable.', $revision->getEntityId()))
+            ),
+            'works' => $this->snapshotWorks(
+                $this->em->getRepository(Works::class)->find($revision->getEntityId())
+                ?? throw new \RuntimeException(sprintf('Works #%d introuvable.', $revision->getEntityId()))
+            ),
+            default => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $revision->getEntityType())),
+        };
+    }
+
+    /**
+     * Construit un tableau HTML de comparaison (valeur actuelle vs proposée).
+     * Les champs modifiés sont surlignés en jaune.
+     */
+    public function buildDiffHtml(Revision $revision): string
+    {
+        $labels = [
+            'title'          => 'Titre',
+            'slug'           => 'Slug',
+            'description'    => 'Description',
+            'content'        => 'Contenu',
+            'status'         => 'Statut',
+            'publishedAt'    => 'Date de publication',
+            'colorPrimary'   => 'Couleur primaire',
+            'colorSecondary' => 'Couleur secondaire',
+            'formationId'    => 'Formation (ID)',
+        ];
+
+        try {
+            $current = $this->getCurrentSnapshot($revision);
+        } catch (\Throwable) {
+            $current = [];
+        }
+
+        $proposed = $revision->getData();
+        $rows = '';
+
+        foreach ($proposed as $key => $newVal) {
+            $label   = $labels[$key] ?? $key;
+            $oldVal  = $current[$key] ?? null;
+            $changed = $oldVal !== $newVal;
+
+            $oldStr = $this->truncateForDisplay((string) ($oldVal ?? '—'));
+            $newStr = $this->truncateForDisplay((string) ($newVal ?? '—'));
+
+            $rowBg   = $changed ? 'background:#fff3cd;' : '';
+            $newBold = $changed ? 'font-weight:bold;' : '';
+
+            $rows .= sprintf(
+                '<tr style="%s">'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;font-weight:bold;white-space:nowrap">%s</td>'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;color:#6c757d;word-break:break-word">%s</td>'
+                . '<td style="padding:6px 10px;border:1px solid #dee2e6;%sword-break:break-word">%s</td>'
+                . '</tr>',
+                $rowBg,
+                htmlspecialchars($label),
+                nl2br(htmlspecialchars($oldStr)),
+                $newBold,
+                nl2br(htmlspecialchars($newStr)),
+            );
+        }
+
+        return '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
+            . '<thead><tr>'
+            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Champ</th>'
+            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Valeur actuelle</th>'
+            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#fff3cd;text-align:left">Valeur proposée ✎</th>'
+            . '</tr></thead>'
+            . '<tbody>' . $rows . '</tbody>'
+            . '</table>';
+    }
+
+    /**
+     * Sauvegarde l'état actuel de l'entité comme révision de sauvegarde (APPROVED).
+     */
+    private function saveCurrentAsBackup(Revision $revision, User $reviewer): void
+    {
+        try {
+            $currentData = $this->getCurrentSnapshot($revision);
+        } catch (\Throwable) {
+            return;
+        }
+
+        $backup = new Revision();
+        $backup->setEntityType($revision->getEntityType());
+        $backup->setEntityId($revision->getEntityId());
+        $backup->setEntityTitle($revision->getEntityTitle() . ' [avant restauration]');
+        $backup->setData($currentData);
+        $backup->setStatus(Revision::STATUS_APPROVED);
+        $backup->setCreatedBy($reviewer);
+        $backup->setReviewedBy($reviewer);
+        $backup->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($backup);
+    }
+
+    /**
+     * Tronque et nettoie une valeur pour l'affichage dans le diff.
+     */
+    private function truncateForDisplay(string $value, int $max = 300): string
+    {
+        $clean = strip_tags($value);
+
+        return mb_strlen($clean) > $max ? mb_substr($clean, 0, $max) . '…' : $clean;
     }
 
     /**
