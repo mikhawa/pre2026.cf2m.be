@@ -202,13 +202,40 @@
         <footer class="cf2m-footer py-4">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                        <span class="fw-bold cf2m-brand-cf">CF</span><span class="fw-bold cf2m-brand-2m">2m</span>
-                        <span class="text-muted ms-2">Centre de Formation</span>
+
+                    {# Colonne gauche : logo + texte #}
+                    <div class="col-md-4 text-center text-md-start mb-3 mb-md-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                        <a href="{{ path('app_home') }}" aria-label="CF2m — Accueil">
+                            <img src="{{ asset('images/logo-cf2m-blanc.svg') }}"
+                                 alt="Logo CF2m"
+                                 width="50" height="50"
+                                 class="cf2m-logo-img">
+                        </a>
+                        <span class="text-muted">Centre de Formation</span>
                     </div>
-                    <div class="col-md-6 text-center text-md-end">
+
+                    {# Colonne centre : Nos activités #}
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        {% if _nav_pages is not empty %}
+                            <p class="text-muted small fw-semibold mb-1 text-uppercase">Nos activités</p>
+                            <ul class="list-unstyled mb-0">
+                                {% for page in _nav_pages %}
+                                    <li>
+                                        <a class="text-muted text-decoration-none cf2m-footer-link small"
+                                           href="{{ path('app_page_show', {slug: page.slug}) }}">
+                                            {{ page.title }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    {# Colonne droite : copyright #}
+                    <div class="col-md-4 text-center text-md-end">
                         <small class="text-muted">&copy; {{ 'now'|date('Y') }} CF2m — Tous droits réservés</small>
                     </div>
+
                 </div>
             </div>
         </footer>
