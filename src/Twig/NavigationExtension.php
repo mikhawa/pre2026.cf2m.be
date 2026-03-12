@@ -8,6 +8,7 @@ use App\Entity\Formation;
 use App\Entity\Page;
 use App\Repository\FormationRepository;
 use App\Repository\PageRepository;
+use App\Repository\RevisionRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -22,9 +23,12 @@ final class NavigationExtension extends AbstractExtension
     /** @var Page[]|null */
     private ?array $pages = null;
 
+    private ?int $pendingRevisionsCount = null;
+
     public function __construct(
         private readonly FormationRepository $formationRepository,
         private readonly PageRepository $pageRepository,
+        private readonly RevisionRepository $revisionRepository,
     ) {
     }
 
@@ -34,6 +38,7 @@ final class NavigationExtension extends AbstractExtension
         return [
             new TwigFunction('nav_formations', $this->getPublishedFormations(...)),
             new TwigFunction('nav_pages', $this->getPublishedPages(...)),
+            new TwigFunction('pending_revisions_count', $this->getPendingRevisionsCount(...)),
         ];
     }
 
@@ -65,5 +70,18 @@ final class NavigationExtension extends AbstractExtension
         }
 
         return $this->pages;
+    }
+
+    /**
+     * Retourne le nombre de révisions en attente de validation.
+     * Mis en cache en mémoire pour éviter plusieurs requêtes par page.
+     */
+    public function getPendingRevisionsCount(): int
+    {
+        if ($this->pendingRevisionsCount === null) {
+            $this->pendingRevisionsCount = $this->revisionRepository->findPendingCount();
+        }
+
+        return $this->pendingRevisionsCount;
     }
 }
