@@ -214,6 +214,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = null;
     }
 
+    /**
+     * Exclut avatarFile (File non sérialisable) de la session Symfony.
+     *
+     * @return array<string, mixed>
+     */
+    public function __serialize(): array
+    {
+        return [
+            'id'          => $this->id,
+            'email'       => $this->email,
+            'password'    => $this->password,
+            'roles'       => $this->roles,
+            'userName'    => $this->userName,
+            'status'      => $this->status,
+            'avatarName'  => $this->avatarName,
+        ];
+    }
+
+    /** @param array<string, mixed> $data */
+    public function __unserialize(array $data): void
+    {
+        $this->id         = $data['id'];
+        $this->email      = $data['email'];
+        $this->password   = $data['password'];
+        $this->roles      = $data['roles'];
+        $this->userName   = $data['userName'];
+        $this->status     = $data['status'];
+        $this->avatarName = $data['avatarName'];
+    }
+
     public function getUserName(): ?string
     {
         return $this->userName;

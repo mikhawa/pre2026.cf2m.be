@@ -112,8 +112,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
         // AM
         $formations[] = FormationFactory::createOne([
@@ -124,8 +128,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
         // TR
         $formations[] = FormationFactory::createOne([
@@ -136,8 +144,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
         // DD
         $formations[] = FormationFactory::createOne([
@@ -148,8 +160,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
         // Web Dev
         $formations[] = FormationFactory::createOne([
@@ -160,8 +176,12 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
         // Chèques TIC
         $formations[] = FormationFactory::createOne([
@@ -172,13 +192,19 @@ class AppFixtures extends Fixture
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
-            'publishedAt' => new \DateTimeImmutable('-2 months'),
+            'publishedAt' => \DateTimeImmutable::createFromMutable(
+                $faker->dateTimeBetween('-11 months', '-3 months')
+            ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#25365f',
+            'colorSecondary' => '#00589a',
         ]);
 
         FormationFactory::createMany(2, fn () => [
             'status'    => 'draft',
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
+            'colorPrimary' => '#00589a',
+            'colorSecondary' => '#00589a',
         ]);
 
         // Associer des responsables (formateurs) à chaque formation

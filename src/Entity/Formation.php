@@ -36,6 +36,14 @@ class Formation
     #[Assert\Choice(choices: ['draft', 'published', 'archived', 'recruiting'], message: 'Le statut "{{ value }}" n\'est pas valide.')]
     private string $status = 'draft';
 
+    #[ORM\Column(length: 7, nullable: true)]
+    #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'La couleur primaire doit être au format hexadécimal (#rrggbb).')]
+    private ?string $colorPrimary = null;
+
+    #[ORM\Column(length: 7, nullable: true)]
+    #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/', message: 'La couleur secondaire doit être au format hexadécimal (#rrggbb).')]
+    private ?string $colorSecondary = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -220,6 +228,30 @@ class Formation
         if ($this->responsables->removeElement($responsable)) {
             $responsable->removeFormation($this);
         }
+
+        return $this;
+    }
+
+    public function getColorPrimary(): ?string
+    {
+        return $this->colorPrimary;
+    }
+
+    public function setColorPrimary(?string $colorPrimary): static
+    {
+        $this->colorPrimary = $colorPrimary;
+
+        return $this;
+    }
+
+    public function getColorSecondary(): ?string
+    {
+        return $this->colorSecondary;
+    }
+
+    public function setColorSecondary(?string $colorSecondary): static
+    {
+        $this->colorSecondary = $colorSecondary;
 
         return $this;
     }

@@ -76,7 +76,7 @@
 </section>
 
 {# ── Section Formations ────────────────────────────────────────────── #}
-<section id="formations" class="py-5">
+<section id="formations" class="py-5" style="background-image: linear-gradient(to bottom, #827e7e 0%, rgba(130,126,126,0.5) 50%, rgba(130,126,126,0.5) 100%), url('{{ asset('images/formations-bg.jpg') }}'); background-size: cover; background-position: center; border-top: 5px solid #38476b;">
     <div class="container">
         <p class="cf2m-section-label text-center">Catalogue</p>
         <h2 class="cf2m-section-title text-center">Nos formations</h2>
@@ -90,7 +90,7 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {% for formation in formations %}
                     <div class="col">
-                        <div class="card cf2m-card">
+                        <div class="card cf2m-card" style="{% if formation.colorPrimary %}--card-color-primary: {{ formation.colorPrimary }};{% endif %}{% if formation.colorSecondary %}--card-color-secondary: {{ formation.colorSecondary }};{% endif %}">
                             <div class="card-header d-flex justify-content-between align-items-start">
                                 <span>{{ formation.title }}</span>
                                 <span class="badge badge-status ms-2 flex-shrink-0">Ouverte</span>
@@ -109,7 +109,7 @@
                                     </p>
                                 {% endif %}
                             </div>
-                            <div class="card-footer bg-transparent border-0 pb-3">
+                            <div class="card-footer border-0 pb-3">
                                 <a href="{{ path('app_formation_show', {slug: formation.slug}) }}"
                                    class="btn btn-outline-secondary btn-sm w-100"
                                    aria-label="Voir la formation {{ formation.title }}">

@@ -19,3 +19,7 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+# Fichiers uploadés par les utilisateurs
+/public/uploads/**/*
+!/public/uploads/**/.gitkeep
