@@ -23,11 +23,10 @@ body {
     color: #1a2b3c;
     background-color: #05111f;
     background-image:
-        radial-gradient(ellipse 70% 60% at 15% 50%, rgba(0, 80, 150, 0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 50% 50% at 85% 15%, rgba(0, 180, 216, 0.10) 0%, transparent 100%),
+        linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
         url('/images/hero-bg.jpg');
-    background-size: auto, auto, cover;
-    background-position: center, center, 65% center;
+    background-size: cover;
+    background-position: center center;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
@@ -413,15 +412,8 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 
 /* ── Hero ────────────────────────────────────────────────────────────── */
 .cf2m-hero {
-    background-color: #05111f;
-    background-image:
-        radial-gradient(ellipse 70% 60% at 15% 50%, rgba(0, 80, 150, 0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 50% 50% at 85% 15%, rgba(0, 180, 216, 0.10) 0%, transparent 100%),
-        radial-gradient(ellipse 80% 80% at 60% 100%, rgba(5, 25, 60, 0.30) 0%, transparent 100%),
-        url('/images/hero-bg.jpg');
-    background-size: auto, auto, auto, cover;
-    background-position: center, center, center, 65% center;
-    background-repeat: no-repeat;
+    background-color: transparent;
+    background-image: none;
     color: var(--cf2m-white);
     /* Padding-top inclut la hauteur de la navbar (≈70px) car elle est en position:absolute */
     padding: calc(70px + 4rem) 0 5rem;
@@ -494,7 +486,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
         border-radius: 1.25rem;
     }
     .cf2m-hero {
-        background-position: center, center, center, 70% 60%;
+        background-position: unset;
     }
 }
 
@@ -540,10 +532,12 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 
 .cf2m-hero-portrait img {
-    width: 100%;
-    height: 100%;
+    width: 160%;
+    height: 160%;
     object-fit: cover;
-    object-position: top center;
+    object-position: center center;
+    margin-left: calc(-30% + 40px);
+    margin-top: calc(-30% - 50px);
 }
 
 /* Placeholder si pas d'image portrait */
