@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
@@ -81,7 +81,7 @@ class PageCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(false)
         ;
-        yield TextEditorField::new('content', 'Contenu')
+        yield SunEditorField::new('content', 'Contenu')
             ->hideOnIndex()
         ;
     }

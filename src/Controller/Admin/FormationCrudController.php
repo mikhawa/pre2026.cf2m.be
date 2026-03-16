@@ -16,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
@@ -94,7 +94,7 @@ class FormationCrudController extends AbstractCrudController
             ->setRequired(false)
             ->showValue()
         ;
-        yield TextEditorField::new('description', 'Description')
+        yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()
             ->setRequired(false)
         ;
