@@ -34,15 +34,16 @@ class MediaUploadController extends AbstractController
     #[Route('/upload', name: 'upload', methods: ['POST'])]
     public function upload(Request $request): JsonResponse
     {
-        $files = $request->files->get('file');
-
-        if (!$files) {
-            return $this->json(['errorMessage' => 'Aucun fichier reçu.'], Response::HTTP_BAD_REQUEST);
+        // SunEditor envoie les fichiers sous les clés "file-0", "file-1", etc.
+        $files = [];
+        foreach ($request->files->all() as $key => $uploadedFile) {
+            if (str_starts_with((string) $key, 'file')) {
+                $files[] = $uploadedFile;
+            }
         }
 
-        // SunEditor peut envoyer un seul fichier ou plusieurs
-        if (!is_array($files)) {
-            $files = [$files];
+        if (empty($files)) {
+            return $this->json(['errorMessage' => 'Aucun fichier reçu.'], Response::HTTP_BAD_REQUEST);
         }
 
         $allowedMimeTypes = [
@@ -77,8 +78,11 @@ class MediaUploadController extends AbstractController
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            // Nom de fichier unique et sécurisé
+            // Infos à conserver avant déplacement (getSize() invalide après move)
             $originalName  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $originalFull  = $file->getClientOriginalName();
+            $fileSize      = $file->getSize();
+
             $safeName      = $this->slugger->slug($originalName)->lower();
             $extension     = strtolower($file->guessExtension() ?? $file->getClientOriginalExtension());
             $uniqueName    = $safeName . '-' . uniqid() . '.' . $extension;
@@ -88,8 +92,8 @@ class MediaUploadController extends AbstractController
 
             $results[] = [
                 'url'  => $this->uploadsEditorUrl . '/' . $uniqueName,
-                'name' => $file->getClientOriginalName(),
-                'size' => $file->getSize(),
+                'name' => $originalFull,
+                'size' => $fileSize,
             ];
         }
 
