@@ -15,12 +15,15 @@ use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use App\Service\RevisionService;
 use faker\Factory as Faker;
 
 class AppFixtures extends Fixture
 {
-
-
+    public function __construct(
+        private readonly RevisionService $revisionService,
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -105,7 +108,6 @@ class AppFixtures extends Fixture
         foreach ($pagesManuel as $page) {
             $page->addUser($usersManuel[0]);
         }
-
 
         // PageFactory::createMany(3);
 
@@ -225,6 +227,14 @@ class AppFixtures extends Fixture
         }
         $manager->flush();
 
+        // ── Révisions initiales des Pages ────────────────────────────────
+        // Créées explicitement car avec flush_once, les entrées page_user
+        // sont insérées APRÈS le flush initial de chaque Page.
+        foreach ($pagesManuel as $page) {
+            $this->revisionService->createRevision($page, $usersManuel[0], true, isCreation: true);
+        }
+        $manager->flush();
+
         // ── Travaux (Works) ─────────────────────────────────────────────
         $works = [];
         foreach ($formations as $formation) {
@@ -246,6 +256,16 @@ class AppFixtures extends Fixture
                 foreach ($auteurs as $auteur) {
                     $work->addUser($auteur);
                 }
+            }
+        }
+        $manager->flush();
+
+        // ── Révisions initiales des Works ────────────────────────────────
+        // Créées explicitement pour la même raison que les Pages.
+        foreach ($works as $work) {
+            $firstUser = $work->getUsers()->first();
+            if ($firstUser) {
+                $this->revisionService->createRevision($work, $firstUser, true, isCreation: true);
             }
         }
         $manager->flush();
