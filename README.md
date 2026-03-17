@@ -37,6 +37,8 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 # to do
 
     php bin/console doctrine:migrations:migrate
+    
+    feature/update-roles-and-administration)
 
 ## Utilisateurs et rôles (fixtures de test)
 
