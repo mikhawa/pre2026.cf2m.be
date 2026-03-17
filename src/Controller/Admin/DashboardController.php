@@ -50,25 +50,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('← Site public', 'fa fa-arrow-left', 'app_home');
 
         yield MenuItem::section('Contenu');
-
-        yield MenuItem::subMenu('Formations', 'fa fa-graduation-cap')->setSubItems([
-            MenuItem::linkTo(FormationCrudController::class, 'Liste', 'fa fa-list'),
-            MenuItem::linkTo(FormationRevisionCrudController::class, 'Historique', 'fa fa-history')
-                ->setPermission('ROLE_ADMIN'),
-        ]);
-
-        yield MenuItem::subMenu('Works', 'fa fa-folder-open')->setSubItems([
-            MenuItem::linkTo(WorksCrudController::class, 'Liste', 'fa fa-list'),
-            MenuItem::linkTo(WorksRevisionCrudController::class, 'Historique', 'fa fa-history')
-                ->setPermission('ROLE_ADMIN'),
-        ]);
-
-        yield MenuItem::subMenu('Pages', 'fa fa-file-alt')->setPermission('ROLE_ADMIN')->setSubItems([
-            MenuItem::linkTo(PageCrudController::class, 'Liste', 'fa fa-list')
-                ->setPermission('ROLE_ADMIN'),
-            MenuItem::linkTo(PageRevisionCrudController::class, 'Historique', 'fa fa-history')
-                ->setPermission('ROLE_ADMIN'),
-        ]);
+        yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap');
+        yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open');
+        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')->setPermission('ROLE_ADMIN');
 
         yield MenuItem::section('Utilisateurs')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users')->setPermission('ROLE_ADMIN');

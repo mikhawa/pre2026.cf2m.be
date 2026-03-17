@@ -32,16 +32,20 @@ class RevisionService
 
     /**
      * Crée une révision (snapshot) pour une entité donnée.
-     * Capture l'état précédent (previousData) via l'UnitOfWork avant tout flush.
+     * Capture l'état précédent (previousData) via DBAL avant tout flush,
+     * sauf pour une création initiale ($isCreation = true) où previousData reste null.
      * Persiste la révision sans effectuer de flush.
      */
-    public function createRevision(object $entity, User $author, bool $autoApprove): Revision
+    public function createRevision(object $entity, User $author, bool $autoApprove, bool $isCreation = false): Revision
     {
         $revision = new Revision();
         $revision->setCreatedBy($author);
 
-        // Capture de l'état précédent depuis l'UnitOfWork (avant flush)
-        $revision->setPreviousData($this->snapshotPreviousFromUow($entity));
+        // Pour une création, previousData = null (aucun état précédent)
+        // Pour une modification, capture via DBAL avant flush
+        if (!$isCreation) {
+            $revision->setPreviousData($this->snapshotPreviousFromDb($entity));
+        }
 
         if ($entity instanceof Formation) {
             $revision->setEntityType('formation');
@@ -119,7 +123,8 @@ class RevisionService
             $backup->setEntityId($source->getEntityId());
             $backup->setEntityTitle($source->getEntityTitle());
             $backup->setData($currentSnapshot);
-            $backup->setPreviousData(null);
+            // previousData = données de la version restaurée (diff = "ce qui existait depuis cette version")
+            $backup->setPreviousData($source->getData());
             $backup->setStatus(Revision::STATUS_APPROVED);
             $backup->setCreatedBy($reviewer);
             $backup->setReviewedBy($reviewer);
@@ -197,6 +202,95 @@ class RevisionService
             ),
             default => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $revision->getEntityType())),
         };
+    }
+
+    /**
+     * Construit un affichage git-like des changements d'une révision.
+     * Compare previousData ↔ data et n'affiche QUE les champs modifiés.
+     */
+    public function buildHistoryDiffHtml(Revision $revision): string
+    {
+        $before = $revision->getPreviousData();
+        $after  = $revision->getData();
+
+        if ($before === null) {
+            return '<span class="badge bg-secondary">Création initiale</span>';
+        }
+
+        $labels = [
+            'title'          => 'Titre',
+            'slug'           => 'Slug',
+            'description'    => 'Description',
+            'content'        => 'Contenu',
+            'status'         => 'Statut',
+            'publishedAt'    => 'Date de publication',
+            'colorPrimary'   => 'Couleur primaire',
+            'colorSecondary' => 'Couleur secondaire',
+            'formationId'    => 'Formation (ID)',
+        ];
+
+        $richFields = ['description', 'content'];
+        $changes = [];
+
+        foreach ($after as $key => $newVal) {
+            $oldVal = $before[$key] ?? null;
+            if ($oldVal === $newVal) {
+                continue;
+            }
+
+            $label  = $labels[$key] ?? $key;
+            $isRich = in_array($key, $richFields, true);
+            $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
+        }
+
+        if ($changes === []) {
+            return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
+        }
+
+        $uid = 'diff-' . $revision->getId();
+        $html = '<ul class="list-unstyled mb-0 small font-monospace">';
+
+        foreach ($changes as $i => $c) {
+            if ($c['rich']) {
+                $collapseId = $uid . '-' . $c['key'];
+                $oldStrip = mb_substr(strip_tags((string) ($c['old'] ?? '')), 0, 120);
+                $newStrip = mb_substr(strip_tags((string) ($c['new'] ?? '')), 0, 120);
+                $html .= sprintf(
+                    '<li class="py-1 border-bottom border-light">'
+                    . '<span class="text-secondary fw-semibold">%s</span> '
+                    . '<button class="btn btn-link btn-sm p-0 text-decoration-none" '
+                    . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                    . 'aria-expanded="false">modifié ▾</button>'
+                    . '<div class="collapse mt-1" id="%s">'
+                    . '<div class="p-2 mb-1 bg-danger-subtle rounded"><del class="text-danger">%s%s</del></div>'
+                    . '<div class="p-2 bg-success-subtle rounded"><ins class="text-success">%s%s</ins></div>'
+                    . '</div></li>',
+                    htmlspecialchars($c['label']),
+                    $collapseId, $collapseId,
+                    htmlspecialchars($oldStrip), mb_strlen(strip_tags((string) ($c['old'] ?? ''))) > 120 ? '…' : '',
+                    htmlspecialchars($newStrip), mb_strlen(strip_tags((string) ($c['new'] ?? ''))) > 120 ? '…' : '',
+                );
+            } else {
+                $old = htmlspecialchars($this->truncateForDisplay((string) ($c['old'] ?? '—')));
+                $new = htmlspecialchars($this->truncateForDisplay((string) ($c['new'] ?? '—')));
+                $html .= sprintf(
+                    '<li class="py-1%s">'
+                    . '<span class="text-secondary fw-semibold">%s :</span> '
+                    . '<del class="text-danger me-1">%s</del>'
+                    . '<span class="text-muted me-1">→</span>'
+                    . '<ins class="text-success fw-semibold">%s</ins>'
+                    . '</li>',
+                    $i < count($changes) - 1 ? ' border-bottom border-light' : '',
+                    htmlspecialchars($c['label']),
+                    $old,
+                    $new,
+                );
+            }
+        }
+
+        $html .= '</ul>';
+
+        return $html;
     }
 
     /**
@@ -351,63 +445,73 @@ class RevisionService
     }
 
     /**
-     * Capture l'état précédent d'une entité via l'UnitOfWork de Doctrine,
-     * avant que le flush ne soit effectué.
+     * Récupère l'état précédent d'une entité via DBAL (contourne le cache d'identité).
+     * Appelé avant le flush : la DB contient encore les anciennes valeurs.
      * Retourne null si l'entité est nouvelle (pas encore en base).
      *
      * @return array<string, mixed>|null
      */
-    private function snapshotPreviousFromUow(object $entity): ?array
+    private function snapshotPreviousFromDb(object $entity): ?array
     {
-        $originalData = $this->em->getUnitOfWork()->getOriginalEntityData($entity);
-
-        // Entité nouvelle : pas d'état précédent
-        if (empty($originalData)) {
+        $id = method_exists($entity, 'getId') ? $entity->getId() : null;
+        if (!$id) {
             return null;
         }
 
-        $fmt = static function (mixed $val): ?string {
-            if ($val instanceof \DateTimeInterface) {
-                return $val->format('c');
-            }
+        $conn  = $this->em->getConnection();
+        $table = $this->em->getClassMetadata($entity::class)->getTableName();
 
-            return $val !== null ? (string) $val : null;
+        $row = $conn->fetchAssociative(
+            sprintf('SELECT * FROM `%s` WHERE id = :id', $table),
+            ['id' => $id]
+        );
+
+        if (!$row) {
+            return null;
+        }
+
+        // Convertit une chaîne datetime DB en ISO 8601 (même format que les snapshots)
+        $fmtDate = static function (?string $val): ?string {
+            if ($val === null || $val === '') {
+                return null;
+            }
+            try {
+                return (new \DateTimeImmutable($val))->format('c');
+            } catch (\Throwable) {
+                return $val;
+            }
         };
 
         if ($entity instanceof Formation) {
             return [
-                'title'          => $originalData['title'] ?? null,
-                'slug'           => $originalData['slug'] ?? null,
-                'description'    => $originalData['description'] ?? null,
-                'status'         => $originalData['status'] ?? null,
-                'publishedAt'    => $fmt($originalData['publishedAt'] ?? null),
-                'colorPrimary'   => $originalData['colorPrimary'] ?? null,
-                'colorSecondary' => $originalData['colorSecondary'] ?? null,
+                'title'          => $row['title'] ?? null,
+                'slug'           => $row['slug'] ?? null,
+                'description'    => $row['description'] ?? null,
+                'status'         => $row['status'] ?? null,
+                'publishedAt'    => $fmtDate($row['published_at'] ?? null),
+                'colorPrimary'   => $row['color_primary'] ?? null,
+                'colorSecondary' => $row['color_secondary'] ?? null,
             ];
         }
 
         if ($entity instanceof Page) {
             return [
-                'title'       => $originalData['title'] ?? null,
-                'slug'        => $originalData['slug'] ?? null,
-                'content'     => $originalData['content'] ?? null,
-                'status'      => $originalData['status'] ?? null,
-                'publishedAt' => $fmt($originalData['publishedAt'] ?? null),
+                'title'       => $row['title'] ?? null,
+                'slug'        => $row['slug'] ?? null,
+                'content'     => $row['content'] ?? null,
+                'status'      => $row['status'] ?? null,
+                'publishedAt' => $fmtDate($row['published_at'] ?? null),
             ];
         }
 
         if ($entity instanceof Works) {
-            // L'association formation est stockée en proxy dans l'UoW
-            $formation = $originalData['formation'] ?? null;
-            $formationId = ($formation instanceof Formation) ? $formation->getId() : null;
-
             return [
-                'title'       => $originalData['title'] ?? null,
-                'slug'        => $originalData['slug'] ?? null,
-                'description' => $originalData['description'] ?? null,
-                'status'      => $originalData['status'] ?? null,
-                'publishedAt' => $fmt($originalData['publishedAt'] ?? null),
-                'formationId' => $formationId,
+                'title'       => $row['title'] ?? null,
+                'slug'        => $row['slug'] ?? null,
+                'description' => $row['description'] ?? null,
+                'status'      => $row['status'] ?? null,
+                'publishedAt' => $fmtDate($row['published_at'] ?? null),
+                'formationId' => $row['formation_id'] ?? null,
             ];
         }
 

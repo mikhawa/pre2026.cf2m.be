@@ -45,4 +45,21 @@ class RevisionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Retourne l'historique complet d'une Formation, trié par date descendante.
+     *
+     * @return Revision[]
+     */
+    public function findByFormationId(int $formationId): array
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.entityType = :type')
+            ->andWhere('r.entityId = :id')
+            ->setParameter('type', 'formation')
+            ->setParameter('id', $formationId)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -250,10 +250,16 @@ class RevisionCrudController extends AbstractCrudController
     }
 
     /**
-     * Redirige vers la liste des révisions.
+     * Redirige vers la liste des révisions ou vers l'URL de retour si fournie.
+     * Permet aux pages d'historique de définir un returnUrl pour revenir après action.
      */
     protected function redirectToIndex(AdminContext $context): Response
     {
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+        if ($returnUrl) {
+            return $this->redirect($returnUrl);
+        }
+
         /** @var AdminUrlGenerator $adminUrlGenerator */
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 
