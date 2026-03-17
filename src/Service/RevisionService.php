@@ -32,12 +32,16 @@ class RevisionService
 
     /**
      * Crée une révision (snapshot) pour une entité donnée.
+     * Capture l'état précédent (previousData) via l'UnitOfWork avant tout flush.
      * Persiste la révision sans effectuer de flush.
      */
     public function createRevision(object $entity, User $author, bool $autoApprove): Revision
     {
         $revision = new Revision();
         $revision->setCreatedBy($author);
+
+        // Capture de l'état précédent depuis l'UnitOfWork (avant flush)
+        $revision->setPreviousData($this->snapshotPreviousFromUow($entity));
 
         if ($entity instanceof Formation) {
             $revision->setEntityType('formation');
@@ -72,13 +76,19 @@ class RevisionService
     }
 
     /**
-     * Applique le snapshot d'une révision à l'entité live correspondante.
-     * Sauvegarde d'abord l'état actuel comme révision de sauvegarde, puis flush.
+     * Applique le snapshot d'une révision PENDING à l'entité live correspondante.
+     * Met à jour previousData avec l'état live courant si non déjà renseigné, puis flush.
      */
     public function applyRevision(Revision $revision, User $reviewer): void
     {
-        // Sauvegarde de l'état actuel avant modification
-        $this->saveCurrentAsBackup($revision, $reviewer);
+        // previousData déjà capturé à la création ; on ne l'écrase que s'il est absent
+        if (null === $revision->getPreviousData()) {
+            try {
+                $revision->setPreviousData($this->getCurrentSnapshot($revision));
+            } catch (\Throwable) {
+                // Entité introuvable, on continue sans sauvegarde
+            }
+        }
 
         $data = $revision->getData();
         $type = $revision->getEntityType();
@@ -88,6 +98,77 @@ class RevisionService
             'formation' => $this->applyFormation($entityId, $data),
             'page'      => $this->applyPage($entityId, $data),
             'works'     => $this->applyWorks($entityId, $data),
+            default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
+        };
+
+        $this->em->flush();
+    }
+
+    /**
+     * Applique les données d'une révision au contenu live (navigation historique).
+     * Sauvegarde l'état courant en tant que nouvelle révision APPROVED avant d'appliquer.
+     */
+    public function appliquerVersion(Revision $source, User $reviewer): void
+    {
+        // Sauvegarder l'état courant dans l'historique avant écrasement
+        try {
+            $currentSnapshot = $this->getCurrentSnapshot($source);
+
+            $backup = new Revision();
+            $backup->setEntityType($source->getEntityType());
+            $backup->setEntityId($source->getEntityId());
+            $backup->setEntityTitle($source->getEntityTitle());
+            $backup->setData($currentSnapshot);
+            $backup->setPreviousData(null);
+            $backup->setStatus(Revision::STATUS_APPROVED);
+            $backup->setCreatedBy($reviewer);
+            $backup->setReviewedBy($reviewer);
+            $backup->setReviewedAt(new \DateTimeImmutable());
+            $this->em->persist($backup);
+        } catch (\Throwable) {
+            // Entité introuvable, on continue sans sauvegarde préalable
+        }
+
+        $type = $source->getEntityType();
+        $entityId = $source->getEntityId();
+
+        match ($type) {
+            'formation' => $this->applyFormation($entityId, $source->getData()),
+            'page'      => $this->applyPage($entityId, $source->getData()),
+            'works'     => $this->applyWorks($entityId, $source->getData()),
+            default     => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $type)),
+        };
+
+        $this->em->flush();
+    }
+
+    /**
+     * Restaure l'état précédent stocké dans previousData.
+     * Permute previousData et l'état live actuel (undo/redo possible).
+     *
+     * @throws \RuntimeException si aucune sauvegarde n'est disponible
+     */
+    public function applyPreviousData(Revision $revision): void
+    {
+        $previousData = $revision->getPreviousData();
+        if (null === $previousData) {
+            throw new \RuntimeException('Aucune sauvegarde disponible pour cette révision.');
+        }
+
+        // Sauvegarder l'état courant avant restauration (pour permettre undo/redo)
+        try {
+            $revision->setPreviousData($this->getCurrentSnapshot($revision));
+        } catch (\Throwable) {
+            $revision->setPreviousData(null);
+        }
+
+        $type = $revision->getEntityType();
+        $entityId = $revision->getEntityId();
+
+        match ($type) {
+            'formation' => $this->applyFormation($entityId, $previousData),
+            'page'      => $this->applyPage($entityId, $previousData),
+            'works'     => $this->applyWorks($entityId, $previousData),
             default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
         };
 
@@ -197,30 +278,6 @@ class RevisionService
     }
 
     /**
-     * Sauvegarde l'état actuel de l'entité comme révision de sauvegarde (APPROVED).
-     */
-    private function saveCurrentAsBackup(Revision $revision, User $reviewer): void
-    {
-        try {
-            $currentData = $this->getCurrentSnapshot($revision);
-        } catch (\Throwable) {
-            return;
-        }
-
-        $backup = new Revision();
-        $backup->setEntityType($revision->getEntityType());
-        $backup->setEntityId($revision->getEntityId());
-        $backup->setEntityTitle($revision->getEntityTitle() . ' [avant restauration]');
-        $backup->setData($currentData);
-        $backup->setStatus(Revision::STATUS_APPROVED);
-        $backup->setCreatedBy($reviewer);
-        $backup->setReviewedBy($reviewer);
-        $backup->setReviewedAt(new \DateTimeImmutable());
-
-        $this->em->persist($backup);
-    }
-
-    /**
      * Tronque et nettoie une valeur pour l'affichage dans le diff.
      */
     private function truncateForDisplay(string $value, int $max = 300): string
@@ -291,6 +348,70 @@ class RevisionService
 
             $this->mailer->send($email);
         }
+    }
+
+    /**
+     * Capture l'état précédent d'une entité via l'UnitOfWork de Doctrine,
+     * avant que le flush ne soit effectué.
+     * Retourne null si l'entité est nouvelle (pas encore en base).
+     *
+     * @return array<string, mixed>|null
+     */
+    private function snapshotPreviousFromUow(object $entity): ?array
+    {
+        $originalData = $this->em->getUnitOfWork()->getOriginalEntityData($entity);
+
+        // Entité nouvelle : pas d'état précédent
+        if (empty($originalData)) {
+            return null;
+        }
+
+        $fmt = static function (mixed $val): ?string {
+            if ($val instanceof \DateTimeInterface) {
+                return $val->format('c');
+            }
+
+            return $val !== null ? (string) $val : null;
+        };
+
+        if ($entity instanceof Formation) {
+            return [
+                'title'          => $originalData['title'] ?? null,
+                'slug'           => $originalData['slug'] ?? null,
+                'description'    => $originalData['description'] ?? null,
+                'status'         => $originalData['status'] ?? null,
+                'publishedAt'    => $fmt($originalData['publishedAt'] ?? null),
+                'colorPrimary'   => $originalData['colorPrimary'] ?? null,
+                'colorSecondary' => $originalData['colorSecondary'] ?? null,
+            ];
+        }
+
+        if ($entity instanceof Page) {
+            return [
+                'title'       => $originalData['title'] ?? null,
+                'slug'        => $originalData['slug'] ?? null,
+                'content'     => $originalData['content'] ?? null,
+                'status'      => $originalData['status'] ?? null,
+                'publishedAt' => $fmt($originalData['publishedAt'] ?? null),
+            ];
+        }
+
+        if ($entity instanceof Works) {
+            // L'association formation est stockée en proxy dans l'UoW
+            $formation = $originalData['formation'] ?? null;
+            $formationId = ($formation instanceof Formation) ? $formation->getId() : null;
+
+            return [
+                'title'       => $originalData['title'] ?? null,
+                'slug'        => $originalData['slug'] ?? null,
+                'description' => $originalData['description'] ?? null,
+                'status'      => $originalData['status'] ?? null,
+                'publishedAt' => $fmt($originalData['publishedAt'] ?? null),
+                'formationId' => $formationId,
+            ];
+        }
+
+        return null;
     }
 
     /**
