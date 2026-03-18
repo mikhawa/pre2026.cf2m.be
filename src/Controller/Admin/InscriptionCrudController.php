@@ -40,10 +40,9 @@ class InscriptionCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->disable(Action::NEW)
+            ->disable(Action::NEW, Action::DELETE)
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::EDIT, 'ROLE_ADMIN')
-            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
         ;
     }
