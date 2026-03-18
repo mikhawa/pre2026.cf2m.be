@@ -95,3 +95,54 @@ document.addEventListener('DOMContentLoaded', initSunEditors);
 // Réinitialisation après navigation Turbo (page complète ou frame)
 document.addEventListener('turbo:load',        initSunEditors);
 document.addEventListener('turbo:frame-load',  initSunEditors);
+
+/**
+ * Convertit un texte en slug URL-friendly (gère les accents français).
+ */
+function slugify(text) {
+    return text
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/-{2,}/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Synchronisation titre → slug en temps réel (page de création uniquement).
+ * N'écrase pas un slug déjà saisi manuellement.
+ */
+function initSlugSync() {
+    const pairs = [
+        { titleId: 'Formation_title', slugId: 'Formation_slug' },
+        { titleId: 'Works_title',     slugId: 'Works_slug' },
+        { titleId: 'Page_title',      slugId: 'Page_slug' },
+    ];
+
+    pairs.forEach(({ titleId, slugId }) => {
+        const titleInput = document.getElementById(titleId);
+        const slugInput  = document.getElementById(slugId);
+
+        if (!titleInput || !slugInput) return;
+
+        // Si le slug est déjà rempli au chargement → ne pas écraser
+        let slugManuallyEdited = slugInput.value.trim() !== '';
+
+        slugInput.addEventListener('input', () => {
+            slugManuallyEdited = true;
+        });
+
+        titleInput.addEventListener('input', () => {
+            if (slugManuallyEdited) return;
+            slugInput.value = slugify(titleInput.value);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initSlugSync);
+document.addEventListener('turbo:load',        initSlugSync);
+document.addEventListener('turbo:frame-load',  initSlugSync);
