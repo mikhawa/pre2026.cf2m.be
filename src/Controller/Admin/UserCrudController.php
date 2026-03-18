@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -21,13 +22,70 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly MailerInterface $mailer,
+        #[Autowire(env: 'MAIL_FORM')]
+        private readonly string $mailFrom,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    /**
+     * Génère un mot de passe temporaire de 12 caractères, le hache, l'envoie par email
+     * et persiste le nouvel utilisateur.
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        if (!$entityInstance instanceof User) {
+            parent::persistEntity($entityManager, $entityInstance);
+
+            return;
+        }
+
+        $plainPassword = $this->generatePassword();
+        $entityInstance->setPassword(
+            $this->passwordHasher->hashPassword($entityInstance, $plainPassword)
+        );
+
+        parent::persistEntity($entityManager, $entityInstance);
+
+        $email = (new TemplatedEmail())
+            ->from(new Address($this->mailFrom, 'CF2m Administration'))
+            ->to(new Address($entityInstance->getEmail()))
+            ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
+            ->htmlTemplate('emails/user_bienvenue.html.twig')
+            ->context([
+                'user'          => $entityInstance,
+                'plainPassword' => $plainPassword,
+            ]);
+
+        $this->mailer->send($email);
+    }
+
+    /** Génère un mot de passe aléatoire de 12 caractères (lettres + chiffres + symboles). */
+    private function generatePassword(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+        $password = '';
+        for ($i = 0; $i < 12; ++$i) {
+            $password .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+
+        return $password;
     }
 
     public function configureActions(Actions $actions): Actions

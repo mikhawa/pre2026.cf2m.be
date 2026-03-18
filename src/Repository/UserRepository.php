@@ -32,6 +32,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /** Trouve un utilisateur par son token de réinitialisation de mot de passe. */
+    public function findByResetToken(string $token): ?User
+    {
+        return $this->findOneBy(['resetPasswordToken' => $token]);
+    }
+
     /**
      * Retourne tous les utilisateurs ayant le rôle ROLE_ADMIN ou ROLE_SUPER_ADMIN.
      *

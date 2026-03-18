@@ -23,9 +23,10 @@ class RatingCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->disable(Action::NEW, Action::EDIT, Action::DELETE)
+            ->disable(Action::NEW, Action::EDIT)
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
         ;
     }
 
