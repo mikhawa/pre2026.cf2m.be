@@ -11,8 +11,6 @@ alias uphp='docker compose exec php sh'
 alias dphp='docker compose exec -it php bash'
 alias dup='docker compose up -d --build'
 alias ddo='docker compose down'
-alias phpfix='./vendor/bin/php-cs-fixer fix'
-alias asset='php bin/console asset-map:compile'
 ```
 
 
@@ -22,6 +20,7 @@ alias asset='php bin/console asset-map:compile'
 ```bash
 alias pbc='php bin/console'
 alias pbcc='php bin/console cache:clear'
+alias fl='php bin/console doctrine:fixtures:load --no-interaction'
 ```
 
 ### ----------------------
