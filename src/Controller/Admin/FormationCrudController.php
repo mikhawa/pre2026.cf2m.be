@@ -29,6 +29,7 @@ class FormationCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
+        private readonly RevisionRepository $revisionRepository,
     ) {
     }
 
@@ -39,9 +40,14 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $repo = $this->revisionRepository;
+
         $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueFormation')
             ->setCssClass('btn btn-outline-info btn-sm')
+            ->setLabel(static function (Formation $entity) use ($repo): string {
+                return sprintf('Historique (%d)', $repo->countByEntityId('formation', $entity->getId()));
+            })
         ;
 
         return $actions
@@ -51,6 +57,13 @@ class FormationCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
+                ->setLabel('Sauvegarder et continuer les changements')
+                ->setCssClass('btn btn-primary')
+            )
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
+                ->setCssClass('btn btn-success')
+            )
         ;
     }
 

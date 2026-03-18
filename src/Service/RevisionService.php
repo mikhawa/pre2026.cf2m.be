@@ -253,8 +253,8 @@ class RevisionService
         foreach ($changes as $i => $c) {
             if ($c['rich']) {
                 $collapseId = $uid . '-' . $c['key'];
-                $oldStrip = mb_substr(strip_tags((string) ($c['old'] ?? '')), 0, 120);
-                $newStrip = mb_substr(strip_tags((string) ($c['new'] ?? '')), 0, 120);
+                $oldFmt     = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
+                $newFmt     = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
                 $html .= sprintf(
                     '<li class="py-1 border-bottom border-light">'
                     . '<span class="text-secondary fw-semibold">%s</span> '
@@ -262,13 +262,15 @@ class RevisionService
                     . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
                     . 'aria-expanded="false">modifié ▾</button>'
                     . '<div class="collapse mt-1" id="%s">'
-                    . '<div class="p-2 mb-1 bg-danger-subtle rounded"><del class="text-danger">%s%s</del></div>'
-                    . '<div class="p-2 bg-success-subtle rounded"><ins class="text-success">%s%s</ins></div>'
+                    . '<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    . '<pre class="p-2 bg-success-subtle text-success rounded small"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
                     . '</div></li>',
                     htmlspecialchars($c['label']),
                     $collapseId, $collapseId,
-                    htmlspecialchars($oldStrip), mb_strlen(strip_tags((string) ($c['old'] ?? ''))) > 120 ? '…' : '',
-                    htmlspecialchars($newStrip), mb_strlen(strip_tags((string) ($c['new'] ?? ''))) > 120 ? '…' : '',
+                    htmlspecialchars($oldFmt['text']), $oldFmt['truncated'] ? "\n…" : '',
+                    htmlspecialchars($newFmt['text']), $newFmt['truncated'] ? "\n…" : '',
                 );
             } else {
                 $old = htmlspecialchars($this->truncateForDisplay((string) ($c['old'] ?? '—')));
@@ -379,6 +381,37 @@ class RevisionService
         $clean = strip_tags($value);
 
         return mb_strlen($clean) > $max ? mb_substr($clean, 0, $max) . '…' : $clean;
+    }
+
+    /**
+     * Formate le HTML brut d'un champ SunEditor pour affichage dans l'historique.
+     * Insère des sauts de ligne après les balises de bloc, retourne max $maxLines lignes.
+     * Les balises HTML restent visibles (non rendues).
+     *
+     * @return array{text: string, truncated: bool}
+     */
+    private function formatRichFieldForDiff(string $html, int $maxLines = 5): array
+    {
+        // Insérer un saut de ligne après chaque balise de bloc fermante
+        $formatted = preg_replace(
+            '/(<\/(p|h[1-6]|li|div|ul|ol|blockquote|pre|tr|td|th)>)/i',
+            "$1\n",
+            $html
+        ) ?? $html;
+
+        // Insérer un saut de ligne après les <br> et <br/>
+        $formatted = preg_replace('/<br\s*\/?>/i', "<br>\n", $formatted) ?? $formatted;
+
+        $lines = explode("\n", $formatted);
+        $lines = array_values(array_filter($lines, static fn(string $l): bool => trim($l) !== ''));
+
+        $truncated = count($lines) > $maxLines;
+        $visible   = array_slice($lines, 0, $maxLines);
+
+        return [
+            'text'      => implode("\n", $visible),
+            'truncated' => $truncated,
+        ];
     }
 
     /**

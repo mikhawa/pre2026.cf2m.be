@@ -47,6 +47,21 @@ class RevisionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Compte le nombre de révisions pour une entité donnée (type + id).
+     */
+    public function countByEntityId(string $type, int $id): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->where('r.entityType = :type')
+            ->andWhere('r.entityId = :id')
+            ->setParameter('type', $type)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Retourne l'historique complet d'une Formation, trié par date descendante.
      *
      * @return Revision[]

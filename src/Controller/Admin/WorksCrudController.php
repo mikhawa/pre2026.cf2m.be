@@ -7,6 +7,8 @@ namespace App\Controller\Admin;
 use App\Entity\Works;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -27,6 +29,19 @@ class WorksCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Works::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
+                ->setLabel('Sauvegarder et continuer les changements')
+                ->setCssClass('btn btn-primary')
+            )
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
+                ->setCssClass('btn btn-success')
+            )
+        ;
     }
 
     public function configureCrud(Crud $crud): Crud

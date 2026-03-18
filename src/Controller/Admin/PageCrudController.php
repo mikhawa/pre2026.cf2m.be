@@ -39,6 +39,13 @@ class PageCrudController extends AbstractCrudController
             ->setPermission(Action::EDIT, 'ROLE_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
+                ->setLabel('Sauvegarder et continuer les changements')
+                ->setCssClass('btn btn-primary')
+            )
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
+                ->setCssClass('btn btn-success')
+            )
         ;
     }
 
