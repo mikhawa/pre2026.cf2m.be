@@ -562,6 +562,26 @@ class RevisionService
     }
 
     /**
+     * Retourne le snapshot live d'une Page pour comparaison avec les révisions.
+     *
+     * @return array<string, mixed>
+     */
+    public function getLivePageSnapshot(Page $entity): array
+    {
+        return $this->snapshotPage($entity);
+    }
+
+    /**
+     * Retourne le snapshot live d'un Works pour comparaison avec les révisions.
+     *
+     * @return array<string, mixed>
+     */
+    public function getLiveWorksSnapshot(Works $entity): array
+    {
+        return $this->snapshotWorks($entity);
+    }
+
+    /**
      * Snapshot des champs principaux d'une Formation.
      *
      * @return array<string, mixed>

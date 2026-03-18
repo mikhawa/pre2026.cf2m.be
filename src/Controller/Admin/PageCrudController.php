@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Page;
+use App\Entity\Revision;
+use App\Repository\RevisionRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -18,11 +22,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\Response;
 
 class PageCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
+        private readonly RevisionRepository $revisionRepository,
     ) {
     }
 
@@ -33,12 +40,26 @@ class PageCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $repo = $this->revisionRepository;
+
+        $historique = Action::new('historiquePage', 'Historique', 'fa fa-history')
+            ->linkToCrudAction('historiquePage')
+            ->asWarningAction()
+            ->setLabel(static function (Page $entity) use ($repo): string {
+                return sprintf('Historique (%d)', $repo->countByEntityId('page', $entity->getId()));
+            })
+        ;
+
         return $actions
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::NEW, 'ROLE_ADMIN')
             ->setPermission(Action::EDIT, 'ROLE_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission('historiquePage', 'ROLE_ADMIN')
+            ->add(Crud::PAGE_INDEX, $historique)
+            ->add(Crud::PAGE_EDIT, $historique)
+            ->add(Crud::PAGE_DETAIL, $historique)
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
                 ->setLabel('Sauvegarder et continuer les changements')
                 ->asWarningAction()
@@ -47,6 +68,7 @@ class PageCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
                 ->asSuccessAction()
             )
+            ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiquePage'])
         ;
     }
 
@@ -103,6 +125,78 @@ class PageCrudController extends AbstractCrudController
                 'Archivée'   => 'archived',
             ]))
         ;
+    }
+
+    /**
+     * Page d'historique des révisions pour une Page donnée.
+     */
+    #[AdminRoute(path: '/{entityId}/historique', name: 'historique_page')]
+    public function historiquePage(
+        AdminContext $context,
+        RevisionRepository $revisionRepository,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        /** @var Page $page */
+        $page = $context->getEntity()->getInstance();
+        $pageId = $page->getId();
+
+        $revisions = $revisionRepository->findByEntityId('page', $pageId);
+
+        $historiqueUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiquePage')
+            ->setEntityId($pageId)
+            ->generateUrl();
+
+        $editUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($pageId)
+            ->generateUrl();
+
+        $liveSnapshot = $this->revisionService->getLivePageSnapshot($page);
+
+        $historique = [];
+        foreach ($revisions as $revision) {
+            $isCurrent = $revision->getData() === $liveSnapshot;
+
+            $entry = [
+                'revision'  => $revision,
+                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+                'isCurrent' => $isCurrent,
+            ];
+
+            if ($revision->getStatus() === Revision::STATUS_PENDING) {
+                $entry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(PageRevisionCrudController::class)
+                    ->setAction('approuverRevision')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+                $entry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(PageRevisionCrudController::class)
+                    ->setAction('rejeterRevision')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            }
+
+            if ($revision->getStatus() === Revision::STATUS_APPROVED && !$isCurrent) {
+                $entry['appliquerUrl'] = $adminUrlGenerator
+                    ->setController(PageRevisionCrudController::class)
+                    ->setAction('appliquerVersion')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            }
+
+            $historique[] = $entry;
+        }
+
+        return $this->render('admin/page/historique.html.twig', [
+            'page'       => $page,
+            'historique' => $historique,
+            'editUrl'    => $editUrl,
+        ]);
     }
 
     /**
