@@ -91,5 +91,19 @@
         </div>
     </div>
 
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">⭐</div>
+                <h5 class="mb-1">Notes</h5>
+                <p class="text-muted small mb-3">Consulter les notes attribuées</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\RatingCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les notes</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
