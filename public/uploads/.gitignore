@@ -1,0 +1,5 @@
+# Ignorer tous les fichiers uploadés sauf ce fichier
+*
+!.gitignore
+!editor/
+!editor/.gitignore
