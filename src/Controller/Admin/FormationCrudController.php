@@ -44,7 +44,7 @@ class FormationCrudController extends AbstractCrudController
 
         $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueFormation')
-            ->setCssClass('btn btn-outline-info btn-sm')
+            ->asWarningAction()
             ->setLabel(static function (Formation $entity) use ($repo): string {
                 return sprintf('Historique (%d)', $repo->countByEntityId('formation', $entity->getId()));
             })
@@ -59,11 +59,13 @@ class FormationCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $historique)
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
                 ->setLabel('Sauvegarder et continuer les changements')
-                ->setCssClass('btn btn-primary')
+                ->asWarningAction()
+                ->setHtmlAttributes(['data-ea-btn' => 'continue'])
             )
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
-                ->setCssClass('btn btn-success')
+                ->asSuccessAction()
             )
+            ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiqueFormation'])
         ;
     }
 
