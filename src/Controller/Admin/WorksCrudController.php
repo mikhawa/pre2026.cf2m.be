@@ -51,6 +51,7 @@ class WorksCrudController extends AbstractCrudController
         ;
 
         return $actions
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission('historiqueWorks', 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)

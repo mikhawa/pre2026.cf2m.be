@@ -54,7 +54,7 @@ class PageCrudController extends AbstractCrudController
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::NEW, 'ROLE_ADMIN')
             ->setPermission(Action::EDIT, 'ROLE_ADMIN')
-            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission('historiquePage', 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, $historique)
