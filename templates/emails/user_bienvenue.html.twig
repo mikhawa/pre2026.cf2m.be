@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur CF2m</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f6fa;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0f6fa;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+
+                <table width="600" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color: #ffffff; border-collapse: collapse;">
+
+                    {# Header #}
+                    <tr>
+                        <td style="background-color: #08111e; padding: 28px 32px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td>
+                                        <span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #ffffff;">CF</span><span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #00b4d8;">2m</span>
+                                    </td>
+                                    <td align="right">
+                                        <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">Création de compte</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {# Body #}
+                    <tr>
+                        <td style="padding: 32px;">
+
+                            {# Message d'accueil #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #1a2b3c; padding-bottom: 8px;">
+                                        Bienvenue sur la plateforme CF2m, {{ user.userName }} !
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 14px; color: #4a5a6a; line-height: 1.6;">
+                                        Un compte a été créé pour vous. Voici vos identifiants de connexion :
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Identifiants #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px; background-color: #f8fafc; border-left: 3px solid #00b4d8;">
+                                <tr>
+                                    <td style="padding: 20px 24px;">
+
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; padding-bottom: 4px; text-transform: uppercase;">
+                                                    Adresse e-mail
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 15px; color: #1a2b3c; padding-bottom: 16px;">
+                                                    {{ user.email }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; padding-bottom: 4px; text-transform: uppercase;">
+                                                    Mot de passe temporaire
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: bold; color: #08111e; letter-spacing: 2px;">
+                                                    {{ plainPassword }}
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Avertissement #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+                                <tr>
+                                    <td style="font-family: Arial, sans-serif; font-size: 13px; color: #e05c00; line-height: 1.6;">
+                                        Pour des raisons de sécurité, veuillez modifier ce mot de passe dès votre première connexion depuis votre espace profil.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            {# Bouton #}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ url('app_login') }}"
+                                           style="display: inline-block; background-color: #00b4d8; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; padding: 12px 28px; border-radius: 4px;">
+                                            Se connecter
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    {# Footer #}
+                    <tr>
+                        <td style="background-color: #f0f6fa; border-top: 1px solid #dde8f0; padding: 16px 32px;">
+                            <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">
+                                Compte créé le {{ 'now'|date('d/m/Y à H:i') }} &mdash; CF2m Centre de Formation
+                            </span>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
