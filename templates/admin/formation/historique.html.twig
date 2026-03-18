@@ -62,16 +62,23 @@
                             </span>
                         </div>
 
-                        <span class="badge
-                            {% if isApproved %}bg-success
-                            {% elseif isPending %}bg-warning text-dark
-                            {% else %}bg-danger{% endif %}">
-                            <i class="fa
-                                {% if isApproved %}fa-check
-                                {% elseif isPending %}fa-clock
-                                {% else %}fa-times{% endif %} me-1"></i>
-                            {{ rev.statusLabel }}
-                        </span>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if entry.isCurrent %}
+                                <span class="badge bg-primary">
+                                    <i class="fa fa-circle-dot me-1"></i> Version actuelle
+                                </span>
+                            {% endif %}
+                            <span class="badge
+                                {% if isApproved %}bg-success
+                                {% elseif isPending %}bg-warning text-dark
+                                {% else %}bg-danger{% endif %}">
+                                <i class="fa
+                                    {% if isApproved %}fa-check
+                                    {% elseif isPending %}fa-clock
+                                    {% else %}fa-times{% endif %} me-1"></i>
+                                {{ rev.statusLabel }}
+                            </span>
+                        </div>
                     </div>
 
                     {# Corps : diff des modifications #}

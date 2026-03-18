@@ -157,11 +157,16 @@ class FormationCrudController extends AbstractCrudController
             ->setEntityId($formationId)
             ->generateUrl();
 
+        $liveSnapshot = $this->revisionService->getLiveFormationSnapshot($formation);
+
         $historique = [];
         foreach ($revisions as $revision) {
+            $isCurrent = $revision->getData() === $liveSnapshot;
+
             $entry = [
-                'revision' => $revision,
-                'diff'     => $this->revisionService->buildHistoryDiffHtml($revision),
+                'revision'  => $revision,
+                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+                'isCurrent' => $isCurrent,
             ];
 
             $baseUrl = $adminUrlGenerator
@@ -182,7 +187,7 @@ class FormationCrudController extends AbstractCrudController
                     ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
             }
 
-            if ($revision->getStatus() === \App\Entity\Revision::STATUS_APPROVED) {
+            if ($revision->getStatus() === \App\Entity\Revision::STATUS_APPROVED && !$isCurrent) {
                 $entry['appliquerUrl'] = $adminUrlGenerator
                     ->setController(FormationRevisionCrudController::class)
                     ->setAction('appliquerVersion')

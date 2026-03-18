@@ -519,6 +519,16 @@ class RevisionService
     }
 
     /**
+     * Retourne le snapshot live d'une Formation pour comparaison avec les révisions.
+     *
+     * @return array<string, mixed>
+     */
+    public function getLiveFormationSnapshot(Formation $entity): array
+    {
+        return $this->snapshotFormation($entity);
+    }
+
+    /**
      * Snapshot des champs principaux d'une Formation.
      *
      * @return array<string, mixed>
