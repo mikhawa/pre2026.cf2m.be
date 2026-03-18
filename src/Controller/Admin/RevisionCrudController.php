@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 class RevisionCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly RevisionService $revisionService,
-        private readonly EntityManagerInterface $em,
+        protected readonly RevisionService $revisionService,
+        protected readonly EntityManagerInterface $em,
     ) {
     }
 
@@ -62,11 +62,11 @@ class RevisionCrudController extends AbstractCrudController
             ->displayIf(static fn (Revision $revision): bool => $revision->getStatus() === Revision::STATUS_PENDING)
         ;
 
-        // Action « Restaurer » — visible uniquement si APPROVED
+        // Action « Restaurer » — visible uniquement si APPROVED et sauvegarde disponible
         $restaurer = Action::new('restaurerRevision', 'Restaurer', 'fa fa-undo')
             ->linkToCrudAction('restaurerRevision')
             ->setCssClass('btn btn-info')
-            ->displayIf(static fn (Revision $revision): bool => $revision->getStatus() === Revision::STATUS_APPROVED)
+            ->displayIf(static fn (Revision $revision): bool => $revision->getStatus() === Revision::STATUS_APPROVED && $revision->getPreviousData() !== null)
         ;
 
         return $actions
@@ -201,7 +201,8 @@ class RevisionCrudController extends AbstractCrudController
     }
 
     /**
-     * Restaure une révision APPROVED : réapplique son snapshot au contenu live.
+     * Restaure l'état précédent stocké dans previousData de la révision.
+     * Permute avec l'état courant (undo/redo possible).
      */
     #[AdminRoute(path: '/{entityId}/restaurer', name: 'restaurer_revision')]
     public function restaurerRevision(AdminContext $context): Response
@@ -209,20 +210,56 @@ class RevisionCrudController extends AbstractCrudController
         /** @var Revision $revision */
         $revision = $context->getEntity()->getInstance();
 
-        /** @var \App\Entity\User $reviewer */
-        $reviewer = $this->getUser();
-        $this->revisionService->applyRevision($revision, $reviewer);
-
-        $this->addFlash('success', sprintf('La révision « %s » a été restaurée et appliquée.', $revision->getEntityTitle()));
+        try {
+            $this->revisionService->applyPreviousData($revision);
+            $this->addFlash('success', sprintf('La révision « %s » a été restaurée (état précédent appliqué).', $revision->getEntityTitle()));
+        } catch (\RuntimeException $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
 
         return $this->redirectToIndex($context);
     }
 
     /**
-     * Redirige vers la liste des révisions.
+     * Applique les données d'une révision au contenu live (restauration historique).
+     * Sauvegarde l'état courant en base avant d'appliquer la version cible.
      */
-    private function redirectToIndex(AdminContext $context): Response
+    #[AdminRoute(path: '/{entityId}/appliquer-version', name: 'appliquer_version')]
+    public function appliquerVersion(AdminContext $context): Response
     {
+        /** @var Revision $revision */
+        $revision = $context->getEntity()->getInstance();
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+
+        try {
+            $this->revisionService->appliquerVersion($revision, $reviewer);
+            $this->addFlash(
+                'success',
+                sprintf(
+                    'La version du %s a été appliquée au contenu live.',
+                    $revision->getCreatedAt()?->format('d/m/Y à H\hi')
+                )
+            );
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+
+        return $this->redirectToIndex($context);
+    }
+
+    /**
+     * Redirige vers la liste des révisions ou vers l'URL de retour si fournie.
+     * Permet aux pages d'historique de définir un returnUrl pour revenir après action.
+     */
+    protected function redirectToIndex(AdminContext $context): Response
+    {
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+        if ($returnUrl) {
+            return $this->redirect($returnUrl);
+        }
+
         /** @var AdminUrlGenerator $adminUrlGenerator */
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 

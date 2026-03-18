@@ -1,0 +1,3 @@
+# Ignorer les fichiers uploadés dans SunEditor, conserver le dossier
+*
+!.gitignore

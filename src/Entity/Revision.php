@@ -39,6 +39,11 @@ class Revision
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
+    /** Snapshot de l'état précédent (avant application de cette révision). */
+    /** @var array<string, mixed>|null */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $previousData = null;
+
     #[ORM\Column(type: 'smallint', options: ['default' => 0, 'unsigned' => true])]
     private int $status = self::STATUS_PENDING;
 
@@ -133,6 +138,20 @@ class Revision
     public function setData(array $data): static
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function getPreviousData(): ?array
+    {
+        return $this->previousData;
+    }
+
+    /** @param array<string, mixed>|null $previousData */
+    public function setPreviousData(?array $previousData): static
+    {
+        $this->previousData = $previousData;
 
         return $this;
     }

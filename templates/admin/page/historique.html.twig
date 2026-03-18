@@ -1,0 +1,120 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <a href="{{ editUrl }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Retour à l'édition
+        </a>
+        <h1 class="h4 mb-0">
+            <i class="fa fa-history text-muted me-1"></i>
+            Historique — <strong>{{ page.title }}</strong>
+        </h1>
+        <span class="badge bg-secondary">{{ historique|length }} version(s)</span>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {% if historique is empty %}
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle me-1"></i>
+            Aucune révision enregistrée pour cette page.
+        </div>
+    {% else %}
+        <div class="revision-timeline position-relative ps-4" style="border-left: 2px solid #dee2e6;">
+
+            {% for entry in historique %}
+                {% set rev = entry.revision %}
+                {% set isApproved = rev.status == 1 %}
+                {% set isPending  = rev.status == 0 %}
+                {% set isRejected = rev.status == 2 %}
+
+                {# Nœud de la timeline #}
+                <div class="position-absolute"
+                     style="left: -9px; margin-top: {{ loop.first ? '1.1rem' : '1.5rem' }};">
+                    <span class="d-inline-block rounded-circle border border-2
+                        {% if isApproved %}bg-success border-success
+                        {% elseif isPending %}bg-warning border-warning
+                        {% else %}bg-danger border-danger{% endif %}"
+                          style="width:14px;height:14px;margin-top:{{ loop.index > 1 ? '24px' : '0' }}"></span>
+                </div>
+
+                <div class="card mb-4 shadow-sm border-0
+                    {% if isPending %}border-start border-warning border-3{% endif %}
+                    {% if isRejected %}opacity-75{% endif %}"
+                     style="{% if isPending %}border-left: 3px solid #ffc107 !important;{% endif %}">
+
+                    {# En-tête : date, auteur, statut #}
+                    <div class="card-header d-flex align-items-center justify-content-between py-2
+                        {% if isApproved %}bg-success-subtle
+                        {% elseif isPending %}bg-warning-subtle
+                        {% else %}bg-danger-subtle{% endif %}">
+
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <code class="text-muted small">#{{ rev.id }}</code>
+                            <span>
+                                <i class="fa fa-calendar-alt me-1 text-muted"></i>
+                                <strong>{{ rev.createdAt|date('d/m/Y') }}</strong>
+                                <span class="text-muted">à {{ rev.createdAt|date('H:i') }}</span>
+                            </span>
+                            <span>
+                                <i class="fa fa-user me-1 text-muted"></i>
+                                {{ rev.createdBy }}
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            {% if entry.isCurrent %}
+                                <span class="badge bg-primary">
+                                    <i class="fa fa-circle-dot me-1"></i> Version actuelle
+                                </span>
+                            {% endif %}
+                            <span class="badge
+                                {% if isApproved %}bg-success
+                                {% elseif isPending %}bg-warning text-dark
+                                {% else %}bg-danger{% endif %}">
+                                <i class="fa
+                                    {% if isApproved %}fa-check
+                                    {% elseif isPending %}fa-clock
+                                    {% else %}fa-times{% endif %} me-1"></i>
+                                {{ rev.statusLabel }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {# Corps : diff des modifications #}
+                    <div class="card-body py-2 px-3">
+                        {{ entry.diff|raw }}
+                    </div>
+
+                    {# Pied : boutons d'action (ROLE_ADMIN uniquement) #}
+                    {% if is_granted('ROLE_ADMIN') and (entry.approuverUrl is defined or entry.appliquerUrl is defined) %}
+                        <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">
+                            {% if isPending and entry.approuverUrl is defined %}
+                                <a href="{{ entry.approuverUrl }}"
+                                   class="btn btn-sm btn-success"
+                                   onclick="return confirm('Approuver et appliquer cette révision ?')">
+                                    <i class="fa fa-check me-1"></i> Approuver &amp; appliquer
+                                </a>
+                                <a href="{{ entry.rejeterUrl }}"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Rejeter cette révision ?')">
+                                    <i class="fa fa-times me-1"></i> Rejeter
+                                </a>
+                            {% endif %}
+                            {% if isApproved and entry.appliquerUrl is defined %}
+                                {% set confirmMsg = 'Restaurer le contenu live à cette version du ' ~ rev.createdAt|date('d/m/Y H:i') ~ ' ?' %}
+                                <a href="{{ entry.appliquerUrl }}"
+                                   class="btn btn-sm btn-warning"
+                                   onclick="return confirm('{{ confirmMsg }}')">
+                                    <i class="fa fa-rotate-left me-1"></i> Restaurer cette version
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+        </div>
+    {% endif %}
+{% endblock %}

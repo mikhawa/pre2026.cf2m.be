@@ -1,0 +1,16 @@
+/*
+ * Styles personnalisés EasyAdmin — CF2m
+ * Chargé via addHtmlContentToHead() après les CSS EasyAdmin (cascade gagnante).
+ */
+
+/**
+ * Bouton "Sauvegarder et continuer les changements"
+ * Fond identique aux boutons warning/success (s'adapte auto au dark/light mode),
+ * texte bleu, survol fond bleu + texte blanc.
+ */
+[data-ea-btn="continue"] {
+    --button-color: #0d6efd;
+    --button-hover-bg: #0d6efd;
+    --button-hover-color: #fff;
+    --button-hover-border-color: #0a58ca;
+}

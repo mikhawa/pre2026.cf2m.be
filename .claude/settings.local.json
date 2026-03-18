@@ -21,7 +21,8 @@
       "Bash(python3:*)",
       "Bash(mkdir:*)",
       "Bash(cat:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(chmod 777 /home/mikhawa/pre2026_cf2m_be/public/uploads /home/mikhawa/pre2026_cf2m_be/public/uploads/editor)"
     ]
   }
 }

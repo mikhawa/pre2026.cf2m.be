@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Formation;
+use App\Repository\RevisionRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -19,11 +22,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\Response;
 
 class FormationCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
+        private readonly RevisionRepository $revisionRepository,
     ) {
     }
 
@@ -34,9 +40,31 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $repo = $this->revisionRepository;
+
+        $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
+            ->linkToCrudAction('historiqueFormation')
+            ->asWarningAction()
+            ->setLabel(static function (Formation $entity) use ($repo): string {
+                return sprintf('Historique (%d)', $repo->countByEntityId('formation', $entity->getId()));
+            })
+        ;
+
         return $actions
             ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission('historiqueFormation', 'ROLE_ADMIN')
+            ->add(Crud::PAGE_INDEX, $historique)
+            ->add(Crud::PAGE_EDIT, $historique)
+            ->add(Crud::PAGE_DETAIL, $historique)
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
+                ->setLabel('Sauvegarder et continuer les changements')
+                ->asWarningAction()
+            )
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
+                ->asSuccessAction()
+            )
+            ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiqueFormation'])
         ;
     }
 
@@ -110,6 +138,85 @@ class FormationCrudController extends AbstractCrudController
                 'Recrutement' => 'recruiting',
             ]))
         ;
+    }
+
+    /**
+     * Page d'historique des révisions pour une Formation donnée.
+     * Affiche toutes les versions sous forme de timeline git-like avec diffs.
+     */
+    #[AdminRoute(path: '/{entityId}/historique', name: 'historique_formation')]
+    public function historiqueFormation(
+        AdminContext $context,
+        RevisionRepository $revisionRepository,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $formationId = $formation->getId();
+
+        $revisions = $revisionRepository->findByFormationId($formationId);
+
+        // URL de cette page (utilisée comme returnUrl pour revenir après action)
+        $historiqueUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiqueFormation')
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $editUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $liveSnapshot = $this->revisionService->getLiveFormationSnapshot($formation);
+
+        $historique = [];
+        foreach ($revisions as $revision) {
+            $isCurrent = $revision->getData() === $liveSnapshot;
+
+            $entry = [
+                'revision'  => $revision,
+                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+                'isCurrent' => $isCurrent,
+            ];
+
+            $baseUrl = $adminUrlGenerator
+                ->setController(FormationRevisionCrudController::class)
+                ->setEntityId($revision->getId())
+                ->generateUrl();
+
+            if ($revision->getStatus() === \App\Entity\Revision::STATUS_PENDING) {
+                $entry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(FormationRevisionCrudController::class)
+                    ->setAction('approuverRevision')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+                $entry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(FormationRevisionCrudController::class)
+                    ->setAction('rejeterRevision')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            }
+
+            if ($revision->getStatus() === \App\Entity\Revision::STATUS_APPROVED && !$isCurrent) {
+                $entry['appliquerUrl'] = $adminUrlGenerator
+                    ->setController(FormationRevisionCrudController::class)
+                    ->setAction('appliquerVersion')
+                    ->setEntityId($revision->getId())
+                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            }
+
+            $historique[] = $entry;
+        }
+
+        return $this->render('admin/formation/historique.html.twig', [
+            'formation'  => $formation,
+            'historique' => $historique,
+            'editUrl'    => $editUrl,
+        ]);
     }
 
     /**
