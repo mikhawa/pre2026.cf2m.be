@@ -63,7 +63,6 @@ class PageCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
                 ->setLabel('Sauvegarder et continuer les changements')
                 ->asWarningAction()
-                ->setHtmlAttributes(['data-ea-btn' => 'continue'])
             )
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, static fn (Action $a) => $a
                 ->asSuccessAction()
