@@ -34,8 +34,14 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 - [Raccourcis de développement](RACCOURCIS.md)
 
-# to do
+# Passage en préproduction
 
+- 2026-03-19
+
+    php bin/console cache:clear --no-warmup
+    php bin/console symfony/mailjet-mailer
+    php bin/console composer update
+    php bin/console importmap:install
     php bin/console doctrine:migrations:migrate
 
 

@@ -68,10 +68,18 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-065 (2026-03-12)
+075 (2026-03-19)
 
 ## Dernier numéro .claude-tasks
-057 (2026-03-12)
+082 (2026-03-19)
+
+## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
+- `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer
+- `config/packages/mailer.yaml` lit `%env(MAILER_DSN)%` — aucun changement de code nécessaire
+- Dev local : `MAILER_DSN=smtp://mailpit:1025` (défaut dans `.env`)
+- Préprod/prod : `MAILER_DSN=mailjet+api://...` dans `.env.local` sur le serveur (géré manuellement, jamais par Claude)
+- Sur les branches `preprod/*` : vérifier que `symfony/mailjet-mailer` est bien dans `composer.json`, sinon l'ajouter
+- Ne jamais créer ni modifier `.env.local`, ni toucher aux fichiers `.git/`
 
 ## Convention navbar (couleur uniforme)
 Sur les pages intérieures (non-home, non-login), la navbar doit avoir `background: var(--cf2m-dark)` + `backdrop-filter: none` pour rester visuellement identique à son apparence sur la home (qui flotte sur fond sombre). Ne jamais laisser le `backdrop-filter` actif sur fond blanc.
