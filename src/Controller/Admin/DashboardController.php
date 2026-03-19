@@ -66,7 +66,7 @@ class DashboardController extends AbstractDashboardController
         ;
 
         yield MenuItem::section('Interactions');
-        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments');
+        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_FORMATEUR');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
         $pendingCount = $this->revisionRepository->findPendingCount();
         yield MenuItem::linkTo(RevisionCrudController::class, 'Révisions', 'fa fa-history')
@@ -75,7 +75,7 @@ class DashboardController extends AbstractDashboardController
         ;
 
         yield MenuItem::section('Communication');
-        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope');
+        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkTo(PartenaireCrudController::class, 'Partenaires', 'fa fa-handshake')->setPermission('ROLE_ADMIN');
     }
 }
