@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Inscription;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -61,17 +62,34 @@ class InscriptionCrudController extends AbstractCrudController
             ->setFormat('dd/MM/yyyy HH:mm')
         ;
         yield DateTimeField::new('treatAt', 'Traitée le')
-            ->hideOnIndex()
+            ->hideOnForm()
             ->setRequired(false)
+            ->setFormat('dd/MM/yyyy HH:mm')
         ;
         yield AssociationField::new('treatBy', 'Traitée par')
-            ->hideOnIndex()
+            ->hideOnForm()
             ->setRequired(false)
         ;
         yield TextareaField::new('message', 'Message')
             ->hideOnIndex()
             ->setRequired(false)
         ;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Inscription $entityInstance */
+        if ($entityInstance->isTreat()) {
+            if ($entityInstance->getTreatBy() === null) {
+                $entityInstance->setTreatBy($this->getUser());
+                $entityInstance->setTreatAt(new \DateTimeImmutable());
+            }
+        } else {
+            $entityInstance->setTreatBy(null);
+            $entityInstance->setTreatAt(null);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     public function configureFilters(Filters $filters): Filters

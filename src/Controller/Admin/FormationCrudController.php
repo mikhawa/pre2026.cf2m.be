@@ -51,7 +51,7 @@ class FormationCrudController extends AbstractCrudController
         ;
 
         return $actions
-            ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::NEW, 'ROLE_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission('historiqueFormation', 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, $historique)
@@ -107,6 +107,7 @@ class FormationCrudController extends AbstractCrudController
         ;
         yield AssociationField::new('createdBy', 'Créée par')
             ->setRequired(true)
+            ->hideWhenCreating()
         ;
         yield AssociationField::new('responsables', 'Responsables')
             ->hideOnIndex()
@@ -217,6 +218,19 @@ class FormationCrudController extends AbstractCrudController
             'historique' => $historique,
             'editUrl'    => $editUrl,
         ]);
+    }
+
+    /**
+     * Assigne automatiquement le créateur lors de la création d'une Formation.
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Formation $entityInstance */
+        if ($entityInstance->getCreatedBy() === null) {
+            $entityInstance->setCreatedBy($this->getUser());
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
     }
 
     /**
