@@ -38,12 +38,12 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 - 2026-03-19
 
-    php bin/console cache:clear --no-warmup
-    composer require symfony/mailjet-mailer
-    composer update
-    php bin/console importmap:install
-    php bin/console doctrine:migrations:migrate
-    php bin/console doctrine:fixtures:load --no-interaction
+        php bin/console cache:clear --no-warmup
+        composer require symfony/mailjet-mailer
+        composer update
+        php bin/console importmap:install
+        php bin/console doctrine:migrations:migrate
+        php bin/console doctrine:fixtures:load --no-interaction
 
 
 ## Utilisateurs et rôles (fixtures de test)
