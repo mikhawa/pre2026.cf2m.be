@@ -80,6 +80,44 @@ class RevisionService
     }
 
     /**
+     * Applique les données d'un snapshot à une Formation en mémoire (sans persist ni flush).
+     * Utilisé pour pré-remplir le formulaire d'édition EasyAdmin avec les données de la révision PENDING.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function applyRevisionDataToFormation(Formation $entity, array $data): void
+    {
+        $entity->setTitle($data['title'] ?? $entity->getTitle());
+        $entity->setSlug($data['slug'] ?? $entity->getSlug());
+        $entity->setDescription($data['description'] ?? null);
+        $entity->setStatus($data['status'] ?? $entity->getStatus());
+        $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
+        $entity->setColorPrimary($data['colorPrimary'] ?? null);
+        $entity->setColorSecondary($data['colorSecondary'] ?? null);
+    }
+
+    /**
+     * Met à jour les données d'une révision PENDING existante avec le snapshot actuel de l'entité.
+     * Ne modifie pas previousData (l'état d'origine avant la première soumission est conservé).
+     * Ne flush pas : le contrôleur gère le timing.
+     */
+    public function updatePendingRevision(Revision $revision, object $entity): void
+    {
+        if ($entity instanceof Formation) {
+            $revision->setData($this->snapshotFormation($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } elseif ($entity instanceof Page) {
+            $revision->setData($this->snapshotPage($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } elseif ($entity instanceof Works) {
+            $revision->setData($this->snapshotWorks($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } else {
+            throw new \InvalidArgumentException(sprintf('Type d\'entité non supporté : %s', $entity::class));
+        }
+    }
+
+    /**
      * Applique le snapshot d'une révision PENDING à l'entité live correspondante.
      * Met à jour previousData avec l'état live courant si non déjà renseigné, puis flush.
      */

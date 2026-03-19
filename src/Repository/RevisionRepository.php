@@ -72,6 +72,18 @@ class RevisionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne la révision PENDING en cours pour une entité donnée, ou null si aucune.
+     */
+    public function findPendingForEntity(string $entityType, int $entityId): ?Revision
+    {
+        return $this->findOneBy([
+            'entityType' => $entityType,
+            'entityId'   => $entityId,
+            'status'     => Revision::STATUS_PENDING,
+        ]);
+    }
+
+    /**
      * Retourne l'historique complet d'une entité quelconque, trié par date descendante.
      *
      * @return Revision[]

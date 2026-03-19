@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -81,6 +82,22 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $repo = $this->revisionRepository;
+        yield TextField::new('revisionPendante', ' ')
+            ->onlyOnIndex()
+            ->renderAsHtml()
+            ->setSortable(false)
+            ->formatValue(static function (mixed $value, ?Formation $entity) use ($repo): string {
+                if ($entity === null) {
+                    return '';
+                }
+                $pending = $repo->findPendingForEntity('formation', $entity->getId());
+
+                return $pending !== null
+                    ? '<span class="badge text-bg-warning text-nowrap"><i class="fa fa-clock me-1"></i>En attente</span>'
+                    : '';
+            })
+        ;
         yield TextField::new('title', 'Titre');
         yield TextField::new('slug', 'Slug');
         yield ChoiceField::new('status', 'Statut')
@@ -139,6 +156,34 @@ class FormationCrudController extends AbstractCrudController
                 'Recrutement' => 'recruiting',
             ]))
         ;
+    }
+
+    /**
+     * Surcharge l'action edit pour pré-remplir le formulaire avec les données de la révision PENDING
+     * lorsqu'un formateur a déjà soumis une modification en attente de validation.
+     */
+    public function edit(AdminContext $context): KeyValueStore|Response
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            /** @var Formation|null $formation */
+            $formation = $context->getEntity()->getInstance();
+
+            if ($formation instanceof Formation) {
+                $pending = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
+
+                if ($pending !== null && $pending->getCreatedBy()?->getId() === $this->getUser()?->getId()) {
+                    // Injecter les données de la révision dans l'entité en mémoire
+                    // Le formulaire affichera les modifications en attente, pas les données live
+                    $this->revisionService->applyRevisionDataToFormation($formation, $pending->getData());
+
+                    if ($context->getRequest()->isMethod('GET')) {
+                        $this->addFlash('info', 'Vous visualisez vos modifications en attente de validation. Vous pouvez les modifier jusqu\'à ce qu\'elles soient traitées.');
+                    }
+                }
+            }
+        }
+
+        return parent::edit($context);
     }
 
     /**
@@ -245,12 +290,23 @@ class FormationCrudController extends AbstractCrudController
         $isAdmin = $this->isGranted('ROLE_ADMIN');
 
         if (!$isAdmin) {
-            // Formateur : créer une révision PENDING et annuler la modification live
-            $revision = $this->revisionService->createRevision($entityInstance, $user, false);
-            $entityManager->refresh($entityInstance);
-            $entityManager->flush();
-            $this->revisionService->notifyAdmins($revision);
-            $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
+            // Vérifier s'il existe déjà une révision PENDING pour cette formation
+            $existingPending = $this->revisionRepository->findPendingForEntity('formation', $entityInstance->getId());
+
+            if ($existingPending !== null) {
+                // Mettre à jour la révision PENDING existante (sans re-notifier les admins)
+                $this->revisionService->updatePendingRevision($existingPending, $entityInstance);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->addFlash('warning', 'Votre modification en attente a été mise à jour. Elle reste soumise à validation.');
+            } else {
+                // Première soumission : créer une nouvelle révision PENDING et notifier les admins
+                $revision = $this->revisionService->createRevision($entityInstance, $user, false);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->revisionService->notifyAdmins($revision);
+                $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
+            }
 
             return;
         }

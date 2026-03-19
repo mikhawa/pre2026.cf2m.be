@@ -34,6 +34,31 @@
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">🗂️</div>
+                <h5 class="mb-1">Works</h5>
+                <p class="text-muted small mb-3">Gérer les réalisations publiées</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\WorksCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les works</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="fs-1 mb-2">💬</div>
+                <h5 class="mb-1">Commentaires</h5>
+                <p class="text-muted small mb-3">Modérer les commentaires</p>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\CommentCrudController').setAction('index').generateUrl() }}"
+                   class="btn btn-sm btn-primary">Voir les commentaires</a>
+            </div>
+        </div>
+    </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
                 <div class="fs-1 mb-2">👥</div>
                 <h5 class="mb-1">Utilisateurs</h5>
                 <p class="text-muted small mb-3">Gérer les comptes et les rôles</p>
@@ -78,18 +103,7 @@
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-4">
-                <div class="fs-1 mb-2">💬</div>
-                <h5 class="mb-1">Commentaires</h5>
-                <p class="text-muted small mb-3">Modérer les commentaires</p>
-                <a href="{{ ea_url().setController('App\\Controller\\Admin\\CommentCrudController').setAction('index').generateUrl() }}"
-                   class="btn btn-sm btn-primary">Voir les commentaires</a>
-            </div>
-        </div>
-    </div>
+    {% endif %}
 
     {% if is_granted('ROLE_SUPER_ADMIN') %}
     <div class="col-md-4">

@@ -309,4 +309,13 @@ class Formation
 
         return $this;
     }
+
+    /**
+     * Getter virtuel utilisé par EasyAdmin (formatValue) pour afficher le statut de révision en attente.
+     * Retourne toujours null : la valeur réelle est injectée dynamiquement via RevisionRepository.
+     */
+    public function getRevisionPendante(): ?string
+    {
+        return null;
+    }
 }
