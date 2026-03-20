@@ -71,7 +71,44 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 075 (2026-03-19)
 
 ## Dernier numéro .claude-tasks
-082 (2026-03-19)
+084 (2026-03-20)
+
+## Refactorisation en cours : tables d'historique typées (branche feature/permissions-for-roles)
+**État au 2026-03-20 — Phase 1 terminée, Phases 2-5 à faire.**
+
+### Objectif
+Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
+- `formation_history` + `formation_history_responsable`
+- `page_history` + `page_history_user`
+- `works_history` + `works_history_user`
+
+### Phase 1 ✅ TERMINÉE (tâche 084)
+Fichiers créés :
+- `src/Entity/Trait/RevisionWorkflowTrait.php` — trait partagé (statuts 0=pending/1=approved/2=rejected/3=auto, champs workflow)
+- `src/Entity/FormationHistory.php` — snapshot typé + `fromFormation(Formation, User, int): self`
+- `src/Entity/PageHistory.php` — snapshot typé + `fromPage(Page, User, int): self`
+- `src/Entity/WorksHistory.php` — snapshot typé + `fromWorks(Works, User, int): self`
+- `src/Repository/FormationHistoryRepository.php` — `getNextVersion()`, `findHistoryForFormation()`, `findPendingForFormation()`, `countPending()`
+- `src/Repository/PageHistoryRepository.php` — idem pour Page
+- `src/Repository/WorksHistoryRepository.php` — idem pour Works
+- `migrations/Version20260320113106.php` — 6 tables créées, **migration déjà exécutée**
+
+### Phase 2 — À FAIRE
+Créer `src/Command/MigrateRevisionsCommand.php` qui lit `revision.data` JSON et insère dans les nouvelles tables typées (numérotation séquentielle par entité, mapping status 0/1/2 → 0/1/2, ManyToMany depuis l'état live de l'entité).
+
+### Phase 3 — À FAIRE
+Adapter `src/Service/RevisionService.php` et `src/EventListener/ContentRevisionListener.php` pour écrire dans les nouvelles tables (double écriture pendant la transition).
+
+### Phase 4 — À FAIRE
+Basculer les controllers EasyAdmin et templates :
+- `src/Controller/Admin/FormationCrudController.php`
+- `src/Controller/Admin/RevisionCrudController.php` (+ sous-controllers)
+- `templates/admin/formation/historique.html.twig`
+- `templates/admin/page/historique.html.twig`
+- `templates/admin/works/historique.html.twig`
+
+### Phase 5 — À FAIRE
+`DROP TABLE revision` dans une migration dédiée (après 2-4 semaines de validation).
 
 ## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
 - `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer
