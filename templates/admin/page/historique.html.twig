@@ -87,7 +87,9 @@
                     </div>
 
                     {# Pied : boutons d'action (ROLE_ADMIN uniquement) #}
-                    {% if is_granted('ROLE_ADMIN') and (entry.approuverUrl is defined or entry.rejeterUrl is defined) %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set hasActions = (entry.approuverUrl is defined) or (entry.restaurerUrl is defined) %}
+                        {% if hasActions %}
                         <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">
                             {% if isPending and entry.approuverUrl is defined %}
                                 <a href="{{ entry.approuverUrl }}"
@@ -101,7 +103,15 @@
                                     <i class="fa fa-times me-1"></i> Rejeter
                                 </a>
                             {% endif %}
+                            {% if entry.restaurerUrl is defined %}
+                                <a href="{{ entry.restaurerUrl }}"
+                                   class="btn btn-sm btn-warning"
+                                   onclick="return confirm('Restaurer cette version et en faire la version active ?')">
+                                    <i class="fa fa-rotate-left me-1"></i> Restaurer cette version
+                                </a>
+                            {% endif %}
                         </div>
+                        {% endif %}
                     {% endif %}
 
                 </div>

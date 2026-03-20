@@ -1057,6 +1057,111 @@ class RevisionService
     }
 
     /**
+     * Restaure une version de l'historique Formation sur l'entité live.
+     * Applique le snapshot (champs scalaires + responsables) à la Formation,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerFormationHistory(FormationHistory $h, User $reviewer): FormationHistory
+    {
+        $formation = $h->getFormation();
+        if ($formation === null) {
+            throw new \RuntimeException('FormationHistory sans Formation liée.');
+        }
+
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+
+        foreach ($formation->getResponsables()->toArray() as $resp) {
+            $formation->removeResponsable($resp);
+        }
+        foreach ($h->getResponsables() as $resp) {
+            $formation->addResponsable($resp);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->formationHistoryRepo->getNextVersion($formation);
+        $newHistory  = FormationHistory::fromFormation($formation, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(FormationHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
+     * Restaure une version de l'historique Page sur l'entité live.
+     * Applique le snapshot (champs scalaires + users) à la Page,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerPageHistory(PageHistory $h, User $reviewer): PageHistory
+    {
+        $page = $h->getPage();
+        if ($page === null) {
+            throw new \RuntimeException('PageHistory sans Page liée.');
+        }
+
+        $this->applyPage($page->getId(), $this->snapshotFromPageHistory($h));
+
+        foreach ($page->getUsers()->toArray() as $user) {
+            $page->removeUser($user);
+        }
+        foreach ($h->getUsers() as $user) {
+            $page->addUser($user);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->pageHistoryRepo->getNextVersion($page);
+        $newHistory  = PageHistory::fromPage($page, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(PageHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
+     * Restaure une version de l'historique Works sur l'entité live.
+     * Applique le snapshot (champs scalaires + users) au Works,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerWorksHistory(WorksHistory $h, User $reviewer): WorksHistory
+    {
+        $works = $h->getWorks();
+        if ($works === null) {
+            throw new \RuntimeException('WorksHistory sans Works lié.');
+        }
+
+        $this->applyWorks($works->getId(), $this->snapshotFromWorksHistory($h));
+
+        foreach ($works->getUsers()->toArray() as $user) {
+            $works->removeUser($user);
+        }
+        foreach ($h->getUsers() as $user) {
+            $works->addUser($user);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->worksHistoryRepo->getNextVersion($works);
+        $newHistory  = WorksHistory::fromWorks($works, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(WorksHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
      * Envoie un email à l'auteur d'une révision typée (FormationHistory, PageHistory, WorksHistory)
      * pour l'informer de l'approbation ou du rejet de sa demande.
      * Crée un objet Revision transient (non persisté) pour la compatibilité avec les templates email.

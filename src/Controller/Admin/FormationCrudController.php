@@ -260,6 +260,16 @@ class FormationCrudController extends AbstractCrudController
                     . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
+            $restaurable = [FormationHistory::STATUS_APPROVED, FormationHistory::STATUS_AUTO_APPROVED];
+            if (!$isCurrent && in_array($entry->getRevisionStatus(), $restaurable, true)) {
+                $histEntry['restaurerUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('restaurerHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId();
+            }
+
             $historique[] = $histEntry;
         }
 
@@ -334,6 +344,43 @@ class FormationCrudController extends AbstractCrudController
         $returnUrl = $context->getRequest()->query->get('returnUrl');
 
         return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Restaure une version de l'historique Formation sur l'entité live.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/restaurer', name: 'restaurer_historique_formation')]
+    public function restaurerHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId   = (int) $context->getRequest()->query->get('historyId');
+        $history     = $formationHistoryRepo->find($historyId);
+        $formationId = $context->getEntity()->getInstance()?->getId();
+
+        $returnUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiqueFormation')
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $restaurable = [FormationHistory::STATUS_APPROVED, FormationHistory::STATUS_AUTO_APPROVED];
+        if (!$history || !in_array($history->getRevisionStatus(), $restaurable, true)) {
+            $this->addFlash('danger', 'Version introuvable ou non restaurable.');
+
+            return $this->redirect($returnUrl);
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->restaurerFormationHistory($history, $reviewer);
+
+        $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
+
+        return $this->redirect($returnUrl);
     }
 
     /**

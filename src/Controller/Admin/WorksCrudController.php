@@ -193,6 +193,16 @@ class WorksCrudController extends AbstractCrudController
                     . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
+            $restaurable = [WorksHistory::STATUS_APPROVED, WorksHistory::STATUS_AUTO_APPROVED];
+            if (!$isCurrent && in_array($entry->getRevisionStatus(), $restaurable, true)) {
+                $histEntry['restaurerUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('restaurerHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId();
+            }
+
             $historique[] = $histEntry;
         }
 
@@ -265,6 +275,43 @@ class WorksCrudController extends AbstractCrudController
         $returnUrl = $context->getRequest()->query->get('returnUrl');
 
         return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Restaure une version de l'historique Works sur l'entité live.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/restaurer', name: 'restaurer_historique_works')]
+    public function restaurerHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+        $worksId   = $context->getEntity()->getInstance()?->getId();
+
+        $returnUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiqueWorks')
+            ->setEntityId($worksId)
+            ->generateUrl();
+
+        $restaurable = [WorksHistory::STATUS_APPROVED, WorksHistory::STATUS_AUTO_APPROVED];
+        if (!$history || !in_array($history->getRevisionStatus(), $restaurable, true)) {
+            $this->addFlash('danger', 'Version introuvable ou non restaurable.');
+
+            return $this->redirect($returnUrl);
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->restaurerWorksHistory($history, $reviewer);
+
+        $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
+
+        return $this->redirect($returnUrl);
     }
 
     /**

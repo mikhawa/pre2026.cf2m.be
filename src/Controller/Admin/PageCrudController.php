@@ -195,6 +195,16 @@ class PageCrudController extends AbstractCrudController
                     . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
+            $restaurable = [PageHistory::STATUS_APPROVED, PageHistory::STATUS_AUTO_APPROVED];
+            if (!$isCurrent && in_array($entry->getRevisionStatus(), $restaurable, true)) {
+                $histEntry['restaurerUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('restaurerHistoriquePage')
+                    ->setEntityId($pageId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId();
+            }
+
             $historique[] = $histEntry;
         }
 
@@ -267,6 +277,43 @@ class PageCrudController extends AbstractCrudController
         $returnUrl = $context->getRequest()->query->get('returnUrl');
 
         return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Restaure une version de l'historique Page sur l'entité live.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/restaurer', name: 'restaurer_historique_page')]
+    public function restaurerHistoriquePage(
+        AdminContext $context,
+        PageHistoryRepository $pageHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $pageHistoryRepo->find($historyId);
+        $pageId    = $context->getEntity()->getInstance()?->getId();
+
+        $returnUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiquePage')
+            ->setEntityId($pageId)
+            ->generateUrl();
+
+        $restaurable = [PageHistory::STATUS_APPROVED, PageHistory::STATUS_AUTO_APPROVED];
+        if (!$history || !in_array($history->getRevisionStatus(), $restaurable, true)) {
+            $this->addFlash('danger', 'Version introuvable ou non restaurable.');
+
+            return $this->redirect($returnUrl);
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->restaurerPageHistory($history, $reviewer);
+
+        $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
+
+        return $this->redirect($returnUrl);
     }
 
     /**
