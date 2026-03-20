@@ -68,13 +68,13 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-076 (2026-03-20)
+077 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
-086 (2026-03-20)
+087 (2026-03-20)
 
 ## Refactorisation en cours : tables d'historique typées (branche feature/permissions-for-roles)
-**État au 2026-03-20 — Phases 1, 2 et 3 terminées, Phases 4-5 à faire.**
+**État au 2026-03-20 — Phases 1, 2, 3 et 4 terminées, Phase 5 à faire.**
 
 ### Objectif
 Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
@@ -99,16 +99,11 @@ Fichiers créés :
 ### Phase 3 ✅ TERMINÉE (tâche 086)
 `RevisionService` écrit en double (table `revision` + tables typées). Méthodes impactées : `createRevision()`, `updatePendingRevision()`, `applyRevision()`. `ContentRevisionListener` couvert automatiquement.
 
-### Phase 4 — À FAIRE
-Basculer les controllers EasyAdmin et templates :
-- `src/Controller/Admin/FormationCrudController.php`
-- `src/Controller/Admin/RevisionCrudController.php` (+ sous-controllers)
-- `templates/admin/formation/historique.html.twig`
-- `templates/admin/page/historique.html.twig`
-- `templates/admin/works/historique.html.twig`
+### Phase 4 ✅ TERMINÉE (tâche 087)
+Controllers Formation/Page/Works basculés vers tables typées. RevisionService +9 méthodes. Templates mis à jour (`rev.revisionStatus`, `v{{ rev.version }}`). Bridge notification garde l'ancienne Revision pour les emails.
 
 ### Phase 5 — À FAIRE
-`DROP TABLE revision` dans une migration dédiée, il faut modifier les fixtures et les tests avant de faire ça.
+`DROP TABLE revision` dans une migration dédiée, il faut modifier les fixtures et les tests avant de faire ça. Puis relancer les tests et vérifier que tout est vert, puis adapter les fixtures en gardant les informations écrites à la main dans src/DataFixtures/AppFixtures.php
 
 ## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
 - `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer

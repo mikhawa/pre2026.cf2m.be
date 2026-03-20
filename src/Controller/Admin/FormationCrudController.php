@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Formation;
+use App\Entity\FormationHistory;
+use App\Repository\FormationHistoryRepository;
 use App\Repository\RevisionRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +33,7 @@ class FormationCrudController extends AbstractCrudController
     public function __construct(
         private readonly RevisionService $revisionService,
         private readonly RevisionRepository $revisionRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
     ) {
     }
 
@@ -41,13 +44,13 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $repo = $this->revisionRepository;
+        $formationHistoryRepo = $this->formationHistoryRepo;
 
         $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueFormation')
             ->asWarningAction()
-            ->setLabel(static function (Formation $entity) use ($repo): string {
-                return sprintf('Historique (%d)', $repo->countByEntityId('formation', $entity->getId()));
+            ->setLabel(static function (Formation $entity) use ($formationHistoryRepo): string {
+                return sprintf('Historique (%d)', count($formationHistoryRepo->findHistoryForFormation($entity)));
             })
         ;
 
@@ -82,16 +85,16 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $repo = $this->revisionRepository;
+        $formationHistoryRepo = $this->formationHistoryRepo;
         yield TextField::new('revisionPendante', ' ')
             ->onlyOnIndex()
             ->renderAsHtml()
             ->setSortable(false)
-            ->formatValue(static function (mixed $value, ?Formation $entity) use ($repo): string {
+            ->formatValue(static function (mixed $value, ?Formation $entity) use ($formationHistoryRepo): string {
                 if ($entity === null) {
                     return '';
                 }
-                $pending = $repo->findPendingForEntity('formation', $entity->getId());
+                $pending = $formationHistoryRepo->findPendingForFormation($entity);
 
                 return $pending !== null
                     ? '<span class="badge text-bg-warning text-nowrap"><i class="fa fa-clock me-1"></i>En attente</span>'
@@ -169,12 +172,15 @@ class FormationCrudController extends AbstractCrudController
             $formation = $context->getEntity()->getInstance();
 
             if ($formation instanceof Formation) {
-                $pending = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
+                $pending = $this->formationHistoryRepo->findPendingForFormation($formation);
 
                 if ($pending !== null && $pending->getCreatedBy()?->getId() === $this->getUser()?->getId()) {
                     // Injecter les données de la révision dans l'entité en mémoire
                     // Le formulaire affichera les modifications en attente, pas les données live
-                    $this->revisionService->applyRevisionDataToFormation($formation, $pending->getData());
+                    $this->revisionService->applyRevisionDataToFormation(
+                        $formation,
+                        $this->revisionService->snapshotFromFormationHistory($pending)
+                    );
 
                     if ($context->getRequest()->isMethod('GET')) {
                         $this->addFlash('info', 'Vous visualisez vos modifications en attente de validation. Vous pouvez les modifier jusqu\'à ce qu\'elles soient traitées.');
@@ -193,18 +199,17 @@ class FormationCrudController extends AbstractCrudController
     #[AdminRoute(path: '/{entityId}/historique', name: 'historique_formation')]
     public function historiqueFormation(
         AdminContext $context,
-        RevisionRepository $revisionRepository,
+        FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         /** @var Formation $formation */
-        $formation = $context->getEntity()->getInstance();
+        $formation  = $context->getEntity()->getInstance();
         $formationId = $formation->getId();
 
-        $revisions = $revisionRepository->findByFormationId($formationId);
+        $entries = $formationHistoryRepo->findHistoryForFormation($formation);
 
-        // URL de cette page (utilisée comme returnUrl pour revenir après action)
         $historiqueUrl = $adminUrlGenerator
             ->setController(self::class)
             ->setAction('historiqueFormation')
@@ -219,43 +224,45 @@ class FormationCrudController extends AbstractCrudController
 
         $liveSnapshot = $this->revisionService->getLiveFormationSnapshot($formation);
 
-        $historique = [];
-        foreach ($revisions as $revision) {
-            $isCurrent = $revision->getData() === $liveSnapshot;
+        // Pré-calcul des snapshots pour chaque entrée
+        $snapshots = [];
+        foreach ($entries as $i => $entry) {
+            $snapshots[$i] = $this->revisionService->snapshotFromFormationHistory($entry);
+        }
 
-            $entry = [
-                'revision'  => $revision,
-                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+        $historique = [];
+        foreach ($entries as $i => $entry) {
+            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+
+            $diff = $this->revisionService->buildTypedHistoryDiffHtml(
+                $snapshots[$i],
+                $snapshots[$i + 1] ?? null
+            );
+
+            $histEntry = [
+                'revision'  => $entry,
+                'diff'      => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            $baseUrl = $adminUrlGenerator
-                ->setController(FormationRevisionCrudController::class)
-                ->setEntityId($revision->getId())
-                ->generateUrl();
-
-            if ($revision->getStatus() === \App\Entity\Revision::STATUS_PENDING) {
-                $entry['approuverUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('approuverRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-                $entry['rejeterUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('rejeterRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            if ($entry->getRevisionStatus() === FormationHistory::STATUS_PENDING) {
+                $histEntry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('approuverHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
+                $histEntry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('rejeterHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
-            if ($revision->getStatus() === \App\Entity\Revision::STATUS_APPROVED && !$isCurrent) {
-                $entry['appliquerUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('appliquerVersion')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-            }
-
-            $historique[] = $entry;
+            $historique[] = $histEntry;
         }
 
         return $this->render('admin/formation/historique.html.twig', [
@@ -263,6 +270,99 @@ class FormationCrudController extends AbstractCrudController
             'historique' => $historique,
             'editUrl'    => $editUrl,
         ]);
+    }
+
+    /**
+     * Approuve et applique une version de l'historique typé Formation.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/approuver', name: 'approuver_historique_formation')]
+    public function approuverHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $formationHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== FormationHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->approuverFormationHistory($history, $reviewer);
+
+        // Bridge de notification : synchronisation de l'ancienne table revision
+        $formation = $history->getFormation();
+        if ($formation !== null) {
+            $oldRevision = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
+            if ($oldRevision !== null) {
+                $oldRevision->setStatus(\App\Entity\Revision::STATUS_APPROVED);
+                $oldRevision->setReviewedBy($reviewer);
+                $oldRevision->setReviewedAt(new \DateTimeImmutable());
+                // Pas de flush supplémentaire : le flush est déjà fait dans approuverFormationHistory()
+                // Mais l'EM est encore ouvert, donc les changements seront persistés au prochain flush.
+                // On force un flush pour s'assurer que les changements sont bien persistés.
+                $this->container->get(EntityManagerInterface::class)->flush();
+                $this->revisionService->notifyAuthor($oldRevision, true);
+            }
+        }
+
+        $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Rejette une version de l'historique typé Formation.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/rejeter', name: 'rejeter_historique_formation')]
+    public function rejeterHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $formationHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== FormationHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->rejeterFormationHistory($history, $reviewer);
+
+        // Bridge de notification : synchronisation de l'ancienne table revision
+        $formation = $history->getFormation();
+        if ($formation !== null) {
+            $oldRevision = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
+            if ($oldRevision !== null) {
+                $oldRevision->setStatus(\App\Entity\Revision::STATUS_REJECTED);
+                $oldRevision->setReviewedBy($reviewer);
+                $oldRevision->setReviewedAt(new \DateTimeImmutable());
+                $this->container->get(EntityManagerInterface::class)->flush();
+                $this->revisionService->notifyAuthor($oldRevision, false);
+            }
+        }
+
+        $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
     }
 
     /**

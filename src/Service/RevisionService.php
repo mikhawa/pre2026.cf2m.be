@@ -730,6 +730,246 @@ class RevisionService
     }
 
     // -------------------------------------------------------------------------
+    // Convertisseurs snapshot pour les tables typées (Phase 4)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Convertit un FormationHistory en tableau snapshot (même format que getLiveFormationSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromFormationHistory(FormationHistory $h): array
+    {
+        return [
+            'title'          => $h->getTitle(),
+            'slug'           => $h->getSlug(),
+            'description'    => $h->getDescription(),
+            'status'         => $h->getStatus(),
+            'publishedAt'    => $h->getPublishedAt()?->format('c'),
+            'colorPrimary'   => $h->getColorPrimary(),
+            'colorSecondary' => $h->getColorSecondary(),
+        ];
+    }
+
+    /**
+     * Convertit un PageHistory en tableau snapshot (même format que getLivePageSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromPageHistory(PageHistory $h): array
+    {
+        return [
+            'title'       => $h->getTitle(),
+            'slug'        => $h->getSlug(),
+            'content'     => $h->getContent(),
+            'status'      => $h->getStatus(),
+            'publishedAt' => $h->getPublishedAt()?->format('c'),
+        ];
+    }
+
+    /**
+     * Convertit un WorksHistory en tableau snapshot (même format que getLiveWorksSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromWorksHistory(WorksHistory $h): array
+    {
+        return [
+            'title'       => $h->getTitle(),
+            'slug'        => $h->getSlug(),
+            'description' => $h->getDescription(),
+            'status'      => $h->getStatus(),
+            'publishedAt' => $h->getPublishedAt()?->format('c'),
+            'formationId' => $h->getFormation()?->getId(),
+        ];
+    }
+
+    /**
+     * Construit un affichage git-like des changements entre deux snapshots typés.
+     * Si $before === null, retourne un badge "Création initiale".
+     * Compare champ par champ, génère le HTML avec collapse pour les champs riches.
+     *
+     * @param array<string, mixed>      $after
+     * @param array<string, mixed>|null $before
+     */
+    public function buildTypedHistoryDiffHtml(array $after, ?array $before): string
+    {
+        if ($before === null) {
+            return '<span class="badge bg-secondary">Création initiale</span>';
+        }
+
+        $labels = [
+            'title'          => 'Titre',
+            'slug'           => 'Slug',
+            'description'    => 'Description',
+            'content'        => 'Contenu',
+            'status'         => 'Statut',
+            'publishedAt'    => 'Date de publication',
+            'colorPrimary'   => 'Couleur primaire',
+            'colorSecondary' => 'Couleur secondaire',
+            'formationId'    => 'Formation (ID)',
+        ];
+
+        $richFields = ['description', 'content'];
+        $changes = [];
+
+        foreach ($after as $key => $newVal) {
+            $oldVal = $before[$key] ?? null;
+            if ($oldVal === $newVal) {
+                continue;
+            }
+
+            $label  = $labels[$key] ?? $key;
+            $isRich = in_array($key, $richFields, true);
+            $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
+        }
+
+        if ($changes === []) {
+            return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
+        }
+
+        $uid  = 'diff-typed-' . substr(md5(serialize($after)), 0, 8);
+        $html = '<ul class="list-unstyled mb-0 small font-monospace">';
+
+        foreach ($changes as $i => $c) {
+            if ($c['rich']) {
+                $collapseId = $uid . '-' . $c['key'];
+                $oldFmt     = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
+                $newFmt     = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
+                $html .= sprintf(
+                    '<li class="py-1 border-bottom border-light">'
+                    . '<span class="text-secondary fw-semibold">%s</span> '
+                    . '<button class="btn btn-link btn-sm p-0 text-decoration-none" '
+                    . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                    . 'aria-expanded="false">modifié ▾</button>'
+                    . '<div class="collapse mt-1" id="%s">'
+                    . '<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    . '<pre class="p-2 bg-success-subtle text-success rounded small"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    . '</div></li>',
+                    htmlspecialchars($c['label']),
+                    $collapseId, $collapseId,
+                    htmlspecialchars($oldFmt['text']), $oldFmt['truncated'] ? "\n…" : '',
+                    htmlspecialchars($newFmt['text']), $newFmt['truncated'] ? "\n…" : '',
+                );
+            } else {
+                $old = htmlspecialchars($this->truncateForDisplay((string) ($c['old'] ?? '—')));
+                $new = htmlspecialchars($this->truncateForDisplay((string) ($c['new'] ?? '—')));
+                $html .= sprintf(
+                    '<li class="py-1%s">'
+                    . '<span class="text-secondary fw-semibold">%s :</span> '
+                    . '<del class="text-danger me-1">%s</del>'
+                    . '<span class="text-muted me-1">→</span>'
+                    . '<ins class="text-success fw-semibold">%s</ins>'
+                    . '</li>',
+                    $i < count($changes) - 1 ? ' border-bottom border-light' : '',
+                    htmlspecialchars($c['label']),
+                    $old,
+                    $new,
+                );
+            }
+        }
+
+        $html .= '</ul>';
+
+        return $html;
+    }
+
+    /**
+     * Approuve un FormationHistory : applique le snapshot à la Formation live et flush.
+     */
+    public function approuverFormationHistory(FormationHistory $h, User $reviewer): void
+    {
+        $formation = $h->getFormation();
+        if ($formation === null) {
+            throw new \RuntimeException('FormationHistory sans Formation liée.');
+        }
+
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+
+        $h->setRevisionStatus(FormationHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un FormationHistory : marque comme rejeté et flush.
+     */
+    public function rejeterFormationHistory(FormationHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(FormationHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Approuve un PageHistory : applique le snapshot à la Page live et flush.
+     */
+    public function approuverPageHistory(PageHistory $h, User $reviewer): void
+    {
+        $page = $h->getPage();
+        if ($page === null) {
+            throw new \RuntimeException('PageHistory sans Page liée.');
+        }
+
+        $this->applyPage($page->getId(), $this->snapshotFromPageHistory($h));
+
+        $h->setRevisionStatus(PageHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un PageHistory : marque comme rejeté et flush.
+     */
+    public function rejeterPageHistory(PageHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(PageHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Approuve un WorksHistory : applique le snapshot au Works live et flush.
+     */
+    public function approuverWorksHistory(WorksHistory $h, User $reviewer): void
+    {
+        $works = $h->getWorks();
+        if ($works === null) {
+            throw new \RuntimeException('WorksHistory sans Works lié.');
+        }
+
+        $this->applyWorks($works->getId(), $this->snapshotFromWorksHistory($h));
+
+        $h->setRevisionStatus(WorksHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un WorksHistory : marque comme rejeté et flush.
+     */
+    public function rejeterWorksHistory(WorksHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(WorksHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    // -------------------------------------------------------------------------
     // Double écriture — tables d'historique typées (Phase 3 de transition)
     // -------------------------------------------------------------------------
 

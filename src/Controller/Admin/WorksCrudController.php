@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Revision;
 use App\Entity\Works;
+use App\Entity\WorksHistory;
 use App\Repository\RevisionRepository;
+use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -30,6 +31,7 @@ class WorksCrudController extends AbstractCrudController
     public function __construct(
         private readonly RevisionService $revisionService,
         private readonly RevisionRepository $revisionRepository,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
     ) {
     }
 
@@ -40,13 +42,13 @@ class WorksCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $repo = $this->revisionRepository;
+        $worksHistoryRepo = $this->worksHistoryRepo;
 
         $historique = Action::new('historiqueWorks', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueWorks')
             ->asWarningAction()
-            ->setLabel(static function (Works $entity) use ($repo): string {
-                return sprintf('Historique (%d)', $repo->countByEntityId('works', $entity->getId()));
+            ->setLabel(static function (Works $entity) use ($worksHistoryRepo): string {
+                return sprintf('Historique (%d)', count($worksHistoryRepo->findHistoryForWorks($entity)));
             })
         ;
 
@@ -130,16 +132,16 @@ class WorksCrudController extends AbstractCrudController
     #[AdminRoute(path: '/{entityId}/historique', name: 'historique_works')]
     public function historiqueWorks(
         AdminContext $context,
-        RevisionRepository $revisionRepository,
+        WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         /** @var Works $works */
-        $works = $context->getEntity()->getInstance();
+        $works   = $context->getEntity()->getInstance();
         $worksId = $works->getId();
 
-        $revisions = $revisionRepository->findByEntityId('works', $worksId);
+        $entries = $worksHistoryRepo->findHistoryForWorks($works);
 
         $historiqueUrl = $adminUrlGenerator
             ->setController(self::class)
@@ -155,38 +157,45 @@ class WorksCrudController extends AbstractCrudController
 
         $liveSnapshot = $this->revisionService->getLiveWorksSnapshot($works);
 
-        $historique = [];
-        foreach ($revisions as $revision) {
-            $isCurrent = $revision->getData() === $liveSnapshot;
+        // Pré-calcul des snapshots pour chaque entrée
+        $snapshots = [];
+        foreach ($entries as $i => $entry) {
+            $snapshots[$i] = $this->revisionService->snapshotFromWorksHistory($entry);
+        }
 
-            $entry = [
-                'revision'  => $revision,
-                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+        $historique = [];
+        foreach ($entries as $i => $entry) {
+            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+
+            $diff = $this->revisionService->buildTypedHistoryDiffHtml(
+                $snapshots[$i],
+                $snapshots[$i + 1] ?? null
+            );
+
+            $histEntry = [
+                'revision'  => $entry,
+                'diff'      => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            if ($revision->getStatus() === Revision::STATUS_PENDING) {
-                $entry['approuverUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('approuverRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-                $entry['rejeterUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('rejeterRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            if ($entry->getRevisionStatus() === WorksHistory::STATUS_PENDING) {
+                $histEntry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('approuverHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
+                $histEntry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('rejeterHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
-            if ($revision->getStatus() === Revision::STATUS_APPROVED && !$isCurrent) {
-                $entry['appliquerUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('appliquerVersion')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-            }
-
-            $historique[] = $entry;
+            $historique[] = $histEntry;
         }
 
         return $this->render('admin/works/historique.html.twig', [
@@ -194,6 +203,96 @@ class WorksCrudController extends AbstractCrudController
             'historique' => $historique,
             'editUrl'    => $editUrl,
         ]);
+    }
+
+    /**
+     * Approuve et applique une version de l'historique typé Works.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/approuver', name: 'approuver_historique_works')]
+    public function approuverHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+        RevisionRepository $revisionRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->approuverWorksHistory($history, $reviewer);
+
+        // Bridge de notification : synchronisation de l'ancienne table revision
+        $works = $history->getWorks();
+        if ($works !== null) {
+            $oldRevision = $revisionRepository->findPendingForEntity('works', $works->getId());
+            if ($oldRevision !== null) {
+                $oldRevision->setStatus(\App\Entity\Revision::STATUS_APPROVED);
+                $oldRevision->setReviewedBy($reviewer);
+                $oldRevision->setReviewedAt(new \DateTimeImmutable());
+                $this->container->get(EntityManagerInterface::class)->flush();
+                $this->revisionService->notifyAuthor($oldRevision, true);
+            }
+        }
+
+        $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Rejette une version de l'historique typé Works.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/rejeter', name: 'rejeter_historique_works')]
+    public function rejeterHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+        RevisionRepository $revisionRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->rejeterWorksHistory($history, $reviewer);
+
+        // Bridge de notification : synchronisation de l'ancienne table revision
+        $works = $history->getWorks();
+        if ($works !== null) {
+            $oldRevision = $revisionRepository->findPendingForEntity('works', $works->getId());
+            if ($oldRevision !== null) {
+                $oldRevision->setStatus(\App\Entity\Revision::STATUS_REJECTED);
+                $oldRevision->setReviewedBy($reviewer);
+                $oldRevision->setReviewedAt(new \DateTimeImmutable());
+                $this->container->get(EntityManagerInterface::class)->flush();
+                $this->revisionService->notifyAuthor($oldRevision, false);
+            }
+        }
+
+        $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
     }
 
     /**
