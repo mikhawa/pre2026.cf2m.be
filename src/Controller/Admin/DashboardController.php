@@ -57,9 +57,19 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('← Site public', 'fa fa-arrow-left', 'app_home');
 
         yield MenuItem::section('Contenu');
-        yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap');
-        yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open');
-        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')->setPermission('ROLE_ADMIN');
+        $pendingFormations = $this->formationHistoryRepo->countPending();
+        yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap')
+            ->setBadge($pendingFormations > 0 ? $pendingFormations : null, 'danger')
+        ;
+        $pendingWorks = $this->worksHistoryRepo->countPending();
+        yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open')
+            ->setBadge($pendingWorks > 0 ? $pendingWorks : null, 'danger')
+        ;
+        $pendingPages = $this->pageHistoryRepo->countPending();
+        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')
+            ->setPermission('ROLE_ADMIN')
+            ->setBadge($pendingPages > 0 ? $pendingPages : null, 'danger')
+        ;
 
         yield MenuItem::section('Utilisateurs')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users')->setPermission('ROLE_ADMIN');
@@ -72,13 +82,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Interactions');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_FORMATEUR');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
-        $pendingCount = $this->formationHistoryRepo->countPending()
-            + $this->pageHistoryRepo->countPending()
-            + $this->worksHistoryRepo->countPending();
-        yield MenuItem::linkTo(FormationCrudController::class, 'Révisions en attente', 'fa fa-history')
-            ->setPermission('ROLE_ADMIN')
-            ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger')
-        ;
 
         yield MenuItem::section('Communication');
         yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('ROLE_ADMIN');

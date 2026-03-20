@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-080 (2026-03-20)
+081 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
-090 (2026-03-20)
+091 (2026-03-20)
 
 ## Refactorisation tables d'historique typées — TERMINÉE ✅
 **État au 2026-03-20 — 5 phases terminées.**
