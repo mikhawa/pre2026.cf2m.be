@@ -68,13 +68,13 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-077 (2026-03-20)
+078 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
-087 (2026-03-20)
+088 (2026-03-20)
 
-## Refactorisation en cours : tables d'historique typées (branche feature/permissions-for-roles)
-**État au 2026-03-20 — Phases 1, 2, 3 et 4 terminées, Phase 5 à faire.**
+## Refactorisation tables d'historique typées — TERMINÉE ✅
+**État au 2026-03-20 — 5 phases terminées.**
 
 ### Objectif
 Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
@@ -102,8 +102,8 @@ Fichiers créés :
 ### Phase 4 ✅ TERMINÉE (tâche 087)
 Controllers Formation/Page/Works basculés vers tables typées. RevisionService +9 méthodes. Templates mis à jour (`rev.revisionStatus`, `v{{ rev.version }}`). Bridge notification garde l'ancienne Revision pour les emails.
 
-### Phase 5 — À FAIRE
-`DROP TABLE revision` dans une migration dédiée, il faut modifier les fixtures et les tests avant de faire ça. Puis relancer les tests et vérifier que tout est vert, puis adapter les fixtures en gardant les informations écrites à la main dans src/DataFixtures/AppFixtures.php
+### Phase 5 ✅ TERMINÉE (tâche 088)
+`DROP TABLE revision` — Migration `Version20260320195434`. `Revision.php` → DTO transient pur. `RevisionRepository`, `RevisionCrudController` et 3 sous-controllers supprimés. `RevisionService.notifyAuthorFromHistory()` gère les emails. 89/89 tests verts.
 
 ## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
 - `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer

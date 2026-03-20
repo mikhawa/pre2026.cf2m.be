@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Entity\Formation;
 use App\Entity\FormationHistory;
 use App\Repository\FormationHistoryRepository;
-use App\Repository\RevisionRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -32,7 +31,6 @@ class FormationCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
-        private readonly RevisionRepository $revisionRepository,
         private readonly FormationHistoryRepository $formationHistoryRepo,
     ) {
     }
@@ -296,22 +294,7 @@ class FormationCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->approuverFormationHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $formation = $history->getFormation();
-        if ($formation !== null) {
-            $oldRevision = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_APPROVED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                // Pas de flush supplémentaire : le flush est déjà fait dans approuverFormationHistory()
-                // Mais l'EM est encore ouvert, donc les changements seront persistés au prochain flush.
-                // On force un flush pour s'assurer que les changements sont bien persistés.
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, true);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, true);
 
         $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
 
@@ -344,19 +327,7 @@ class FormationCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->rejeterFormationHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $formation = $history->getFormation();
-        if ($formation !== null) {
-            $oldRevision = $this->revisionRepository->findPendingForEntity('formation', $formation->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_REJECTED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, false);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, false);
 
         $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
 
@@ -391,11 +362,11 @@ class FormationCrudController extends AbstractCrudController
 
         if (!$isAdmin) {
             // Vérifier s'il existe déjà une révision PENDING pour cette formation
-            $existingPending = $this->revisionRepository->findPendingForEntity('formation', $entityInstance->getId());
+            $existingPending = $this->formationHistoryRepo->findPendingForFormation($entityInstance);
 
             if ($existingPending !== null) {
                 // Mettre à jour la révision PENDING existante (sans re-notifier les admins)
-                $this->revisionService->updatePendingRevision($existingPending, $entityInstance);
+                $this->revisionService->updatePendingTypedHistory($entityInstance);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
                 $this->addFlash('warning', 'Votre modification en attente a été mise à jour. Elle reste soumise à validation.');

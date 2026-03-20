@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\FormationHistoryRepository;
 use App\Repository\InscriptionRepository;
-use App\Repository\RevisionRepository;
+use App\Repository\PageHistoryRepository;
+use App\Repository\WorksHistoryRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -19,7 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
-        private readonly RevisionRepository $revisionRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
+        private readonly PageHistoryRepository $pageHistoryRepo,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
         private readonly InscriptionRepository $inscriptionRepository,
     ) {
     }
@@ -68,8 +72,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Interactions');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_FORMATEUR');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
-        $pendingCount = $this->revisionRepository->findPendingCount();
-        yield MenuItem::linkTo(RevisionCrudController::class, 'Révisions', 'fa fa-history')
+        $pendingCount = $this->formationHistoryRepo->countPending()
+            + $this->pageHistoryRepo->countPending()
+            + $this->worksHistoryRepo->countPending();
+        yield MenuItem::linkTo(FormationCrudController::class, 'Révisions en attente', 'fa fa-history')
             ->setPermission('ROLE_ADMIN')
             ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger')
         ;

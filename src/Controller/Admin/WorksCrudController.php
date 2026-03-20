@@ -6,7 +6,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Works;
 use App\Entity\WorksHistory;
-use App\Repository\RevisionRepository;
 use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +29,6 @@ class WorksCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
-        private readonly RevisionRepository $revisionRepository,
         private readonly WorksHistoryRepository $worksHistoryRepo,
     ) {
     }
@@ -212,7 +210,6 @@ class WorksCrudController extends AbstractCrudController
     public function approuverHistoriqueWorks(
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
-        RevisionRepository $revisionRepository,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -229,19 +226,7 @@ class WorksCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->approuverWorksHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $works = $history->getWorks();
-        if ($works !== null) {
-            $oldRevision = $revisionRepository->findPendingForEntity('works', $works->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_APPROVED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, true);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, true);
 
         $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
 
@@ -257,7 +242,6 @@ class WorksCrudController extends AbstractCrudController
     public function rejeterHistoriqueWorks(
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
-        RevisionRepository $revisionRepository,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -274,19 +258,7 @@ class WorksCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->rejeterWorksHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $works = $history->getWorks();
-        if ($works !== null) {
-            $oldRevision = $revisionRepository->findPendingForEntity('works', $works->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_REJECTED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, false);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, false);
 
         $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
 

@@ -83,9 +83,10 @@ class RevisionService
             $revision->setStatus(Revision::STATUS_PENDING);
         }
 
-        $this->em->persist($revision);
+        // Phase 5 : Revision n'est plus persistée, elle sert de DTO transient pour les emails
+        $revision->setCreatedAt(new \DateTimeImmutable());
 
-        // Double écriture : table historique typée (transition Phase 3)
+        // Écriture dans la table historique typée
         $this->saveToTypedHistory($entity, $author, $autoApprove);
 
         return $revision;
@@ -969,8 +970,38 @@ class RevisionService
         $this->em->flush();
     }
 
+    /**
+     * Envoie un email à l'auteur d'une révision typée (FormationHistory, PageHistory, WorksHistory)
+     * pour l'informer de l'approbation ou du rejet de sa demande.
+     * Crée un objet Revision transient (non persisté) pour la compatibilité avec les templates email.
+     */
+    public function notifyAuthorFromHistory(FormationHistory|PageHistory|WorksHistory $history, bool $approved): void
+    {
+        $createdBy = $history->getCreatedBy();
+        if ($createdBy === null) {
+            return;
+        }
+
+        $transient = new Revision();
+        $transient->setCreatedBy($createdBy);
+        $transient->setCreatedAt($history->getCreatedAt() ?? new \DateTimeImmutable());
+        $transient->setEntityTitle($history->getTitle() ?? '');
+        $transient->setReviewedBy($history->getReviewedBy());
+        $transient->setReviewedAt($history->getReviewedAt());
+
+        if ($history instanceof FormationHistory) {
+            $transient->setEntityType('formation');
+        } elseif ($history instanceof PageHistory) {
+            $transient->setEntityType('page');
+        } else {
+            $transient->setEntityType('works');
+        }
+
+        $this->notifyAuthor($transient, $approved);
+    }
+
     // -------------------------------------------------------------------------
-    // Double écriture — tables d'historique typées (Phase 3 de transition)
+    // Tables d'historique typées
     // -------------------------------------------------------------------------
 
     /**
@@ -1026,7 +1057,7 @@ class RevisionService
      * Met à jour les champs de l'entrée PENDING dans la table typée
      * pour refléter le nouvel état proposé par le formateur.
      */
-    private function updatePendingTypedHistory(object $entity): void
+    public function updatePendingTypedHistory(object $entity): void
     {
         if ($entity instanceof Formation) {
             $pending = $this->formationHistoryRepo->findPendingForFormation($entity);

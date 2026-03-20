@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Entity\Page;
 use App\Entity\PageHistory;
 use App\Repository\PageHistoryRepository;
-use App\Repository\RevisionRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -30,7 +29,6 @@ class PageCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
-        private readonly RevisionRepository $revisionRepository,
         private readonly PageHistoryRepository $pageHistoryRepo,
     ) {
     }
@@ -214,7 +212,6 @@ class PageCrudController extends AbstractCrudController
     public function approuverHistoriquePage(
         AdminContext $context,
         PageHistoryRepository $pageHistoryRepo,
-        RevisionRepository $revisionRepository,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -231,19 +228,7 @@ class PageCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->approuverPageHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $page = $history->getPage();
-        if ($page !== null) {
-            $oldRevision = $revisionRepository->findPendingForEntity('page', $page->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_APPROVED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, true);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, true);
 
         $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
 
@@ -259,7 +244,6 @@ class PageCrudController extends AbstractCrudController
     public function rejeterHistoriquePage(
         AdminContext $context,
         PageHistoryRepository $pageHistoryRepo,
-        RevisionRepository $revisionRepository,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -276,19 +260,7 @@ class PageCrudController extends AbstractCrudController
         /** @var \App\Entity\User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->rejeterPageHistory($history, $reviewer);
-
-        // Bridge de notification : synchronisation de l'ancienne table revision
-        $page = $history->getPage();
-        if ($page !== null) {
-            $oldRevision = $revisionRepository->findPendingForEntity('page', $page->getId());
-            if ($oldRevision !== null) {
-                $oldRevision->setStatus(\App\Entity\Revision::STATUS_REJECTED);
-                $oldRevision->setReviewedBy($reviewer);
-                $oldRevision->setReviewedAt(new \DateTimeImmutable());
-                $this->container->get(EntityManagerInterface::class)->flush();
-                $this->revisionService->notifyAuthor($oldRevision, false);
-            }
-        }
+        $this->revisionService->notifyAuthorFromHistory($history, false);
 
         $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
 
