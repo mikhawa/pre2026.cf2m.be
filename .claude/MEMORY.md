@@ -68,7 +68,7 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-085 (2026-03-20)
+086 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
 095 (2026-03-20)
