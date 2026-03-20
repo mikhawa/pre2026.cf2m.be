@@ -13,7 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
@@ -25,12 +27,30 @@ class DashboardController extends AbstractDashboardController
         private readonly PageHistoryRepository $pageHistoryRepo,
         private readonly WorksHistoryRepository $worksHistoryRepo,
         private readonly InscriptionRepository $inscriptionRepository,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig');
+    }
+
+    /**
+     * Route de redirection pour que path('admin_revisions_en_attente') fonctionne
+     * dans les templates Twig (ex. profil/index.html.twig).
+     * Redirige vers la page EasyAdmin dédiée (RevisionsPendantesController).
+     */
+    #[Route('/admin/revisions-en-attente', name: 'admin_revisions_en_attente')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function revisionsPendantesRedirect(): Response
+    {
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(RevisionsPendantesController::class)
+                ->setAction('revisionsPendantes')
+                ->generateUrl()
+        );
     }
 
     public function configureAssets(): Assets
@@ -53,19 +73,26 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        $pendingFormations = $this->formationHistoryRepo->countPending();
+        $pendingWorks      = $this->worksHistoryRepo->countPending();
+        $pendingPages      = $this->pageHistoryRepo->countPending();
+        $totalPending      = $pendingFormations + $pendingWorks + $pendingPages;
+
+        $revisionsPendantesUrl = $this->adminUrlGenerator
+            ->setController(RevisionsPendantesController::class)
+            ->setAction('revisionsPendantes')
+            ->generateUrl();
+
         yield MenuItem::linkToDashboard('Tableau de bord', 'fa fa-home');
         yield MenuItem::linkToRoute('← Site public', 'fa fa-arrow-left', 'app_home');
 
         yield MenuItem::section('Contenu');
-        $pendingFormations = $this->formationHistoryRepo->countPending();
         yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap')
             ->setBadge($pendingFormations > 0 ? $pendingFormations : null, 'danger')
         ;
-        $pendingWorks = $this->worksHistoryRepo->countPending();
         yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open')
             ->setBadge($pendingWorks > 0 ? $pendingWorks : null, 'danger')
         ;
-        $pendingPages = $this->pageHistoryRepo->countPending();
         yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')
             ->setPermission('ROLE_ADMIN')
             ->setBadge($pendingPages > 0 ? $pendingPages : null, 'danger')
@@ -82,6 +109,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Interactions');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_FORMATEUR');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToUrl('Révisions en attente', 'fa fa-clock', $revisionsPendantesUrl)
+            ->setPermission('ROLE_ADMIN')
+            ->setBadge($totalPending > 0 ? $totalPending : null, 'danger')
+        ;
 
         yield MenuItem::section('Communication');
         yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('ROLE_ADMIN');

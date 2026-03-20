@@ -68,6 +68,35 @@ class WorksHistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * Retourne toutes les révisions en attente (tous works confondus), les plus récentes en premier.
+     *
+     * @return WorksHistory[]
+     */
+    public function findAllPending(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.revisionStatus = :status')
+            ->setParameter('status', WorksHistory::STATUS_PENDING)
+            ->orderBy('h.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Retourne une version précise de l'historique pour un works donné.
+     */
+    public function findByVersion(Works $works, int $version): ?WorksHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.works = :works')
+            ->andWhere('h.version = :version')
+            ->setParameter('works', $works)
+            ->setParameter('version', $version)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function countPending(): int
     {
         return (int) $this->createQueryBuilder('h')

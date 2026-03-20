@@ -83,6 +83,35 @@ class FormationHistoryRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne toutes les révisions en attente (toutes formations confondues), les plus récentes en premier.
+     *
+     * @return FormationHistory[]
+     */
+    public function findAllPending(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.revisionStatus = :status')
+            ->setParameter('status', FormationHistory::STATUS_PENDING)
+            ->orderBy('h.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Retourne une version précise de l'historique pour une formation donnée.
+     */
+    public function findByVersion(Formation $formation, int $version): ?FormationHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.formation = :formation')
+            ->andWhere('h.version = :version')
+            ->setParameter('formation', $formation)
+            ->setParameter('version', $version)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * Compte les révisions en attente (toutes formations confondues).
      */
     public function countPending(): int

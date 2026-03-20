@@ -1,0 +1,68 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <h1 class="h4 mb-0">
+            <i class="fa fa-clock text-warning me-1"></i>
+            Révisions en attente
+        </h1>
+        <span class="badge bg-danger">{{ entries|length }} révision(s)</span>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {% if entries is empty %}
+        <div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="fa fa-check-circle fa-lg"></i>
+            <span>Aucune révision en attente de validation.</span>
+        </div>
+    {% else %}
+        {% for entry in entries %}
+            <div class="card mb-4 shadow-sm border-0"
+                 style="border-left: 4px solid #ffc107 !important;">
+
+                {# En-tête #}
+                <div class="card-header bg-warning-subtle d-flex align-items-center justify-content-between py-2 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <span class="badge
+                            {% if entry.type == 'Formation' %}bg-primary
+                            {% elseif entry.type == 'Works' %}bg-info text-dark
+                            {% else %}bg-secondary{% endif %}">
+                            {{ entry.type }}
+                        </span>
+                        <strong>{{ entry.title }}</strong>
+                        <code class="text-muted small">v{{ entry.revision.version }}</code>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-muted small">
+                        <i class="fa fa-user me-1"></i>{{ entry.revision.createdBy }}
+                        &nbsp;—&nbsp;
+                        <i class="fa fa-calendar-alt me-1"></i>{{ entry.revision.createdAt|date('d/m/Y à H:i') }}
+                    </div>
+                </div>
+
+                {# Diff #}
+                <div class="card-body py-3 px-3">
+                    {{ entry.diff|raw }}
+                </div>
+
+                {# Actions #}
+                <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap align-items-center">
+                    <a href="{{ entry.approuverUrl }}"
+                       class="btn btn-sm btn-success"
+                       onclick="return confirm('Approuver et appliquer cette révision ?')">
+                        <i class="fa fa-check me-1"></i> Approuver &amp; appliquer
+                    </a>
+                    <a href="{{ entry.rejeterUrl }}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Rejeter cette révision ?')">
+                        <i class="fa fa-times me-1"></i> Rejeter
+                    </a>
+                    <a href="{{ entry.historiqueUrl }}" class="btn btn-sm btn-outline-secondary ms-auto">
+                        <i class="fa fa-history me-1"></i> Historique complet
+                    </a>
+                </div>
+
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

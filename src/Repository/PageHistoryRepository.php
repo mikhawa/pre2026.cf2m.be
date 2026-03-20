@@ -68,6 +68,35 @@ class PageHistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * Retourne toutes les révisions en attente (toutes pages confondues), les plus récentes en premier.
+     *
+     * @return PageHistory[]
+     */
+    public function findAllPending(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.revisionStatus = :status')
+            ->setParameter('status', PageHistory::STATUS_PENDING)
+            ->orderBy('h.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Retourne une version précise de l'historique pour une page donnée.
+     */
+    public function findByVersion(Page $page, int $version): ?PageHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.page = :page')
+            ->andWhere('h.version = :version')
+            ->setParameter('page', $page)
+            ->setParameter('version', $version)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function countPending(): int
     {
         return (int) $this->createQueryBuilder('h')
