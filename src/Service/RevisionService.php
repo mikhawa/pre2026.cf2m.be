@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Formation;
+use App\Entity\FormationHistory;
 use App\Entity\Page;
+use App\Entity\PageHistory;
 use App\Entity\Revision;
 use App\Entity\User;
 use App\Entity\Works;
+use App\Entity\WorksHistory;
+use App\Repository\FormationHistoryRepository;
+use App\Repository\PageHistoryRepository;
 use App\Repository\UserRepository;
+use App\Repository\WorksHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -25,6 +31,9 @@ class RevisionService
         private readonly EntityManagerInterface $em,
         private readonly MailerInterface $mailer,
         private readonly UserRepository $userRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
+        private readonly PageHistoryRepository $pageHistoryRepo,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
         #[Autowire(env: 'MAIL_FORM')]
         private readonly string $mailFrom,
     ) {
@@ -76,6 +85,9 @@ class RevisionService
 
         $this->em->persist($revision);
 
+        // Double écriture : table historique typée (transition Phase 3)
+        $this->saveToTypedHistory($entity, $author, $autoApprove);
+
         return $revision;
     }
 
@@ -115,6 +127,9 @@ class RevisionService
         } else {
             throw new \InvalidArgumentException(sprintf('Type d\'entité non supporté : %s', $entity::class));
         }
+
+        // Double écriture : mise à jour de l'entrée pending dans la table typée (transition Phase 3)
+        $this->updatePendingTypedHistory($entity);
     }
 
     /**
@@ -142,6 +157,9 @@ class RevisionService
             'works'     => $this->applyWorks($entityId, $data),
             default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
         };
+
+        // Double écriture : approbation dans la table typée (transition Phase 3)
+        $this->approvePendingTypedHistory($type, $entityId, $reviewer);
 
         $this->em->flush();
     }
@@ -709,6 +727,136 @@ class RevisionService
         $entity->setContent($data['content'] ?? '');
         $entity->setStatus($data['status']);
         $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
+    }
+
+    // -------------------------------------------------------------------------
+    // Double écriture — tables d'historique typées (Phase 3 de transition)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Crée une entrée dans la table d'historique typée correspondant à l'entité.
+     * Appelé après chaque createRevision() pour maintenir la synchronisation
+     * entre l'ancienne table `revision` et les nouvelles tables typées.
+     */
+    private function saveToTypedHistory(object $entity, User $author, bool $autoApprove): void
+    {
+        $revisionStatus = $autoApprove
+            ? FormationHistory::STATUS_AUTO_APPROVED
+            : FormationHistory::STATUS_PENDING;
+
+        if ($entity instanceof Formation) {
+            $version = $this->formationHistoryRepo->getNextVersion($entity);
+            $history = FormationHistory::fromFormation($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+
+            return;
+        }
+
+        if ($entity instanceof Page) {
+            $version = $this->pageHistoryRepo->getNextVersion($entity);
+            $history = PageHistory::fromPage($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+
+            return;
+        }
+
+        if ($entity instanceof Works) {
+            $version = $this->worksHistoryRepo->getNextVersion($entity);
+            $history = WorksHistory::fromWorks($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+        }
+    }
+
+    /**
+     * Met à jour les champs de l'entrée PENDING dans la table typée
+     * pour refléter le nouvel état proposé par le formateur.
+     */
+    private function updatePendingTypedHistory(object $entity): void
+    {
+        if ($entity instanceof Formation) {
+            $pending = $this->formationHistoryRepo->findPendingForFormation($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setDescription($entity->getDescription());
+            $pending->setStatus($entity->getStatus());
+            $pending->setColorPrimary($entity->getColorPrimary());
+            $pending->setColorSecondary($entity->getColorSecondary());
+            $pending->setPublishedAt($entity->getPublishedAt());
+
+            return;
+        }
+
+        if ($entity instanceof Page) {
+            $pending = $this->pageHistoryRepo->findPendingForPage($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setContent($entity->getContent() ?? '');
+            $pending->setStatus($entity->getStatus());
+            $pending->setPublishedAt($entity->getPublishedAt());
+
+            return;
+        }
+
+        if ($entity instanceof Works) {
+            $pending = $this->worksHistoryRepo->findPendingForWorks($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setDescription($entity->getDescription());
+            $pending->setStatus($entity->getStatus());
+            $pending->setPublishedAt($entity->getPublishedAt());
+        }
+    }
+
+    /**
+     * Marque l'entrée PENDING dans la table typée comme approuvée.
+     * Appelé lors de l'approbation d'une révision via applyRevision().
+     */
+    private function approvePendingTypedHistory(string $entityType, int $entityId, User $reviewer): void
+    {
+        $pending = match ($entityType) {
+            'formation' => $this->formationHistoryRepo->findPendingForFormation(
+                $this->em->getRepository(Formation::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            'page' => $this->pageHistoryRepo->findPendingForPage(
+                $this->em->getRepository(Page::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            'works' => $this->worksHistoryRepo->findPendingForWorks(
+                $this->em->getRepository(Works::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            default => null,
+        };
+
+        if ($pending === null) {
+            return;
+        }
+
+        $pending->setRevisionStatus(FormationHistory::STATUS_APPROVED);
+        $pending->setReviewedBy($reviewer);
+        $pending->setReviewedAt(new \DateTimeImmutable());
     }
 
     /**

@@ -68,13 +68,13 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-075 (2026-03-20)
+076 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
-085 (2026-03-20)
+086 (2026-03-20)
 
 ## Refactorisation en cours : tables d'historique typées (branche feature/permissions-for-roles)
-**État au 2026-03-20 — Phases 1 et 2 terminées, Phases 3-5 à faire.**
+**État au 2026-03-20 — Phases 1, 2 et 3 terminées, Phases 4-5 à faire.**
 
 ### Objectif
 Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
@@ -96,8 +96,8 @@ Fichiers créés :
 ### Phase 2 ✅ TERMINÉE (tâche 085)
 `src/Command/MigrateRevisionsCommand.php` créé. Options `--dry-run` et `--force`. Migration exécutée : 11 formations, 3 pages, 12 works, 0 ignorées.
 
-### Phase 3 — À FAIRE
-Adapter `src/Service/RevisionService.php` et `src/EventListener/ContentRevisionListener.php` pour écrire dans les nouvelles tables (double écriture pendant la transition).
+### Phase 3 ✅ TERMINÉE (tâche 086)
+`RevisionService` écrit en double (table `revision` + tables typées). Méthodes impactées : `createRevision()`, `updatePendingRevision()`, `applyRevision()`. `ContentRevisionListener` couvert automatiquement.
 
 ### Phase 4 — À FAIRE
 Basculer les controllers EasyAdmin et templates :
@@ -108,7 +108,7 @@ Basculer les controllers EasyAdmin et templates :
 - `templates/admin/works/historique.html.twig`
 
 ### Phase 5 — À FAIRE
-`DROP TABLE revision` dans une migration dédiée (après 2-4 semaines de validation).
+`DROP TABLE revision` dans une migration dédiée, il faut modifier les fixtures et les tests avant de faire ça.
 
 ## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
 - `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer
