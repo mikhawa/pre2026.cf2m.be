@@ -68,13 +68,13 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-075 (2026-03-19)
+075 (2026-03-20)
 
 ## Dernier numéro .claude-tasks
-084 (2026-03-20)
+085 (2026-03-20)
 
 ## Refactorisation en cours : tables d'historique typées (branche feature/permissions-for-roles)
-**État au 2026-03-20 — Phase 1 terminée, Phases 2-5 à faire.**
+**État au 2026-03-20 — Phases 1 et 2 terminées, Phases 3-5 à faire.**
 
 ### Objectif
 Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
@@ -93,8 +93,8 @@ Fichiers créés :
 - `src/Repository/WorksHistoryRepository.php` — idem pour Works
 - `migrations/Version20260320113106.php` — 6 tables créées, **migration déjà exécutée**
 
-### Phase 2 — À FAIRE
-Créer `src/Command/MigrateRevisionsCommand.php` qui lit `revision.data` JSON et insère dans les nouvelles tables typées (numérotation séquentielle par entité, mapping status 0/1/2 → 0/1/2, ManyToMany depuis l'état live de l'entité).
+### Phase 2 ✅ TERMINÉE (tâche 085)
+`src/Command/MigrateRevisionsCommand.php` créé. Options `--dry-run` et `--force`. Migration exécutée : 11 formations, 3 pages, 12 works, 0 ignorées.
 
 ### Phase 3 — À FAIRE
 Adapter `src/Service/RevisionService.php` et `src/EventListener/ContentRevisionListener.php` pour écrire dans les nouvelles tables (double écriture pendant la transition).
