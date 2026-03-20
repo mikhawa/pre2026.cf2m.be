@@ -653,6 +653,7 @@ class RevisionService
             'publishedAt'    => $entity->getPublishedAt()?->format('c'),
             'colorPrimary'   => $entity->getColorPrimary(),
             'colorSecondary' => $entity->getColorSecondary(),
+            'responsables'   => $this->usersToSortedString($entity->getResponsables()),
         ];
     }
 
@@ -669,6 +670,7 @@ class RevisionService
             'content'     => $entity->getContent(),
             'status'      => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
+            'users'       => $this->usersToSortedString($entity->getUsers()),
         ];
     }
 
@@ -686,7 +688,25 @@ class RevisionService
             'status'      => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
             'formationId' => $entity->getFormation()?->getId(),
+            'users'       => $this->usersToSortedString($entity->getUsers()),
         ];
+    }
+
+    /**
+     * Convertit un itérable d'utilisateurs en chaîne triée de noms d'utilisateur.
+     * Utilisé pour inclure les relations ManyToMany dans les snapshots de comparaison.
+     *
+     * @param iterable<User> $users
+     */
+    private function usersToSortedString(iterable $users): string
+    {
+        $names = [];
+        foreach ($users as $user) {
+            $names[] = (string) $user;
+        }
+        sort($names);
+
+        return implode(', ', $names);
     }
 
     /**
@@ -749,6 +769,7 @@ class RevisionService
             'publishedAt'    => $h->getPublishedAt()?->format('c'),
             'colorPrimary'   => $h->getColorPrimary(),
             'colorSecondary' => $h->getColorSecondary(),
+            'responsables'   => $this->usersToSortedString($h->getResponsables()),
         ];
     }
 
@@ -765,6 +786,7 @@ class RevisionService
             'content'     => $h->getContent(),
             'status'      => $h->getStatus(),
             'publishedAt' => $h->getPublishedAt()?->format('c'),
+            'users'       => $this->usersToSortedString($h->getUsers()),
         ];
     }
 
@@ -782,6 +804,7 @@ class RevisionService
             'status'      => $h->getStatus(),
             'publishedAt' => $h->getPublishedAt()?->format('c'),
             'formationId' => $h->getFormation()?->getId(),
+            'users'       => $this->usersToSortedString($h->getUsers()),
         ];
     }
 
@@ -795,10 +818,6 @@ class RevisionService
      */
     public function buildTypedHistoryDiffHtml(array $after, ?array $before): string
     {
-        if ($before === null) {
-            return '<span class="badge bg-secondary">Création initiale</span>';
-        }
-
         $labels = [
             'title'          => 'Titre',
             'slug'           => 'Slug',
@@ -809,9 +828,69 @@ class RevisionService
             'colorPrimary'   => 'Couleur primaire',
             'colorSecondary' => 'Couleur secondaire',
             'formationId'    => 'Formation (ID)',
+            'responsables'   => 'Responsables',
+            'users'          => 'Participants',
         ];
 
         $richFields = ['description', 'content'];
+
+        // Cas création initiale : afficher tous les champs non vides comme "ajoutés"
+        if ($before === null) {
+            $uid  = 'diff-init-' . substr(md5(serialize($after)), 0, 8);
+            $html = '<span class="badge bg-secondary mb-1">Création initiale</span>'
+                . '<ul class="list-unstyled mb-0 small font-monospace mt-1">';
+
+            $idx = 0;
+            $total = count(array_filter($after, static fn ($v): bool => $v !== null && $v !== ''));
+
+            foreach ($after as $key => $val) {
+                if ($val === null || $val === '') {
+                    continue;
+                }
+
+                $label  = $labels[$key] ?? $key;
+                $isRich = in_array($key, $richFields, true);
+                $isLast = ++$idx === $total;
+
+                if ($isRich) {
+                    $collapseId = $uid . '-' . $key;
+                    $fmt        = $this->formatRichFieldForDiff((string) $val);
+                    $html .= sprintf(
+                        '<li class="py-1%s">'
+                        . '<span class="text-secondary fw-semibold">%s</span> '
+                        . '<button class="btn btn-link btn-sm p-0 text-decoration-none text-success" '
+                        . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                        . 'aria-expanded="false">voir ▾</button>'
+                        . '<div class="collapse mt-1" id="%s">'
+                        . '<pre class="p-2 bg-success-subtle text-success rounded small"'
+                        . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                        . '</div></li>',
+                        $isLast ? '' : ' border-bottom border-light',
+                        htmlspecialchars($label),
+                        $collapseId,
+                        $collapseId,
+                        htmlspecialchars($fmt['text']),
+                        $fmt['truncated'] ? "\n…" : '',
+                    );
+                } else {
+                    $html .= sprintf(
+                        '<li class="py-1%s">'
+                        . '<span class="text-secondary fw-semibold">%s :</span> '
+                        . '<ins class="text-success fw-semibold">%s</ins>'
+                        . '</li>',
+                        $isLast ? '' : ' border-bottom border-light',
+                        htmlspecialchars($label),
+                        htmlspecialchars($this->truncateForDisplay((string) $val)),
+                    );
+                }
+            }
+
+            $html .= '</ul>';
+
+            return $html;
+        }
+
+        // Cas modification : afficher uniquement les champs modifiés
         $changes = [];
 
         foreach ($after as $key => $newVal) {
@@ -820,8 +899,8 @@ class RevisionService
                 continue;
             }
 
-            $label  = $labels[$key] ?? $key;
-            $isRich = in_array($key, $richFields, true);
+            $label    = $labels[$key] ?? $key;
+            $isRich   = in_array($key, $richFields, true);
             $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
         }
 
@@ -829,8 +908,15 @@ class RevisionService
             return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
         }
 
-        $uid  = 'diff-typed-' . substr(md5(serialize($after)), 0, 8);
-        $html = '<ul class="list-unstyled mb-0 small font-monospace">';
+        $count = count($changes);
+        $uid   = 'diff-typed-' . substr(md5(serialize($after)), 0, 8);
+        $html  = sprintf(
+            '<p class="text-muted small mb-1">%d champ%s modifié%s</p>',
+            $count,
+            $count > 1 ? 's' : '',
+            $count > 1 ? 's' : '',
+        );
+        $html .= '<ul class="list-unstyled mb-0 small font-monospace">';
 
         foreach ($changes as $i => $c) {
             if ($c['rich']) {
@@ -864,7 +950,7 @@ class RevisionService
                     . '<span class="text-muted me-1">→</span>'
                     . '<ins class="text-success fw-semibold">%s</ins>'
                     . '</li>',
-                    $i < count($changes) - 1 ? ' border-bottom border-light' : '',
+                    $i < $count - 1 ? ' border-bottom border-light' : '',
                     htmlspecialchars($c['label']),
                     $old,
                     $new,
