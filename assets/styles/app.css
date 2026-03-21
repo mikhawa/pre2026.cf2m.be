@@ -15,12 +15,50 @@
 
     --font-display: 'Outfit', sans-serif;
     --font-body:    'DM Sans', sans-serif;
+
+    /* ── Bootstrap dark mode overrides ───────────────────────────────── */
+    --bs-body-color:          rgba(255, 255, 255, 0.87);
+    --bs-body-color-rgb:      255, 255, 255;
+    --bs-secondary-color:     rgba(255, 255, 255, 0.55);
+    --bs-emphasis-color:      #ffffff;
+    --bs-card-color:          rgba(255, 255, 255, 0.87);
+    --bs-card-bg:             transparent;
+    --bs-card-border-color:   rgba(255, 255, 255, 0.10);
+    --bs-link-color:          #48cae4;
+    --bs-link-hover-color:    #ffffff;
+    --bs-heading-color:       #ffffff;
+    --bs-list-group-color:    rgba(255, 255, 255, 0.87);
+    --bs-list-group-bg:       transparent;
+    --bs-border-color:        rgba(255, 255, 255, 0.12);
+    --bs-alert-color:         rgba(255, 255, 255, 0.87);
+}
+
+/* ── Dark mode : surcharges globales Bootstrap ───────────────────────── */
+.text-muted {
+    color: rgba(255, 255, 255, 0.50) !important;
+}
+small {
+    color: rgba(255, 255, 255, 0.50);
+}
+.alert {
+    --bs-alert-color: rgba(255, 255, 255, 0.87);
+}
+a {
+    color: var(--cf2m-cyan-light);
+}
+a:hover {
+    color: var(--cf2m-white);
+}
+/* Labels de section inline (couleur neutre lisible sur fond sombre) */
+.cf2m-muted-label {
+    color: rgba(255, 255, 255, 0.50);
+    letter-spacing: 0.05em;
 }
 
 /* ── Base ────────────────────────────────────────────────────────────── */
 body {
     font-family: var(--font-body);
-    color: #1a2b3c;
+    color: rgba(255, 255, 255, 0.87);
     background-color: #05111f;
     background-image:
         linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
@@ -51,7 +89,7 @@ body:not(.page-home):not(.page-login) .text-muted {
 
 /* Breadcrumbs Bootstrap sur fond sombre */
 body:not(.page-home):not(.page-login) .breadcrumb-item a {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -59,15 +97,15 @@ body:not(.page-home):not(.page-login) .breadcrumb-item a:hover {
     color: var(--cf2m-cyan);
 }
 body:not(.page-home):not(.page-login) .breadcrumb-item.active {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.65);
 }
 body:not(.page-home):not(.page-login) .breadcrumb-item + .breadcrumb-item::before {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.55);
 }
 
-/* Cartes glassmorphisme plus opaques pour lisibilité du texte sombre */
+/* Cartes glassmorphisme sombres sur pages intérieures */
 body:not(.page-home):not(.page-login) .cf2m-card {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(8, 17, 30, 0.72);
     backdrop-filter: blur(16px) saturate(1.3);
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
 }
@@ -94,7 +132,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 
 /* ── Navbar ──────────────────────────────────────────────────────────── */
 .cf2m-navbar {
-    background: rgba(6, 14, 26, 0.45);
+    background: rgba(6, 14, 26, 0.80);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -170,7 +208,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: rgba(6, 14, 26, 0.45);
+    background: rgba(6, 14, 26, 0.80);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
 }
@@ -304,7 +342,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     /* Dropdowns formations/activités : inline sur mobile → fond opaque cohérent */
     .navbar-nav .cf2m-dropdown {
         position: static !important;
-        background: rgba(6, 14, 26, 0.45);
+        background: rgba(6, 14, 26, 0.80);
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         border: none;
@@ -340,7 +378,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     --bs-dropdown-bg: transparent;
     --bs-dropdown-color: rgba(255, 255, 255, 0.82);
     --bs-dropdown-border-color: transparent;
-    background: rgba(6, 14, 26, 0.45);
+    background: rgba(6, 14, 26, 0.80);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border: none;
@@ -646,7 +684,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-section-title {
     font-family: var(--font-display);
     font-weight: 800;
-    color: var(--cf2m-navy);
+    color: var(--cf2m-white);
     margin-bottom: 2.5rem;
     letter-spacing: -0.3px;
 }
@@ -661,12 +699,28 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 
 /* ── Titres de sections (accueil) ────────────────────────────────────── */
 
+/* Section formations sur fond sombre : titre et label en blanc */
+.page-home #formations .cf2m-section-label,
+.page-home #formations .cf2m-section-title {
+    color: var(--cf2m-white);
+}
+.page-home #formations .cf2m-section-title::after {
+    background: var(--cf2m-cyan);
+}
+
+/* Cartes formations accueil : glassmorphisme sombre */
+.page-home #formations .cf2m-card {
+    background: rgba(8, 17, 30, 0.78);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
 /* ── Cards formations ────────────────────────────────────────────────── */
 .cf2m-card {
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 0.75rem;
-    box-shadow: 0 8px 32px rgba(13, 30, 53, 0.18), inset 0 1px 0 rgba(255,255,255,0.7);
-    background: rgba(255, 255, 255, 0.50);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    background: rgba(8, 17, 30, 0.65);
     backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     -webkit-backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
@@ -688,6 +742,18 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     padding: 1rem 1.25rem;
     line-height: 1.4;
 }
+
+/* Icône thématique dans le card-header (dark mode : blanche par défaut) */
+.cf2m-formation-icon {
+    opacity: 0.90;
+    transition: filter 0.2s, opacity 0.2s;
+}
+
+/* Light mode : filtre invert → icône blanche devient navy */
+[data-theme="light"] .cf2m-formation-icon {
+    filter: invert(1) brightness(0.25) sepia(0.4) saturate(3) hue-rotate(190deg);
+    opacity: 1;
+}
 .cf2m-card .card-body,
 .cf2m-card .card-footer {
     background: transparent;
@@ -704,15 +770,18 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     border-radius: 0.3rem;
 }
 .cf2m-card .card-text {
-    color: #4a6070;
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.88rem;
     line-height: 1.65;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 .cf2m-card .btn-outline-secondary {
-    background: var(--cf2m-white);
-    border: 1px solid rgba(0, 180, 216, 0.2);
+    background: rgba(0, 180, 216, 0.08);
+    border: 1px solid rgba(0, 180, 216, 0.35);
     border-radius: 0.6rem;
-    color: var(--card-color-secondary, var(--cf2m-dark));
+    color: var(--cf2m-cyan-light);
     font-family: var(--font-display);
     font-size: 0.82rem;
     font-weight: 600;
@@ -723,27 +792,27 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-card .btn-outline-secondary:hover {
     box-shadow: 0 6px 18px rgba(0, 180, 216, 0.2);
     border-color: var(--cf2m-cyan);
-    color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
     transform: translateY(-2px);
-    background: var(--cf2m-white);
+    background: rgba(0, 180, 216, 0.18);
 }
 
 /* ── Section partenaires ─────────────────────────────────────────────── */
 .cf2m-partners {
-    background: linear-gradient(180deg, var(--cf2m-light) 0%, #ddeef5 100%);
+    background: linear-gradient(180deg, var(--cf2m-navy) 0%, var(--cf2m-dark) 100%);
 }
 .cf2m-partner-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--cf2m-white);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(0, 180, 216, 0.2);
     border-radius: 0.6rem;
     padding: 0.9rem 1.5rem;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--cf2m-navy);
+    color: rgba(255, 255, 255, 0.80);
     text-decoration: none;
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
@@ -1054,6 +1123,42 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 
 
+/* ── Contenu riche formation et pages (SunEditor |raw) ───────────────── */
+.cf2m-formation-description,
+.cf2m-page-content {
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.85;
+    font-size: 0.97rem;
+}
+.cf2m-formation-description h1, .cf2m-page-content h1,
+.cf2m-formation-description h2, .cf2m-page-content h2,
+.cf2m-formation-description h3, .cf2m-page-content h3,
+.cf2m-formation-description h4, .cf2m-page-content h4,
+.cf2m-formation-description h5, .cf2m-page-content h5,
+.cf2m-formation-description h6, .cf2m-page-content h6 {
+    color: var(--cf2m-white);
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+.cf2m-formation-description p,   .cf2m-page-content p   { margin-bottom: 0.9rem; }
+.cf2m-formation-description ul,  .cf2m-page-content ul,
+.cf2m-formation-description ol,  .cf2m-page-content ol  { padding-left: 1.4rem; margin-bottom: 0.9rem; color: rgba(255,255,255,0.80); }
+.cf2m-formation-description li,  .cf2m-page-content li  { margin-bottom: 0.3rem; }
+.cf2m-formation-description strong, .cf2m-page-content strong { color: var(--cf2m-white); font-weight: 600; }
+.cf2m-formation-description em,     .cf2m-page-content em     { color: var(--cf2m-cyan-light); }
+.cf2m-formation-description a,      .cf2m-page-content a      { color: var(--cf2m-cyan-light); text-decoration: underline; }
+.cf2m-formation-description a:hover, .cf2m-page-content a:hover { color: var(--cf2m-white); }
+.cf2m-formation-description table,  .cf2m-page-content table  { color: rgba(255,255,255,0.82); }
+.cf2m-formation-description hr,     .cf2m-page-content hr     { border-color: rgba(255,255,255,0.15); }
+.cf2m-formation-description blockquote, .cf2m-page-content blockquote {
+    border-left: 3px solid var(--cf2m-cyan);
+    padding-left: 1rem;
+    color: rgba(255,255,255,0.65);
+    font-style: italic;
+}
+
 /* ── Liens works sur la page formation ──────────────────────────────── */
 .cf2m-works-link {
     color: var(--cf2m-cyan);
@@ -1083,14 +1188,14 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     pointer-events: none;
 }
 .cf2m-work-breadcrumb .breadcrumb-item a {
-    color: var(--cf2m-muted);
+    color: rgba(255, 255, 255, 0.85) !important;
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.2s;
 }
-.cf2m-work-breadcrumb .breadcrumb-item a:hover { color: var(--cf2m-cyan); }
-.cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
-.cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.25); }
+.cf2m-work-breadcrumb .breadcrumb-item a:hover { color: var(--cf2m-cyan) !important; }
+.cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.65) !important; font-size: 0.8rem; }
+.cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.55) !important; }
 
 .cf2m-work-label {
     display: inline-block;
@@ -1131,11 +1236,11 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-work-body { background: transparent; }
 
 .cf2m-work-description-card {
-    background: var(--cf2m-white);
+    background: rgba(8, 17, 30, 0.72);
     border: 1px solid rgba(0, 180, 216, 0.12);
     border-radius: 0.75rem;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
 }
 .cf2m-work-description-header {
     background: linear-gradient(135deg, var(--cf2m-dark) 0%, var(--cf2m-navy-md) 100%);
@@ -1151,19 +1256,19 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-work-description-body {
     padding: 1.75rem;
-    color: #2a3f52;
+    color: rgba(255, 255, 255, 0.80);
     font-size: 0.95rem;
     line-height: 1.8;
 }
 
 /* Sidebar */
 .cf2m-work-sidebar-block {
-    background: var(--cf2m-white);
+    background: rgba(8, 17, 30, 0.72);
     border: 1px solid rgba(0, 180, 216, 0.12);
     border-radius: 0.75rem;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1.25rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 .cf2m-work-sidebar-title {
     font-family: var(--font-display);
@@ -1171,7 +1276,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #7a95aa;
+    color: var(--cf2m-cyan-light);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -1209,7 +1314,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-work-author-name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #1a2b3c;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 /* Lien formation */
@@ -1217,7 +1322,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: var(--cf2m-navy-md);
+    color: rgba(255, 255, 255, 0.82);
     text-decoration: none;
     font-size: 0.88rem;
     font-weight: 500;
@@ -1271,4 +1376,411 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-footer-link:hover {
     color: var(--cf2m-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BOUTON THÈME (dark/light toggle)
+   ═══════════════════════════════════════════════════════════════════════ */
+.cf2m-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.80);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+    flex-shrink: 0;
+    padding: 0;
+}
+.cf2m-theme-toggle:hover {
+    background: rgba(0, 180, 216, 0.18);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
+    transform: rotate(20deg);
+}
+
+/* Icônes pilotées par CSS selon le thème actif */
+html:not([data-theme="light"]) .cf2m-theme-sun { display: inline-flex; }
+html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
+[data-theme="light"] .cf2m-theme-sun { display: none; }
+[data-theme="light"] .cf2m-theme-moon { display: inline-flex; }
+
+/* Bouton thème mobile : pill centré avec texte */
+.cf2m-theme-toggle-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+.cf2m-theme-toggle-mobile:hover {
+    background: rgba(0, 180, 216, 0.20);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT MODE — [data-theme="light"] sur <html>
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Variables Bootstrap réinitialisées */
+[data-theme="light"] {
+    --bs-body-color:        #1a2b3c;
+    --bs-body-color-rgb:    26, 43, 60;
+    --bs-secondary-color:   #6c757d;
+    --bs-emphasis-color:    #000000;
+    --bs-card-color:        #1a2b3c;
+    --bs-card-bg:           #ffffff;
+    --bs-card-border-color: rgba(0, 0, 0, 0.10);
+    --bs-link-color:        #0072a3;
+    --bs-link-hover-color:  #0d1e35;
+    --bs-heading-color:     #0d1e35;
+    --bs-border-color:      rgba(0, 0, 0, 0.12);
+    --bs-alert-color:       #1a2b3c;
+    --cf2m-muted:           rgba(0, 0, 0, 0.50);
+}
+
+/* Body */
+[data-theme="light"] body {
+    color: #1a2b3c;
+    background-color: #c4dff0;
+    background-image: none;
+}
+
+/* Textes généraux */
+[data-theme="light"] small,
+[data-theme="light"] .cf2m-muted-label { color: #6c757d; }
+[data-theme="light"] .text-muted       { color: #6c757d !important; }
+[data-theme="light"] a                 { color: #0072a3; }
+[data-theme="light"] a:hover           { color: #0d1e35; }
+
+/* Titres de section */
+[data-theme="light"] .cf2m-section-title { color: var(--cf2m-navy); }
+[data-theme="light"] .cf2m-section-label { color: var(--cf2m-cyan); }
+
+/* Section formations accueil */
+[data-theme="light"] #formations {
+    background-image: none !important;
+    background-color: #c4dff0 !important;
+    border-top: 2px solid rgba(0, 100, 160, 0.20) !important;
+    box-shadow: inset 0 4px 24px rgba(0, 80, 140, 0.08) !important;
+}
+[data-theme="light"] .page-home #formations .cf2m-section-label,
+[data-theme="light"] .page-home #formations .cf2m-section-title { color: var(--cf2m-navy); }
+[data-theme="light"] .page-home #formations .cf2m-section-title::after { background: var(--cf2m-cyan); }
+
+/* Cards (toutes) */
+[data-theme="light"] .cf2m-card,
+[data-theme="light"] .page-home #formations .cf2m-card,
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 60, 120, 0.10);
+    box-shadow:
+        0 2px 6px rgba(0, 30, 60, 0.07),
+        0 8px 28px rgba(0, 30, 60, 0.11),
+        0 1px 0 rgba(255, 255, 255, 1) inset;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+[data-theme="light"] .cf2m-card .card-text       { color: #4a6070; }
+[data-theme="light"] .cf2m-card .btn-outline-secondary {
+    background: #ffffff;
+    border-color: rgba(0, 180, 216, 0.35);
+    color: var(--cf2m-navy);
+}
+[data-theme="light"] .cf2m-card .btn-outline-secondary:hover {
+    background: rgba(0, 180, 216, 0.08);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-navy);
+}
+
+/* Section partenaires */
+[data-theme="light"] .cf2m-partners {
+    background: linear-gradient(180deg, #ddeef5 0%, #c8e4f0 100%);
+}
+[data-theme="light"] .cf2m-partners .cf2m-section-title,
+[data-theme="light"] .cf2m-partners .cf2m-section-label { color: var(--cf2m-navy); }
+[data-theme="light"] .cf2m-partner-item {
+    background: #ffffff;
+    color: var(--cf2m-navy);
+    border-color: rgba(0, 180, 216, 0.25);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+}
+[data-theme="light"] .cf2m-partner-item:hover { color: var(--cf2m-cyan); }
+
+/* Breadcrumbs */
+[data-theme="light"] body:not(.page-home):not(.page-login) .breadcrumb-item a   { color: #0d1e35; }
+[data-theme="light"] body:not(.page-home):not(.page-login) .breadcrumb-item a:hover { color: var(--cf2m-cyan); }
+[data-theme="light"] body:not(.page-home):not(.page-login) .breadcrumb-item.active { color: #6c757d; }
+[data-theme="light"] body:not(.page-home):not(.page-login) .breadcrumb-item + .breadcrumb-item::before { color: #adb5bd; }
+/* Hero works toujours sombre → breadcrumb reste blanc quel que soit le thème */
+/* Hero works toujours sombre → tout le contenu du hero reste blanc */
+[data-theme="light"] .cf2m-work-breadcrumb .breadcrumb-item a   { color: rgba(255, 255, 255, 0.85) !important; }
+[data-theme="light"] .cf2m-work-breadcrumb .breadcrumb-item a:hover { color: var(--cf2m-cyan) !important; }
+[data-theme="light"] .cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255, 255, 255, 0.60) !important; }
+[data-theme="light"] .cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255, 255, 255, 0.45) !important; }
+[data-theme="light"] .cf2m-work-title       { color: #ffffff !important; }
+[data-theme="light"] .cf2m-work-meta-item   { color: rgba(255, 255, 255, 0.72) !important; }
+[data-theme="light"] .cf2m-work-meta-item svg { color: rgba(255, 255, 255, 0.72) !important; }
+[data-theme="light"] .cf2m-work-label       { color: var(--cf2m-cyan) !important; border-color: rgba(0, 180, 216, 0.40) !important; }
+
+/* Contenu riche (SunEditor) */
+[data-theme="light"] .cf2m-formation-description,
+[data-theme="light"] .cf2m-page-content { color: #1a2b3c; }
+[data-theme="light"] .cf2m-formation-description h1, [data-theme="light"] .cf2m-page-content h1,
+[data-theme="light"] .cf2m-formation-description h2, [data-theme="light"] .cf2m-page-content h2,
+[data-theme="light"] .cf2m-formation-description h3, [data-theme="light"] .cf2m-page-content h3,
+[data-theme="light"] .cf2m-formation-description h4, [data-theme="light"] .cf2m-page-content h4,
+[data-theme="light"] .cf2m-formation-description h5, [data-theme="light"] .cf2m-page-content h5,
+[data-theme="light"] .cf2m-formation-description h6, [data-theme="light"] .cf2m-page-content h6 { color: #0d1e35; }
+[data-theme="light"] .cf2m-formation-description ul,  [data-theme="light"] .cf2m-page-content ul,
+[data-theme="light"] .cf2m-formation-description ol,  [data-theme="light"] .cf2m-page-content ol { color: #2a3f52; }
+[data-theme="light"] .cf2m-formation-description strong, [data-theme="light"] .cf2m-page-content strong { color: #0d1e35; }
+[data-theme="light"] .cf2m-formation-description em,    [data-theme="light"] .cf2m-page-content em    { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-formation-description a,     [data-theme="light"] .cf2m-page-content a     { color: #0072a3; }
+[data-theme="light"] .cf2m-formation-description a:hover,[data-theme="light"] .cf2m-page-content a:hover { color: #0d1e35; }
+
+/* Works show */
+[data-theme="light"] .cf2m-work-description-card {
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .cf2m-work-description-body { color: #2a3f52; }
+[data-theme="light"] .cf2m-work-sidebar-block {
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+[data-theme="light"] .cf2m-work-sidebar-title { color: #7a95aa; }
+
+/* Bouton thème en light mode */
+[data-theme="light"] .cf2m-theme-toggle {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Light mode : corrections lisibilité ─────────────────────────────── */
+
+/* Navbar + dropdowns : fond toujours sombre → texte toujours blanc */
+[data-theme="light"] .cf2m-navbar .nav-link,
+[data-theme="light"] .cf2m-navbar .nav-link:hover,
+[data-theme="light"] .cf2m-navbar .nav-link.active,
+[data-theme="light"] .cf2m-navbar a { color: rgba(255, 255, 255, 0.85) !important; }
+[data-theme="light"] .cf2m-navbar .nav-link:hover,
+[data-theme="light"] .cf2m-navbar .nav-link.active { color: var(--cf2m-white) !important; }
+
+[data-theme="light"] .cf2m-btn-connexion { color: rgba(255,255,255,0.85); }
+[data-theme="light"] .cf2m-user-dropdown-toggle { color: rgba(255,255,255,0.85); }
+
+[data-theme="light"] .cf2m-dropdown,
+[data-theme="light"] .cf2m-dropdown * { color: rgba(255, 255, 255, 0.82); }
+[data-theme="light"] .cf2m-dropdown-item { color: rgba(255, 255, 255, 0.82); }
+[data-theme="light"] .cf2m-dropdown-item:hover,
+[data-theme="light"] .cf2m-dropdown-item:focus { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-dropdown-all { color: var(--cf2m-cyan); }
+
+/* Footer : fond toujours sombre → texte blanc */
+[data-theme="light"] .cf2m-footer a,
+[data-theme="light"] .cf2m-footer .cf2m-footer-link { color: rgba(255,255,255,0.55); }
+[data-theme="light"] .cf2m-footer .cf2m-footer-link:hover { color: #ffffff !important; }
+[data-theme="light"] .cf2m-footer .text-muted { color: rgba(255,255,255,0.55) !important; }
+
+/* Liens dans les cartes de contenu (fond clair) */
+[data-theme="light"] .cf2m-card a:not(.btn) { color: #0072a3; }
+[data-theme="light"] .cf2m-card a:not(.btn):hover { color: #0d1e35; }
+[data-theme="light"] .cf2m-works-link { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-work-author-name    { color: #1a2b3c; }
+[data-theme="light"] .cf2m-work-formation-link { color: #0072a3; }
+[data-theme="light"] .cf2m-work-back-btn { color: var(--cf2m-cyan); border-color: rgba(0,180,216,0.4); }
+
+/* Contact page : formulaire */
+[data-theme="light"] label { color: #1a2b3c; }
+[data-theme="light"] .cf2m-input {
+    background: #ffffff;
+    color: #1a2b3c;
+    border-color: rgba(0, 0, 0, 0.18);
+}
+[data-theme="light"] .cf2m-input::placeholder { color: #9aacba; }
+[data-theme="light"] .cf2m-input:focus {
+    background: #ffffff;
+    border-color: var(--cf2m-cyan);
+    color: #1a2b3c;
+}
+
+/* Profil : labels de section */
+[data-theme="light"] .cf2m-muted-label { color: #6c757d; }
+
+/* Alertes Bootstrap : fond clair → texte sombre */
+[data-theme="light"] .alert-success { color: #0a3622; }
+[data-theme="light"] .alert-warning { color: #664d03; }
+[data-theme="light"] .alert-danger  { color: #58151c; }
+[data-theme="light"] .alert-info    { color: #055160; }
+
+/* Bouton thème : adapter si on veut (la navbar reste sombre, donc pas de changement) */
+[data-theme="light"] .cf2m-theme-toggle:hover {
+    background: rgba(0, 180, 216, 0.25);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
+}
+
+/* Titres de section sur pages intérieures (spécificité identique à la règle dark) */
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-section-title {
+    color: var(--cf2m-navy);
+}
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-section-label {
+    color: var(--cf2m-cyan);
+}
+[data-theme="light"] body:not(.page-home):not(.page-login) .text-muted {
+    color: #6c757d !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT MODE — Hero glassmorphisme & contrastes accueil
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Hero : la photo est sur le body en dark mode (fixed), on la reporte sur la section en light */
+[data-theme="light"] .cf2m-hero {
+    background-image:
+        linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
+        url('/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+/* Overlay photo : allégé car le verre est maintenant blanc et opaque */
+[data-theme="light"] .cf2m-hero::before {
+    background: linear-gradient(
+        110deg,
+        rgba(5, 12, 28, 0.32) 0%,
+        rgba(5, 12, 28, 0.18) 45%,
+        rgba(5, 12, 28, 0.06) 100%
+    );
+}
+
+/* Panel glassmorphisme : verre blanc opaque, ombre forte */
+[data-theme="light"] .cf2m-hero-glass {
+    background: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(22px) saturate(2.2) brightness(1.08);
+    -webkit-backdrop-filter: blur(22px) saturate(2.2) brightness(1.08);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    border-bottom-color: rgba(180, 220, 255, 0.30);
+    border-right-color: rgba(180, 220, 255, 0.20);
+    box-shadow:
+        0 4px 16px rgba(0, 20, 50, 0.10),
+        0 16px 48px rgba(0, 20, 50, 0.16),
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 0 0 0.5px rgba(200, 230, 255, 0.40) inset;
+}
+
+/* Textes hero sur fond de verre blanc → navy */
+[data-theme="light"] .cf2m-hero h1            { color: #0d1e35; text-shadow: 0 1px 4px rgba(255,255,255,0.60); }
+[data-theme="light"] .cf2m-hero h1 em         { color: #0a6ea0; }
+[data-theme="light"] .cf2m-hero .lead         { color: #1e3a52; text-shadow: 0 1px 3px rgba(255,255,255,0.50); }
+[data-theme="light"] .cf2m-hero-stats .cf2m-stat-label { color: #3a5870; }
+[data-theme="light"] .cf2m-hero-label         { color: #0a6ea0; }
+[data-theme="light"] .cf2m-stat-value         { color: #0d5a8a; }
+
+/* Lueur cyan du hero : couleur adoucie en light */
+[data-theme="light"] .cf2m-hero::after {
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.08) 0%, transparent 65%);
+}
+
+/* Section partenaires : bord supérieur et ombre */
+[data-theme="light"] .cf2m-partners {
+    box-shadow: inset 0 4px 20px rgba(0, 80, 140, 0.07);
+    border-top: 2px solid rgba(0, 100, 160, 0.12);
+}
+
+/* Partner items : ombre plus marquée */
+[data-theme="light"] .cf2m-partner-item {
+    box-shadow: 0 2px 10px rgba(0, 30, 60, 0.09), 0 1px 0 rgba(255,255,255,1) inset;
+}
+
+/* Works : ombre sur les blocs sidebar */
+[data-theme="light"] .cf2m-work-sidebar-block {
+    box-shadow: 0 2px 14px rgba(0, 30, 60, 0.10);
+}
+[data-theme="light"] .cf2m-work-description-card {
+    box-shadow: 0 4px 24px rgba(0, 30, 60, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT MODE — Page connexion
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Fond de la section : remplace le #06101c par le bleu clair */
+[data-theme="light"] .cf2m-login-section {
+    background-color: #c4dff0;
+    background-image:
+        radial-gradient(ellipse 55% 50% at 10% 30%, rgba(0, 120, 200, 0.18) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(0, 180, 216, 0.12) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 60% at 50% 100%, rgba(0, 80, 160, 0.12) 0%, transparent 100%);
+}
+
+/* Blobs décoratifs : teintes claires */
+[data-theme="light"] .cf2m-login-blob--tl {
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.18) 0%, transparent 70%);
+}
+[data-theme="light"] .cf2m-login-blob--br {
+    background: radial-gradient(circle, rgba(0, 80, 160, 0.14) 0%, transparent 70%);
+}
+
+/* Carte : verre blanc opaque comme le hero glass */
+[data-theme="light"] .cf2m-login-card {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.96);
+    border-bottom-color: rgba(0, 40, 80, 0.10);
+    box-shadow:
+        0 6px 24px rgba(0, 20, 50, 0.14),
+        0 20px 56px rgba(0, 20, 50, 0.18),
+        0 1px 0 rgba(255, 255, 255, 1) inset;
+}
+
+/* Textes dans la carte */
+[data-theme="light"] .cf2m-login-title    { color: #0d1e35; }
+[data-theme="light"] .cf2m-login-subtitle { color: #4a6878; }
+[data-theme="light"] .cf2m-login-label    { color: #2e4a62; }
+[data-theme="light"] .cf2m-login-forgot   { color: #4a7090; }
+[data-theme="light"] .cf2m-login-forgot:hover { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-login-back a   { color: #2e4a62; }
+[data-theme="light"] .cf2m-login-back a:hover { color: #0d1e35; }
+
+/* Champs de saisie */
+[data-theme="light"] .cf2m-login-input {
+    background: rgba(0, 60, 120, 0.05);
+    border-color: rgba(0, 60, 120, 0.18);
+    color: #0d1e35;
+}
+[data-theme="light"] .cf2m-login-input::placeholder { color: rgba(0, 30, 60, 0.35); }
+[data-theme="light"] .cf2m-login-input:focus {
+    border-color: var(--cf2m-cyan);
+    background: rgba(0, 180, 216, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.18);
+}
+
+/* Logo : ombre plus douce sur fond clair */
+[data-theme="light"] .cf2m-login-logo {
+    filter: drop-shadow(0 0 10px rgba(0, 100, 160, 0.30));
+}
+
+/* ─── Titres dans les card-header (pages et formations) : plus lumineux ─── */
+/* Titres dans les card-header (pages et formations) : plus lumineux */
+.cf2m-card .card-header h1,
+.cf2m-card .card-header h2,
+.cf2m-card .card-header h3,
+.cf2m-card .card-header h4 {
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 }

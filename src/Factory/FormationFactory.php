@@ -54,10 +54,11 @@ final class FormationFactory extends PersistentObjectFactory
                 . '-' . self::faker()->unique()->numberBetween(1, 99999);
 
             return [
-                'title'       => $title,
-                'slug'        => $slug,
-                'description' => self::faker()->realText(600),
-                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                'title'             => $title,
+                'slug'              => $slug,
+                'description'       => self::faker()->realText(600),
+                'descriptionCourte' => self::faker()->realText(200),
+                'createdAt'         => \DateTimeImmutable::createFromMutable(
                     self::faker()->dateTimeBetween('-3 years', '-1 year')
                 ),
                 'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
