@@ -661,6 +661,22 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 
 /* ── Titres de sections (accueil) ────────────────────────────────────── */
 
+/* Section formations sur fond sombre : titre et label en blanc */
+.page-home #formations .cf2m-section-label,
+.page-home #formations .cf2m-section-title {
+    color: var(--cf2m-white);
+}
+.page-home #formations .cf2m-section-title::after {
+    background: var(--cf2m-cyan);
+}
+
+/* Cartes formations accueil : fond opaque pour lisibilité */
+.page-home #formations .cf2m-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
 /* ── Cards formations ────────────────────────────────────────────────── */
 .cf2m-card {
     border: 1px solid rgba(255, 255, 255, 0.55);

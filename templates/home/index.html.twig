@@ -101,13 +101,6 @@
                                         {{ formation.description|striptags|slice(0, 150) }}{% if formation.description|length > 150 %}…{% endif %}
                                     </p>
                                 {% endif %}
-                                {% if formation.publishedAt %}
-                                    <p class="card-text mt-2">
-                                        <small style="color: #7a95aa;">
-                                            Publiée le {{ formation.publishedAt|date('d/m/Y') }}
-                                        </small>
-                                    </p>
-                                {% endif %}
                             </div>
                             <div class="card-footer border-0 pb-3">
                                 <a href="{{ path('app_formation_show', {slug: formation.slug}) }}"
