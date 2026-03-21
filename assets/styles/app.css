@@ -1391,6 +1391,33 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     transform: rotate(20deg);
 }
 
+/* Icônes pilotées par CSS selon le thème actif */
+html:not([data-theme="light"]) .cf2m-theme-sun { display: inline-flex; }
+html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
+[data-theme="light"] .cf2m-theme-sun { display: none; }
+[data-theme="light"] .cf2m-theme-moon { display: inline-flex; }
+
+/* Bouton thème mobile : pill centré avec texte */
+.cf2m-theme-toggle-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+.cf2m-theme-toggle-mobile:hover {
+    background: rgba(0, 180, 216, 0.20);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    LIGHT MODE — [data-theme="light"] sur <html>
    ═══════════════════════════════════════════════════════════════════════ */
