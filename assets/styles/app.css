@@ -1518,3 +1518,87 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.25);
 }
+
+/* ── Light mode : corrections lisibilité ─────────────────────────────── */
+
+/* Navbar + dropdowns : fond toujours sombre → texte toujours blanc */
+[data-theme="light"] .cf2m-navbar .nav-link,
+[data-theme="light"] .cf2m-navbar .nav-link:hover,
+[data-theme="light"] .cf2m-navbar .nav-link.active,
+[data-theme="light"] .cf2m-navbar a { color: rgba(255, 255, 255, 0.85) !important; }
+[data-theme="light"] .cf2m-navbar .nav-link:hover,
+[data-theme="light"] .cf2m-navbar .nav-link.active { color: var(--cf2m-white) !important; }
+
+[data-theme="light"] .cf2m-btn-connexion { color: rgba(255,255,255,0.85); }
+[data-theme="light"] .cf2m-user-dropdown-toggle { color: rgba(255,255,255,0.85); }
+
+[data-theme="light"] .cf2m-dropdown,
+[data-theme="light"] .cf2m-dropdown * { color: rgba(255, 255, 255, 0.82); }
+[data-theme="light"] .cf2m-dropdown-item { color: rgba(255, 255, 255, 0.82); }
+[data-theme="light"] .cf2m-dropdown-item:hover,
+[data-theme="light"] .cf2m-dropdown-item:focus { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-dropdown-all { color: var(--cf2m-cyan); }
+
+/* Footer : fond toujours sombre → texte blanc */
+[data-theme="light"] .cf2m-footer a,
+[data-theme="light"] .cf2m-footer .cf2m-footer-link { color: rgba(255,255,255,0.55); }
+[data-theme="light"] .cf2m-footer .cf2m-footer-link:hover { color: #ffffff !important; }
+[data-theme="light"] .cf2m-footer .text-muted { color: rgba(255,255,255,0.55) !important; }
+
+/* Liens dans les cartes de contenu (fond clair) */
+[data-theme="light"] .cf2m-card a:not(.btn) { color: #0072a3; }
+[data-theme="light"] .cf2m-card a:not(.btn):hover { color: #0d1e35; }
+[data-theme="light"] .cf2m-works-link { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-work-formation-link { color: #0072a3; }
+[data-theme="light"] .cf2m-work-back-btn { color: var(--cf2m-cyan); border-color: rgba(0,180,216,0.4); }
+
+/* Contact page : formulaire */
+[data-theme="light"] label { color: #1a2b3c; }
+[data-theme="light"] .cf2m-input {
+    background: #ffffff;
+    color: #1a2b3c;
+    border-color: rgba(0, 0, 0, 0.18);
+}
+[data-theme="light"] .cf2m-input::placeholder { color: #9aacba; }
+[data-theme="light"] .cf2m-input:focus {
+    background: #ffffff;
+    border-color: var(--cf2m-cyan);
+    color: #1a2b3c;
+}
+
+/* Profil : labels de section */
+[data-theme="light"] .cf2m-muted-label { color: #6c757d; }
+
+/* Alertes Bootstrap : fond clair → texte sombre */
+[data-theme="light"] .alert-success { color: #0a3622; }
+[data-theme="light"] .alert-warning { color: #664d03; }
+[data-theme="light"] .alert-danger  { color: #58151c; }
+[data-theme="light"] .alert-info    { color: #055160; }
+
+/* Bouton thème : adapter si on veut (la navbar reste sombre, donc pas de changement) */
+[data-theme="light"] .cf2m-theme-toggle:hover {
+    background: rgba(0, 180, 216, 0.25);
+    border-color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
+}
+
+/* Titres de section sur pages intérieures (spécificité identique à la règle dark) */
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-section-title {
+    color: var(--cf2m-navy);
+}
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-section-label {
+    color: var(--cf2m-cyan);
+}
+[data-theme="light"] body:not(.page-home):not(.page-login) .text-muted {
+    color: #6c757d !important;
+}
+
+/* Titres dans les card-header (pages et formations) : plus lumineux */
+.cf2m-card .card-header h1,
+.cf2m-card .card-header h2,
+.cf2m-card .card-header h3,
+.cf2m-card .card-header h4 {
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
