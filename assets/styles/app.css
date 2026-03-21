@@ -1650,23 +1650,26 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 
 /* Panel glassmorphisme : verre blanc opaque, ombre forte */
 [data-theme="light"] .cf2m-hero-glass {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(28px) saturate(1.6) brightness(1.04);
-    -webkit-backdrop-filter: blur(28px) saturate(1.6) brightness(1.04);
-    border: 1px solid rgba(255, 255, 255, 0.96);
-    border-bottom-color: rgba(0, 40, 80, 0.10);
-    border-right-color: rgba(0, 40, 80, 0.06);
+    background: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(22px) saturate(2.2) brightness(1.08);
+    -webkit-backdrop-filter: blur(22px) saturate(2.2) brightness(1.08);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    border-bottom-color: rgba(180, 220, 255, 0.30);
+    border-right-color: rgba(180, 220, 255, 0.20);
     box-shadow:
-        0 6px 24px rgba(0, 20, 50, 0.14),
-        0 20px 64px rgba(0, 20, 50, 0.22),
-        0 1px 0 rgba(255, 255, 255, 1) inset,
-        0 0 0 0.5px rgba(0, 100, 180, 0.06) inset;
+        0 4px 16px rgba(0, 20, 50, 0.10),
+        0 16px 48px rgba(0, 20, 50, 0.16),
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 0 0 0.5px rgba(200, 230, 255, 0.40) inset;
 }
 
 /* Textes hero sur fond de verre blanc → navy */
-[data-theme="light"] .cf2m-hero h1            { color: #0d1e35; text-shadow: none; }
-[data-theme="light"] .cf2m-hero .lead         { color: #2e4a62; }
-[data-theme="light"] .cf2m-hero-stats .cf2m-stat-label { color: #4a6878; }
+[data-theme="light"] .cf2m-hero h1            { color: #0d1e35; text-shadow: 0 1px 4px rgba(255,255,255,0.60); }
+[data-theme="light"] .cf2m-hero h1 em         { color: #0a6ea0; }
+[data-theme="light"] .cf2m-hero .lead         { color: #1e3a52; text-shadow: 0 1px 3px rgba(255,255,255,0.50); }
+[data-theme="light"] .cf2m-hero-stats .cf2m-stat-label { color: #3a5870; }
+[data-theme="light"] .cf2m-hero-label         { color: #0a6ea0; }
+[data-theme="light"] .cf2m-stat-value         { color: #0d5a8a; }
 
 /* Lueur cyan du hero : couleur adoucie en light */
 [data-theme="light"] .cf2m-hero::after {
