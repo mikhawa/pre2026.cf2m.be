@@ -24,7 +24,8 @@
       "Bash(find:*)",
       "Bash(chmod 777 /home/mikhawa/pre2026_cf2m_be/public/uploads /home/mikhawa/pre2026_cf2m_be/public/uploads/editor)",
       "Bash(ls /home/mikhawa/pre2026_cf2m_be/config/packages/when@*/)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(printf:*)"
     ]
   }
 }

@@ -21,8 +21,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
@@ -140,6 +144,22 @@ class FormationCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(false)
             ->showValue()
+        ;
+        yield TextareaField::new('descriptionCourte', 'Description courte (accueil, max 800 car.)')
+            ->hideOnIndex()
+            ->setRequired(false)
+            ->setHelp('Texte affiché sur la page d\'accueil à la place de la description longue. 800 caractères maximum.')
+        ;
+        yield Field::new('logoFile', 'Logo')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])
+            ->hideOnIndex()
+            ->setRequired(false)
+        ;
+        yield ImageField::new('logo', 'Logo')
+            ->setBasePath('/uploads/formation-logos/')
+            ->hideOnForm()
+            ->setRequired(false)
         ;
         yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()

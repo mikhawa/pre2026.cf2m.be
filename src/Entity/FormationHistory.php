@@ -42,6 +42,12 @@ class FormationHistory
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 800, nullable: true)]
+    private ?string $descriptionCourte = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo = null;
+
     #[ORM\Column(length: 20, options: ['default' => 'draft'])]
     private string $status = 'draft';
 
@@ -80,17 +86,19 @@ class FormationHistory
     public static function fromFormation(Formation $formation, User $author, int $version): self
     {
         $history = new self();
-        $history->formation     = $formation;
-        $history->version       = $version;
-        $history->title         = $formation->getTitle();
-        $history->slug          = $formation->getSlug();
-        $history->description   = $formation->getDescription();
-        $history->status        = $formation->getStatus();
-        $history->colorPrimary  = $formation->getColorPrimary();
-        $history->colorSecondary = $formation->getColorSecondary();
-        $history->publishedAt   = $formation->getPublishedAt();
-        $history->createdBy     = $author;
-        $history->createdAt     = new \DateTimeImmutable();
+        $history->formation        = $formation;
+        $history->version          = $version;
+        $history->title            = $formation->getTitle();
+        $history->slug             = $formation->getSlug();
+        $history->description      = $formation->getDescription();
+        $history->descriptionCourte = $formation->getDescriptionCourte();
+        $history->logo             = $formation->getLogo();
+        $history->status           = $formation->getStatus();
+        $history->colorPrimary     = $formation->getColorPrimary();
+        $history->colorSecondary   = $formation->getColorSecondary();
+        $history->publishedAt      = $formation->getPublishedAt();
+        $history->createdBy        = $author;
+        $history->createdAt        = new \DateTimeImmutable();
 
         foreach ($formation->getResponsables() as $user) {
             $history->responsables->add($user);
@@ -165,6 +173,30 @@ class FormationHistory
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescriptionCourte(): ?string
+    {
+        return $this->descriptionCourte;
+    }
+
+    public function setDescriptionCourte(?string $descriptionCourte): static
+    {
+        $this->descriptionCourte = $descriptionCourte;
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): static
+    {
+        $this->logo = $logo;
 
         return $this;
     }

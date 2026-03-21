@@ -103,6 +103,8 @@ class RevisionService
         $entity->setTitle($data['title'] ?? $entity->getTitle());
         $entity->setSlug($data['slug'] ?? $entity->getSlug());
         $entity->setDescription($data['description'] ?? null);
+        $entity->setDescriptionCourte($data['descriptionCourte'] ?? null);
+        $entity->setLogo($data['logo'] ?? null);
         $entity->setStatus($data['status'] ?? $entity->getStatus());
         $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
         $entity->setColorPrimary($data['colorPrimary'] ?? null);
@@ -646,14 +648,16 @@ class RevisionService
     private function snapshotFormation(Formation $entity): array
     {
         return [
-            'title'          => $entity->getTitle(),
-            'slug'           => $entity->getSlug(),
-            'description'    => $entity->getDescription(),
-            'status'         => $entity->getStatus(),
-            'publishedAt'    => $entity->getPublishedAt()?->format('c'),
-            'colorPrimary'   => $entity->getColorPrimary(),
-            'colorSecondary' => $entity->getColorSecondary(),
-            'responsables'   => $this->usersToSortedString($entity->getResponsables()),
+            'title'             => $entity->getTitle(),
+            'slug'              => $entity->getSlug(),
+            'description'       => $entity->getDescription(),
+            'descriptionCourte' => $entity->getDescriptionCourte(),
+            'logo'              => $entity->getLogo(),
+            'status'            => $entity->getStatus(),
+            'publishedAt'       => $entity->getPublishedAt()?->format('c'),
+            'colorPrimary'      => $entity->getColorPrimary(),
+            'colorSecondary'    => $entity->getColorSecondary(),
+            'responsables'      => $this->usersToSortedString($entity->getResponsables()),
         ];
     }
 
@@ -724,6 +728,8 @@ class RevisionService
         $entity->setTitle($data['title']);
         $entity->setSlug($data['slug']);
         $entity->setDescription($data['description'] ?? null);
+        $entity->setDescriptionCourte($data['descriptionCourte'] ?? null);
+        $entity->setLogo($data['logo'] ?? null);
         $entity->setStatus($data['status']);
         $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
         $entity->setColorPrimary($data['colorPrimary'] ?? null);
@@ -762,14 +768,16 @@ class RevisionService
     public function snapshotFromFormationHistory(FormationHistory $h): array
     {
         return [
-            'title'          => $h->getTitle(),
-            'slug'           => $h->getSlug(),
-            'description'    => $h->getDescription(),
-            'status'         => $h->getStatus(),
-            'publishedAt'    => $h->getPublishedAt()?->format('c'),
-            'colorPrimary'   => $h->getColorPrimary(),
-            'colorSecondary' => $h->getColorSecondary(),
-            'responsables'   => $this->usersToSortedString($h->getResponsables()),
+            'title'             => $h->getTitle(),
+            'slug'              => $h->getSlug(),
+            'description'       => $h->getDescription(),
+            'descriptionCourte' => $h->getDescriptionCourte(),
+            'logo'              => $h->getLogo(),
+            'status'            => $h->getStatus(),
+            'publishedAt'       => $h->getPublishedAt()?->format('c'),
+            'colorPrimary'      => $h->getColorPrimary(),
+            'colorSecondary'    => $h->getColorSecondary(),
+            'responsables'      => $this->usersToSortedString($h->getResponsables()),
         ];
     }
 
@@ -819,17 +827,19 @@ class RevisionService
     public function buildTypedHistoryDiffHtml(array $after, ?array $before): string
     {
         $labels = [
-            'title'          => 'Titre',
-            'slug'           => 'Slug',
-            'description'    => 'Description',
-            'content'        => 'Contenu',
-            'status'         => 'Statut',
-            'publishedAt'    => 'Date de publication',
-            'colorPrimary'   => 'Couleur primaire',
-            'colorSecondary' => 'Couleur secondaire',
-            'formationId'    => 'Formation (ID)',
-            'responsables'   => 'Responsables',
-            'users'          => 'Participants',
+            'title'             => 'Titre',
+            'slug'              => 'Slug',
+            'description'       => 'Description',
+            'descriptionCourte' => 'Description courte',
+            'logo'              => 'Logo',
+            'content'           => 'Contenu',
+            'status'            => 'Statut',
+            'publishedAt'       => 'Date de publication',
+            'colorPrimary'      => 'Couleur primaire',
+            'colorSecondary'    => 'Couleur secondaire',
+            'formationId'       => 'Formation (ID)',
+            'responsables'      => 'Responsables',
+            'users'             => 'Participants',
         ];
 
         $richFields = ['description', 'content'];

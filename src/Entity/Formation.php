@@ -9,10 +9,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[Vich\Uploadable]
 class Formation
 {
     #[ORM\Id]
@@ -30,6 +33,16 @@ class Formation
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column(length: 800, nullable: true)]
+    #[Assert\Length(max: 800, maxMessage: 'La description courte ne peut pas dépasser {{ limit }} caractères.')]
+    private ?string $descriptionCourte = null;
+
+    #[Vich\UploadableField(mapping: 'formation_logo', fileNameProperty: 'logo')]
+    private ?File $logoFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo = null;
 
     #[ORM\Column(length: 20, options: ['default' => 'draft'])]
     #[Assert\NotBlank(message: 'Le statut ne peut pas être vide.')]
@@ -138,6 +151,46 @@ class Formation
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescriptionCourte(): ?string
+    {
+        return $this->descriptionCourte;
+    }
+
+    public function setDescriptionCourte(?string $descriptionCourte): static
+    {
+        $this->descriptionCourte = $descriptionCourte;
+
+        return $this;
+    }
+
+    public function getLogoFile(): ?File
+    {
+        return $this->logoFile;
+    }
+
+    public function setLogoFile(?File $logoFile): static
+    {
+        $this->logoFile = $logoFile;
+
+        if ($logoFile !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): static
+    {
+        $this->logo = $logo;
 
         return $this;
     }
