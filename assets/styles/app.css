@@ -723,6 +723,9 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: #4a6070;
     font-size: 0.88rem;
     line-height: 1.65;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 .cf2m-card .btn-outline-secondary {
     background: var(--cf2m-white);

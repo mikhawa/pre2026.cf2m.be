@@ -97,8 +97,9 @@
                             </div>
                             <div class="card-body">
                                 {% if formation.description %}
+                                    {% set desc = formation.description|plain_text %}
                                     <p class="card-text">
-                                        {{ formation.description|striptags|slice(0, 150) }}{% if formation.description|length > 150 %}…{% endif %}
+                                        {{ desc|slice(0, 150) }}{% if desc|length > 150 %}…{% endif %}
                                     </p>
                                 {% endif %}
                             </div>
