@@ -41,6 +41,7 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 # Passage en préproduction
 
 - À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via git et avant de partager l'URL avec les utilisateurs finaux.
+- preprod/v02 - 2026-03-21
 
         php bin/console cache:clear --no-warmup
         composer require symfony/mailjet-mailer
