@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Formation;
+use App\Entity\FormationHistory;
 use App\Entity\Page;
+use App\Entity\PageHistory;
 use App\Entity\Revision;
 use App\Entity\User;
 use App\Entity\Works;
+use App\Entity\WorksHistory;
+use App\Repository\FormationHistoryRepository;
+use App\Repository\PageHistoryRepository;
 use App\Repository\UserRepository;
+use App\Repository\WorksHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -25,6 +31,9 @@ class RevisionService
         private readonly EntityManagerInterface $em,
         private readonly MailerInterface $mailer,
         private readonly UserRepository $userRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
+        private readonly PageHistoryRepository $pageHistoryRepo,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
         #[Autowire(env: 'MAIL_FORM')]
         private readonly string $mailFrom,
     ) {
@@ -74,9 +83,54 @@ class RevisionService
             $revision->setStatus(Revision::STATUS_PENDING);
         }
 
-        $this->em->persist($revision);
+        // Phase 5 : Revision n'est plus persistée, elle sert de DTO transient pour les emails
+        $revision->setCreatedAt(new \DateTimeImmutable());
+
+        // Écriture dans la table historique typée
+        $this->saveToTypedHistory($entity, $author, $autoApprove);
 
         return $revision;
+    }
+
+    /**
+     * Applique les données d'un snapshot à une Formation en mémoire (sans persist ni flush).
+     * Utilisé pour pré-remplir le formulaire d'édition EasyAdmin avec les données de la révision PENDING.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function applyRevisionDataToFormation(Formation $entity, array $data): void
+    {
+        $entity->setTitle($data['title'] ?? $entity->getTitle());
+        $entity->setSlug($data['slug'] ?? $entity->getSlug());
+        $entity->setDescription($data['description'] ?? null);
+        $entity->setStatus($data['status'] ?? $entity->getStatus());
+        $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
+        $entity->setColorPrimary($data['colorPrimary'] ?? null);
+        $entity->setColorSecondary($data['colorSecondary'] ?? null);
+    }
+
+    /**
+     * Met à jour les données d'une révision PENDING existante avec le snapshot actuel de l'entité.
+     * Ne modifie pas previousData (l'état d'origine avant la première soumission est conservé).
+     * Ne flush pas : le contrôleur gère le timing.
+     */
+    public function updatePendingRevision(Revision $revision, object $entity): void
+    {
+        if ($entity instanceof Formation) {
+            $revision->setData($this->snapshotFormation($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } elseif ($entity instanceof Page) {
+            $revision->setData($this->snapshotPage($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } elseif ($entity instanceof Works) {
+            $revision->setData($this->snapshotWorks($entity));
+            $revision->setEntityTitle($entity->getTitle() ?? '');
+        } else {
+            throw new \InvalidArgumentException(sprintf('Type d\'entité non supporté : %s', $entity::class));
+        }
+
+        // Double écriture : mise à jour de l'entrée pending dans la table typée (transition Phase 3)
+        $this->updatePendingTypedHistory($entity);
     }
 
     /**
@@ -104,6 +158,9 @@ class RevisionService
             'works'     => $this->applyWorks($entityId, $data),
             default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
         };
+
+        // Double écriture : approbation dans la table typée (transition Phase 3)
+        $this->approvePendingTypedHistory($type, $entityId, $reviewer);
 
         $this->em->flush();
     }
@@ -596,6 +653,7 @@ class RevisionService
             'publishedAt'    => $entity->getPublishedAt()?->format('c'),
             'colorPrimary'   => $entity->getColorPrimary(),
             'colorSecondary' => $entity->getColorSecondary(),
+            'responsables'   => $this->usersToSortedString($entity->getResponsables()),
         ];
     }
 
@@ -612,6 +670,7 @@ class RevisionService
             'content'     => $entity->getContent(),
             'status'      => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
+            'users'       => $this->usersToSortedString($entity->getUsers()),
         ];
     }
 
@@ -629,7 +688,25 @@ class RevisionService
             'status'      => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
             'formationId' => $entity->getFormation()?->getId(),
+            'users'       => $this->usersToSortedString($entity->getUsers()),
         ];
+    }
+
+    /**
+     * Convertit un itérable d'utilisateurs en chaîne triée de noms d'utilisateur.
+     * Utilisé pour inclure les relations ManyToMany dans les snapshots de comparaison.
+     *
+     * @param iterable<User> $users
+     */
+    private function usersToSortedString(iterable $users): string
+    {
+        $names = [];
+        foreach ($users as $user) {
+            $names[] = (string) $user;
+        }
+        sort($names);
+
+        return implode(', ', $names);
     }
 
     /**
@@ -671,6 +748,577 @@ class RevisionService
         $entity->setContent($data['content'] ?? '');
         $entity->setStatus($data['status']);
         $entity->setPublishedAt(isset($data['publishedAt']) ? new \DateTimeImmutable($data['publishedAt']) : null);
+    }
+
+    // -------------------------------------------------------------------------
+    // Convertisseurs snapshot pour les tables typées (Phase 4)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Convertit un FormationHistory en tableau snapshot (même format que getLiveFormationSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromFormationHistory(FormationHistory $h): array
+    {
+        return [
+            'title'          => $h->getTitle(),
+            'slug'           => $h->getSlug(),
+            'description'    => $h->getDescription(),
+            'status'         => $h->getStatus(),
+            'publishedAt'    => $h->getPublishedAt()?->format('c'),
+            'colorPrimary'   => $h->getColorPrimary(),
+            'colorSecondary' => $h->getColorSecondary(),
+            'responsables'   => $this->usersToSortedString($h->getResponsables()),
+        ];
+    }
+
+    /**
+     * Convertit un PageHistory en tableau snapshot (même format que getLivePageSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromPageHistory(PageHistory $h): array
+    {
+        return [
+            'title'       => $h->getTitle(),
+            'slug'        => $h->getSlug(),
+            'content'     => $h->getContent(),
+            'status'      => $h->getStatus(),
+            'publishedAt' => $h->getPublishedAt()?->format('c'),
+            'users'       => $this->usersToSortedString($h->getUsers()),
+        ];
+    }
+
+    /**
+     * Convertit un WorksHistory en tableau snapshot (même format que getLiveWorksSnapshot).
+     *
+     * @return array<string, mixed>
+     */
+    public function snapshotFromWorksHistory(WorksHistory $h): array
+    {
+        return [
+            'title'       => $h->getTitle(),
+            'slug'        => $h->getSlug(),
+            'description' => $h->getDescription(),
+            'status'      => $h->getStatus(),
+            'publishedAt' => $h->getPublishedAt()?->format('c'),
+            'formationId' => $h->getFormation()?->getId(),
+            'users'       => $this->usersToSortedString($h->getUsers()),
+        ];
+    }
+
+    /**
+     * Construit un affichage git-like des changements entre deux snapshots typés.
+     * Si $before === null, retourne un badge "Création initiale".
+     * Compare champ par champ, génère le HTML avec collapse pour les champs riches.
+     *
+     * @param array<string, mixed>      $after
+     * @param array<string, mixed>|null $before
+     */
+    public function buildTypedHistoryDiffHtml(array $after, ?array $before): string
+    {
+        $labels = [
+            'title'          => 'Titre',
+            'slug'           => 'Slug',
+            'description'    => 'Description',
+            'content'        => 'Contenu',
+            'status'         => 'Statut',
+            'publishedAt'    => 'Date de publication',
+            'colorPrimary'   => 'Couleur primaire',
+            'colorSecondary' => 'Couleur secondaire',
+            'formationId'    => 'Formation (ID)',
+            'responsables'   => 'Responsables',
+            'users'          => 'Participants',
+        ];
+
+        $richFields = ['description', 'content'];
+
+        // Cas création initiale : afficher tous les champs non vides comme "ajoutés"
+        if ($before === null) {
+            $uid  = 'diff-init-' . substr(md5(serialize($after)), 0, 8);
+            $html = '<span class="badge bg-secondary mb-1">Création initiale</span>'
+                . '<ul class="list-unstyled mb-0 small font-monospace mt-1">';
+
+            $idx = 0;
+            $total = count(array_filter($after, static fn ($v): bool => $v !== null && $v !== ''));
+
+            foreach ($after as $key => $val) {
+                if ($val === null || $val === '') {
+                    continue;
+                }
+
+                $label  = $labels[$key] ?? $key;
+                $isRich = in_array($key, $richFields, true);
+                $isLast = ++$idx === $total;
+
+                if ($isRich) {
+                    $collapseId = $uid . '-' . $key;
+                    $fmt        = $this->formatRichFieldForDiff((string) $val);
+                    $html .= sprintf(
+                        '<li class="py-1%s">'
+                        . '<span class="text-secondary fw-semibold">%s</span> '
+                        . '<button class="btn btn-link btn-sm p-0 text-decoration-none text-success" '
+                        . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                        . 'aria-expanded="false">voir ▾</button>'
+                        . '<div class="collapse mt-1" id="%s">'
+                        . '<pre class="p-2 bg-success-subtle text-success rounded small"'
+                        . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                        . '</div></li>',
+                        $isLast ? '' : ' border-bottom border-light',
+                        htmlspecialchars($label),
+                        $collapseId,
+                        $collapseId,
+                        htmlspecialchars($fmt['text']),
+                        $fmt['truncated'] ? "\n…" : '',
+                    );
+                } else {
+                    $html .= sprintf(
+                        '<li class="py-1%s">'
+                        . '<span class="text-secondary fw-semibold">%s :</span> '
+                        . '<ins class="text-success fw-semibold">%s</ins>'
+                        . '</li>',
+                        $isLast ? '' : ' border-bottom border-light',
+                        htmlspecialchars($label),
+                        htmlspecialchars($this->truncateForDisplay((string) $val)),
+                    );
+                }
+            }
+
+            $html .= '</ul>';
+
+            return $html;
+        }
+
+        // Cas modification : afficher uniquement les champs modifiés
+        $changes = [];
+
+        foreach ($after as $key => $newVal) {
+            $oldVal = $before[$key] ?? null;
+            if ($oldVal === $newVal) {
+                continue;
+            }
+
+            $label    = $labels[$key] ?? $key;
+            $isRich   = in_array($key, $richFields, true);
+            $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
+        }
+
+        if ($changes === []) {
+            return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
+        }
+
+        $count = count($changes);
+        $uid   = 'diff-typed-' . substr(md5(serialize($after)), 0, 8);
+        $html  = sprintf(
+            '<p class="text-muted small mb-1">%d champ%s modifié%s</p>',
+            $count,
+            $count > 1 ? 's' : '',
+            $count > 1 ? 's' : '',
+        );
+        $html .= '<ul class="list-unstyled mb-0 small font-monospace">';
+
+        foreach ($changes as $i => $c) {
+            if ($c['rich']) {
+                $collapseId = $uid . '-' . $c['key'];
+                $oldFmt     = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
+                $newFmt     = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
+                $html .= sprintf(
+                    '<li class="py-1 border-bottom border-light">'
+                    . '<span class="text-secondary fw-semibold">%s</span> '
+                    . '<button class="btn btn-link btn-sm p-0 text-decoration-none" '
+                    . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                    . 'aria-expanded="false">modifié ▾</button>'
+                    . '<div class="collapse mt-1" id="%s">'
+                    . '<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    . '<pre class="p-2 bg-success-subtle text-success rounded small"'
+                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    . '</div></li>',
+                    htmlspecialchars($c['label']),
+                    $collapseId, $collapseId,
+                    htmlspecialchars($oldFmt['text']), $oldFmt['truncated'] ? "\n…" : '',
+                    htmlspecialchars($newFmt['text']), $newFmt['truncated'] ? "\n…" : '',
+                );
+            } else {
+                $old = htmlspecialchars($this->truncateForDisplay((string) ($c['old'] ?? '—')));
+                $new = htmlspecialchars($this->truncateForDisplay((string) ($c['new'] ?? '—')));
+                $html .= sprintf(
+                    '<li class="py-1%s">'
+                    . '<span class="text-secondary fw-semibold">%s :</span> '
+                    . '<del class="text-danger me-1">%s</del>'
+                    . '<span class="text-muted me-1">→</span>'
+                    . '<ins class="text-success fw-semibold">%s</ins>'
+                    . '</li>',
+                    $i < $count - 1 ? ' border-bottom border-light' : '',
+                    htmlspecialchars($c['label']),
+                    $old,
+                    $new,
+                );
+            }
+        }
+
+        $html .= '</ul>';
+
+        return $html;
+    }
+
+    /**
+     * Approuve un FormationHistory : applique le snapshot à la Formation live et flush.
+     */
+    public function approuverFormationHistory(FormationHistory $h, User $reviewer): void
+    {
+        $formation = $h->getFormation();
+        if ($formation === null) {
+            throw new \RuntimeException('FormationHistory sans Formation liée.');
+        }
+
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+
+        $h->setRevisionStatus(FormationHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un FormationHistory : marque comme rejeté et flush.
+     */
+    public function rejeterFormationHistory(FormationHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(FormationHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Approuve un PageHistory : applique le snapshot à la Page live et flush.
+     */
+    public function approuverPageHistory(PageHistory $h, User $reviewer): void
+    {
+        $page = $h->getPage();
+        if ($page === null) {
+            throw new \RuntimeException('PageHistory sans Page liée.');
+        }
+
+        $this->applyPage($page->getId(), $this->snapshotFromPageHistory($h));
+
+        $h->setRevisionStatus(PageHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un PageHistory : marque comme rejeté et flush.
+     */
+    public function rejeterPageHistory(PageHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(PageHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Approuve un WorksHistory : applique le snapshot au Works live et flush.
+     */
+    public function approuverWorksHistory(WorksHistory $h, User $reviewer): void
+    {
+        $works = $h->getWorks();
+        if ($works === null) {
+            throw new \RuntimeException('WorksHistory sans Works lié.');
+        }
+
+        $this->applyWorks($works->getId(), $this->snapshotFromWorksHistory($h));
+
+        $h->setRevisionStatus(WorksHistory::STATUS_APPROVED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Rejette un WorksHistory : marque comme rejeté et flush.
+     */
+    public function rejeterWorksHistory(WorksHistory $h, User $reviewer): void
+    {
+        $h->setRevisionStatus(WorksHistory::STATUS_REJECTED);
+        $h->setReviewedBy($reviewer);
+        $h->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->flush();
+    }
+
+    /**
+     * Restaure une version de l'historique Formation sur l'entité live.
+     * Applique le snapshot (champs scalaires + responsables) à la Formation,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerFormationHistory(FormationHistory $h, User $reviewer): FormationHistory
+    {
+        $formation = $h->getFormation();
+        if ($formation === null) {
+            throw new \RuntimeException('FormationHistory sans Formation liée.');
+        }
+
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+
+        foreach ($formation->getResponsables()->toArray() as $resp) {
+            $formation->removeResponsable($resp);
+        }
+        foreach ($h->getResponsables() as $resp) {
+            $formation->addResponsable($resp);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->formationHistoryRepo->getNextVersion($formation);
+        $newHistory  = FormationHistory::fromFormation($formation, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(FormationHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
+     * Restaure une version de l'historique Page sur l'entité live.
+     * Applique le snapshot (champs scalaires + users) à la Page,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerPageHistory(PageHistory $h, User $reviewer): PageHistory
+    {
+        $page = $h->getPage();
+        if ($page === null) {
+            throw new \RuntimeException('PageHistory sans Page liée.');
+        }
+
+        $this->applyPage($page->getId(), $this->snapshotFromPageHistory($h));
+
+        foreach ($page->getUsers()->toArray() as $user) {
+            $page->removeUser($user);
+        }
+        foreach ($h->getUsers() as $user) {
+            $page->addUser($user);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->pageHistoryRepo->getNextVersion($page);
+        $newHistory  = PageHistory::fromPage($page, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(PageHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
+     * Restaure une version de l'historique Works sur l'entité live.
+     * Applique le snapshot (champs scalaires + users) au Works,
+     * puis crée une nouvelle entrée d'historique auto-approuvée.
+     */
+    public function restaurerWorksHistory(WorksHistory $h, User $reviewer): WorksHistory
+    {
+        $works = $h->getWorks();
+        if ($works === null) {
+            throw new \RuntimeException('WorksHistory sans Works lié.');
+        }
+
+        $this->applyWorks($works->getId(), $this->snapshotFromWorksHistory($h));
+
+        foreach ($works->getUsers()->toArray() as $user) {
+            $works->removeUser($user);
+        }
+        foreach ($h->getUsers() as $user) {
+            $works->addUser($user);
+        }
+
+        $this->em->flush();
+
+        $nextVersion = $this->worksHistoryRepo->getNextVersion($works);
+        $newHistory  = WorksHistory::fromWorks($works, $reviewer, $nextVersion);
+        $newHistory->setRevisionStatus(WorksHistory::STATUS_AUTO_APPROVED);
+        $newHistory->setReviewedBy($reviewer);
+        $newHistory->setReviewedAt(new \DateTimeImmutable());
+
+        $this->em->persist($newHistory);
+        $this->em->flush();
+
+        return $newHistory;
+    }
+
+    /**
+     * Envoie un email à l'auteur d'une révision typée (FormationHistory, PageHistory, WorksHistory)
+     * pour l'informer de l'approbation ou du rejet de sa demande.
+     * Crée un objet Revision transient (non persisté) pour la compatibilité avec les templates email.
+     */
+    public function notifyAuthorFromHistory(FormationHistory|PageHistory|WorksHistory $history, bool $approved): void
+    {
+        $createdBy = $history->getCreatedBy();
+        if ($createdBy === null) {
+            return;
+        }
+
+        $transient = new Revision();
+        $transient->setCreatedBy($createdBy);
+        $transient->setCreatedAt($history->getCreatedAt() ?? new \DateTimeImmutable());
+        $transient->setEntityTitle($history->getTitle() ?? '');
+        $transient->setReviewedBy($history->getReviewedBy());
+        $transient->setReviewedAt($history->getReviewedAt());
+
+        if ($history instanceof FormationHistory) {
+            $transient->setEntityType('formation');
+        } elseif ($history instanceof PageHistory) {
+            $transient->setEntityType('page');
+        } else {
+            $transient->setEntityType('works');
+        }
+
+        $this->notifyAuthor($transient, $approved);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tables d'historique typées
+    // -------------------------------------------------------------------------
+
+    /**
+     * Crée une entrée dans la table d'historique typée correspondant à l'entité.
+     * Appelé après chaque createRevision() pour maintenir la synchronisation
+     * entre l'ancienne table `revision` et les nouvelles tables typées.
+     */
+    private function saveToTypedHistory(object $entity, User $author, bool $autoApprove): void
+    {
+        $revisionStatus = $autoApprove
+            ? FormationHistory::STATUS_AUTO_APPROVED
+            : FormationHistory::STATUS_PENDING;
+
+        if ($entity instanceof Formation) {
+            $version = $this->formationHistoryRepo->getNextVersion($entity);
+            $history = FormationHistory::fromFormation($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+
+            return;
+        }
+
+        if ($entity instanceof Page) {
+            $version = $this->pageHistoryRepo->getNextVersion($entity);
+            $history = PageHistory::fromPage($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+
+            return;
+        }
+
+        if ($entity instanceof Works) {
+            $version = $this->worksHistoryRepo->getNextVersion($entity);
+            $history = WorksHistory::fromWorks($entity, $author, $version);
+            $history->setRevisionStatus($revisionStatus);
+            if ($autoApprove) {
+                $history->setReviewedBy($author);
+                $history->setReviewedAt(new \DateTimeImmutable());
+            }
+            $this->em->persist($history);
+        }
+    }
+
+    /**
+     * Met à jour les champs de l'entrée PENDING dans la table typée
+     * pour refléter le nouvel état proposé par le formateur.
+     */
+    public function updatePendingTypedHistory(object $entity): void
+    {
+        if ($entity instanceof Formation) {
+            $pending = $this->formationHistoryRepo->findPendingForFormation($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setDescription($entity->getDescription());
+            $pending->setStatus($entity->getStatus());
+            $pending->setColorPrimary($entity->getColorPrimary());
+            $pending->setColorSecondary($entity->getColorSecondary());
+            $pending->setPublishedAt($entity->getPublishedAt());
+
+            return;
+        }
+
+        if ($entity instanceof Page) {
+            $pending = $this->pageHistoryRepo->findPendingForPage($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setContent($entity->getContent() ?? '');
+            $pending->setStatus($entity->getStatus());
+            $pending->setPublishedAt($entity->getPublishedAt());
+
+            return;
+        }
+
+        if ($entity instanceof Works) {
+            $pending = $this->worksHistoryRepo->findPendingForWorks($entity);
+            if ($pending === null) {
+                return;
+            }
+            $pending->setTitle($entity->getTitle() ?? '');
+            $pending->setSlug($entity->getSlug() ?? '');
+            $pending->setDescription($entity->getDescription());
+            $pending->setStatus($entity->getStatus());
+            $pending->setPublishedAt($entity->getPublishedAt());
+        }
+    }
+
+    /**
+     * Marque l'entrée PENDING dans la table typée comme approuvée.
+     * Appelé lors de l'approbation d'une révision via applyRevision().
+     */
+    private function approvePendingTypedHistory(string $entityType, int $entityId, User $reviewer): void
+    {
+        $pending = match ($entityType) {
+            'formation' => $this->formationHistoryRepo->findPendingForFormation(
+                $this->em->getRepository(Formation::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            'page' => $this->pageHistoryRepo->findPendingForPage(
+                $this->em->getRepository(Page::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            'works' => $this->worksHistoryRepo->findPendingForWorks(
+                $this->em->getRepository(Works::class)->find($entityId) ?? throw new \RuntimeException()
+            ),
+            default => null,
+        };
+
+        if ($pending === null) {
+            return;
+        }
+
+        $pending->setRevisionStatus(FormationHistory::STATUS_APPROVED);
+        $pending->setReviewedBy($reviewer);
+        $pending->setReviewedAt(new \DateTimeImmutable());
     }
 
     /**

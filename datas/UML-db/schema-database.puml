@@ -1,0 +1,348 @@
+@startuml schema-database-cf2m
+' ============================================================
+' Schéma UML avancé — Base de données pre2026.cf2m.be
+' Généré le 2026-03-19 — Symfony 7.4 / Doctrine ORM / MariaDB 11.4
+' ============================================================
+
+!theme plain
+skinparam linetype ortho
+skinparam roundcorner 8
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 12
+
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #495057
+    HeaderBackgroundColor #343A40
+    HeaderFontColor #FFFFFF
+    HeaderFontSize 13
+    ArrowColor #495057
+    ArrowFontSize 11
+}
+
+skinparam note {
+    BackgroundColor #FFF3CD
+    BorderColor #FFC107
+}
+
+' ============================================================
+' LÉGENDE DES TYPES SQL (MariaDB 11.4)
+' PK  = Clé primaire
+' FK  = Clé étrangère
+' UQ  = Contrainte UNIQUE
+' NN  = NOT NULL
+' [?] = Nullable
+' ============================================================
+
+' ============================================================
+' TABLE : user
+' ============================================================
+entity "**user**" as User {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * email : VARCHAR(180) <<UQ, NN>>
+    * roles : JSON <<NN>>
+    * password : VARCHAR(255) <<NN>>
+    * user_name : VARCHAR(50) <<UQ, NN>>
+    * status : SMALLINT UNSIGNED <<default: 0>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    --
+    activation_token : VARCHAR(64) <<[?]>>
+    reset_password_token : VARCHAR(64) <<[?]>>
+    reset_password_requested_at : DATETIME_IMMUTABLE <<[?]>>
+    avatar_name : VARCHAR(255) <<[?]>>
+    biography : VARCHAR(600) <<[?]>>
+    external_link1 : VARCHAR(255) <<[?]>>
+    external_link2 : VARCHAR(255) <<[?]>>
+    external_link3 : VARCHAR(255) <<[?]>>
+    updated_at : DATETIME_IMMUTABLE <<[?]>>
+}
+
+note right of User
+  Rôles possibles :
+  ROLE_USER (implicite)
+  ROLE_FORMATEUR
+  ROLE_ADMIN
+  ROLE_SUPER_ADMIN
+  --
+  status : 0=inactif / 1=actif
+  Avatar géré par VichUploader
+end note
+
+' ============================================================
+' TABLE : formation
+' ============================================================
+entity "**formation**" as Formation {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * title : VARCHAR(255) <<NN>>
+    * slug : VARCHAR(255) <<UQ, NN>>
+    * status : VARCHAR(20) <<default: 'draft'>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * created_by_id : INT UNSIGNED <<FK → user>>
+    --
+    description : TEXT <<[?]>>
+    color_primary : VARCHAR(7) <<[?]>>
+    color_secondary : VARCHAR(7) <<[?]>>
+    published_at : DATETIME_IMMUTABLE <<[?]>>
+    updated_at : DATETIME_IMMUTABLE <<[?]>>
+    updated_by_id : INT UNSIGNED <<FK → user, [?]>>
+}
+
+note right of Formation
+  status : draft / published
+           archived / recruiting
+  Couleurs au format hex (#rrggbb)
+end note
+
+' ============================================================
+' TABLE : works
+' ============================================================
+entity "**works**" as Works {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * title : VARCHAR(255) <<NN>>
+    * slug : VARCHAR(255) <<UQ, NN>>
+    * status : VARCHAR(20) <<default: 'draft'>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * formation_id : INT UNSIGNED <<FK → formation, NN>>
+    --
+    description : TEXT <<[?]>>
+    published_at : DATETIME_IMMUTABLE <<[?]>>
+}
+
+note right of Works
+  status : draft / published / archived
+  Activité (cours/projet) rattachée
+  à une Formation
+end note
+
+' ============================================================
+' TABLE : page
+' ============================================================
+entity "**page**" as Page {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * title : VARCHAR(255) <<NN>>
+    * slug : VARCHAR(255) <<UQ, NN>>
+    * content : TEXT <<NN>>
+    * status : VARCHAR(20) <<default: 'draft'>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    --
+    published_at : DATETIME_IMMUTABLE <<[?]>>
+}
+
+note right of Page
+  status : draft / published / archived
+  Page CMS (contenu WYSIWYG)
+  Auteurs via ManyToMany → user
+end note
+
+' ============================================================
+' TABLE : comment
+' ============================================================
+entity "**comment**" as Comment {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * content : TEXT <<NN>>
+    * is_approved : TINYINT(1) <<default: 0>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * user_id : INT UNSIGNED <<FK → user, NN>>
+    * works_id : INT UNSIGNED <<FK → works, NN>>
+}
+
+' ============================================================
+' TABLE : rating
+' ============================================================
+entity "**rating**" as Rating {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * value : SMALLINT UNSIGNED <<NN, 1..5>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * user_id : INT UNSIGNED <<FK → user, NN>>
+}
+
+' ============================================================
+' TABLE : inscription
+' ============================================================
+entity "**inscription**" as Inscription {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * nom : VARCHAR(100) <<NN>>
+    * prenom : VARCHAR(100) <<NN>>
+    * email : VARCHAR(180) <<NN>>
+    * treat : TINYINT(1) <<default: 0>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * formation_id : INT UNSIGNED <<FK → formation, NN>>
+    --
+    message : TEXT <<[?]>>
+    treat_at : DATETIME_IMMUTABLE <<[?]>>
+    treat_by_id : INT UNSIGNED <<FK → user, [?]>>
+}
+
+note right of Inscription
+  Demande d'inscription publique
+  treat = traitée (oui/non)
+  treat_by = admin traitant
+end note
+
+' ============================================================
+' TABLE : revision
+' ============================================================
+entity "**revision**" as Revision {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * entity_type : VARCHAR(20) <<NN>>
+    * entity_id : INT UNSIGNED <<NN>>
+    * entity_title : VARCHAR(255) <<NN>>
+    * data : JSON <<NN>>
+    * status : SMALLINT UNSIGNED <<default: 0>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    * created_by_id : INT UNSIGNED <<FK → user, NN>>
+    --
+    previous_data : JSON <<[?]>>
+    review_note : TEXT <<[?]>>
+    reviewed_at : DATETIME_IMMUTABLE <<[?]>>
+    reviewed_by_id : INT UNSIGNED <<FK → user, [?]>>
+}
+
+note right of Revision
+  Système de révisions (workflow CMS)
+  entity_type : formation / works / page
+  status : 0=En attente / 1=Approuvée
+           2=Rejetée
+  data = snapshot proposé (JSON)
+  previous_data = état avant révision
+end note
+
+' ============================================================
+' TABLE : partenaire
+' ============================================================
+entity "**partenaire**" as Partenaire {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * nom : VARCHAR(255) <<NN>>
+    * is_active : TINYINT(1) <<default: 0>>
+    --
+    description : TEXT <<[?]>>
+    logo : VARCHAR(255) <<[?]>>
+    url : VARCHAR(255) <<[?]>>
+}
+
+' ============================================================
+' TABLE : contact_message
+' ============================================================
+entity "**contact_message**" as ContactMessage {
+    * id : INT UNSIGNED <<PK, AUTO_INCREMENT>>
+    --
+    * nom : VARCHAR(100) <<NN>>
+    * email : VARCHAR(180) <<NN>>
+    * sujet : VARCHAR(255) <<NN>>
+    * message : TEXT <<NN>>
+    * is_read : TINYINT(1) <<default: 0>>
+    * created_at : DATETIME_IMMUTABLE <<NN>>
+    --
+    read_by_id : INT UNSIGNED <<FK → user, [?]>>
+}
+
+' ============================================================
+' TABLES DE JOINTURE ManyToMany
+' ============================================================
+
+entity "**formation_user**\n//[table de jointure]//" as FormationUser #E3F2FD {
+    * formation_id : INT UNSIGNED <<FK → formation>>
+    * user_id : INT UNSIGNED <<FK → user>>
+    --
+    <<PK (formation_id, user_id)>>
+}
+
+entity "**works_user**\n//[table de jointure]//" as WorksUser #E3F2FD {
+    * works_id : INT UNSIGNED <<FK → works>>
+    * user_id : INT UNSIGNED <<FK → user>>
+    --
+    <<PK (works_id, user_id)>>
+}
+
+entity "**page_user**\n//[table de jointure]//" as PageUser #E3F2FD {
+    * page_id : INT UNSIGNED <<FK → page>>
+    * user_id : INT UNSIGNED <<FK → user>>
+    --
+    <<PK (page_id, user_id)>>
+}
+
+entity "**comment_rating**\n//[table de jointure]//" as CommentRating #E3F2FD {
+    * comment_id : INT UNSIGNED <<FK → comment>>
+    * rating_id : INT UNSIGNED <<FK → rating>>
+    --
+    <<PK (comment_id, rating_id)>>
+}
+
+entity "**rating_works**\n//[table de jointure]//" as RatingWorks #E3F2FD {
+    * rating_id : INT UNSIGNED <<FK → rating>>
+    * works_id : INT UNSIGNED <<FK → works>>
+    --
+    <<PK (rating_id, works_id)>>
+}
+
+' ============================================================
+' RELATIONS DIRECTES (FK dans les tables)
+' ============================================================
+
+' Formation → User (createdBy / updatedBy)
+Formation }o--|| User : "created_by_id\n(créateur)"
+Formation }o--o| User : "updated_by_id\n(modificateur)"
+
+' Works → Formation
+Works }|--|| Formation : "formation_id\n(1 Formation\npour N Works)"
+
+' Comment → User & Works
+Comment }|--|| User : "user_id\n(auteur)"
+Comment }|--|| Works : "works_id\n(sur ce Works)"
+
+' Rating → User
+Rating }|--|| User : "user_id\n(évaluateur)"
+
+' Inscription → Formation & User
+Inscription }|--|| Formation : "formation_id"
+Inscription }o--o| User : "treat_by_id\n(traité par)"
+
+' Revision → User (createdBy / reviewedBy)
+Revision }|--|| User : "created_by_id\n(auteur révision)"
+Revision }o--o| User : "reviewed_by_id\n(relecteur)"
+
+' ContactMessage → User
+ContactMessage }o--o| User : "read_by_id\n(lu par)"
+
+' ============================================================
+' RELATIONS ManyToMany (via tables de jointure)
+' ============================================================
+
+Formation ||--o{ FormationUser : "responsables"
+FormationUser }o--|| User : "formateurs\nresponsables"
+
+Works ||--o{ WorksUser : "auteurs"
+WorksUser }o--|| User : "co-auteurs"
+
+Page ||--o{ PageUser : "auteurs"
+PageUser }o--|| User : "co-auteurs"
+
+Comment ||--o{ CommentRating : ""
+CommentRating }o--|| Rating : ""
+
+Rating ||--o{ RatingWorks : ""
+RatingWorks }o--|| Works : ""
+
+' ============================================================
+' NOTE GLOBALE SUR LE SYSTÈME DE RÉVISIONS
+' ============================================================
+note bottom of Revision
+  Le champ entity_type (VARCHAR 20) identifie
+  polymorphiquement la table cible :
+  "formation", "works" ou "page".
+  entity_id pointe vers l'id dans cette table.
+  Pas de FK déclarée (relation polymorphique
+  gérée applicativement par RevisionService).
+end note
+
+@enduml

@@ -24,9 +24,9 @@
 
             {% for entry in historique %}
                 {% set rev = entry.revision %}
-                {% set isApproved = rev.status == 1 %}
-                {% set isPending  = rev.status == 0 %}
-                {% set isRejected = rev.status == 2 %}
+                {% set isApproved = rev.revisionStatus == 1 or rev.revisionStatus == 3 %}
+                {% set isPending  = rev.revisionStatus == 0 %}
+                {% set isRejected = rev.revisionStatus == 2 %}
 
                 {# Nœud de la timeline #}
                 <div class="position-absolute"
@@ -43,14 +43,14 @@
                     {% if isRejected %}opacity-75{% endif %}"
                      style="{% if isPending %}border-left: 3px solid #ffc107 !important;{% endif %}">
 
-                    {# En-tête : date, auteur, statut #}
+                    {# En-tête : version, date, auteur, statut #}
                     <div class="card-header d-flex align-items-center justify-content-between py-2
                         {% if isApproved %}bg-success-subtle
                         {% elseif isPending %}bg-warning-subtle
                         {% else %}bg-danger-subtle{% endif %}">
 
                         <div class="d-flex align-items-center gap-3 flex-wrap">
-                            <code class="text-muted small">#{{ rev.id }}</code>
+                            <code class="text-muted small">v{{ rev.version }}</code>
                             <span>
                                 <i class="fa fa-calendar-alt me-1 text-muted"></i>
                                 <strong>{{ rev.createdAt|date('d/m/Y') }}</strong>
@@ -76,7 +76,7 @@
                                     {% if isApproved %}fa-check
                                     {% elseif isPending %}fa-clock
                                     {% else %}fa-times{% endif %} me-1"></i>
-                                {{ rev.statusLabel }}
+                                {{ rev.revisionStatusLabel }}
                             </span>
                         </div>
                     </div>
@@ -87,7 +87,9 @@
                     </div>
 
                     {# Pied : boutons d'action (ROLE_ADMIN uniquement) #}
-                    {% if is_granted('ROLE_ADMIN') and (entry.approuverUrl is defined or entry.appliquerUrl is defined) %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set hasActions = (entry.approuverUrl is defined) or (entry.restaurerUrl is defined) %}
+                        {% if hasActions %}
                         <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">
                             {% if isPending and entry.approuverUrl is defined %}
                                 <a href="{{ entry.approuverUrl }}"
@@ -101,15 +103,15 @@
                                     <i class="fa fa-times me-1"></i> Rejeter
                                 </a>
                             {% endif %}
-                            {% if isApproved and entry.appliquerUrl is defined %}
-                                {% set confirmMsg = 'Restaurer le contenu live à cette version du ' ~ rev.createdAt|date('d/m/Y H:i') ~ ' ?' %}
-                                <a href="{{ entry.appliquerUrl }}"
+                            {% if entry.restaurerUrl is defined %}
+                                <a href="{{ entry.restaurerUrl }}"
                                    class="btn btn-sm btn-warning"
-                                   onclick="return confirm('{{ confirmMsg }}')">
+                                   onclick="return confirm('Restaurer cette version et en faire la version active ?')">
                                     <i class="fa fa-rotate-left me-1"></i> Restaurer cette version
                                 </a>
                             {% endif %}
                         </div>
+                        {% endif %}
                     {% endif %}
 
                 </div>

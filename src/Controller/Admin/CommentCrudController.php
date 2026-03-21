@@ -28,9 +28,9 @@ class CommentCrudController extends AbstractCrudController
     {
         return $actions
             ->disable(Action::NEW, Action::DELETE)
-            ->setPermission(Action::INDEX, 'ROLE_ADMIN')
-            ->setPermission(Action::EDIT, 'ROLE_ADMIN')
-            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission(Action::INDEX, 'ROLE_FORMATEUR')
+            ->setPermission(Action::EDIT, 'ROLE_FORMATEUR')
+            ->setPermission(Action::DETAIL, 'ROLE_FORMATEUR')
         ;
     }
 

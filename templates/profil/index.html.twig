@@ -22,7 +22,7 @@
 
                 {# ── Révisions en attente (admins) ─────────────────────── #}
                 {% if is_granted('ROLE_ADMIN') and pending_revisions_count() > 0 %}
-                    <a href="/admin/revision" class="alert alert-warning alert-dismissible fade show mb-4 text-decoration-none d-flex align-items-center gap-2" role="alert">
+                    <a href="{{ path('admin_revisions_en_attente') }}" class="alert alert-warning alert-dismissible fade show mb-4 text-decoration-none d-flex align-items-center gap-2" role="alert">
                         <span class="badge rounded-pill bg-danger">{{ pending_revisions_count() }}</span>
                         <span>
                             {% if pending_revisions_count() == 1 %}
