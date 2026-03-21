@@ -1692,6 +1692,65 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     box-shadow: 0 4px 24px rgba(0, 30, 60, 0.12);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT MODE — Page connexion
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Fond de la section : remplace le #06101c par le bleu clair */
+[data-theme="light"] .cf2m-login-section {
+    background-color: #c4dff0;
+    background-image:
+        radial-gradient(ellipse 55% 50% at 10% 30%, rgba(0, 120, 200, 0.18) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(0, 180, 216, 0.12) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 60% at 50% 100%, rgba(0, 80, 160, 0.12) 0%, transparent 100%);
+}
+
+/* Blobs décoratifs : teintes claires */
+[data-theme="light"] .cf2m-login-blob--tl {
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.18) 0%, transparent 70%);
+}
+[data-theme="light"] .cf2m-login-blob--br {
+    background: radial-gradient(circle, rgba(0, 80, 160, 0.14) 0%, transparent 70%);
+}
+
+/* Carte : verre blanc opaque comme le hero glass */
+[data-theme="light"] .cf2m-login-card {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.96);
+    border-bottom-color: rgba(0, 40, 80, 0.10);
+    box-shadow:
+        0 6px 24px rgba(0, 20, 50, 0.14),
+        0 20px 56px rgba(0, 20, 50, 0.18),
+        0 1px 0 rgba(255, 255, 255, 1) inset;
+}
+
+/* Textes dans la carte */
+[data-theme="light"] .cf2m-login-title    { color: #0d1e35; }
+[data-theme="light"] .cf2m-login-subtitle { color: #4a6878; }
+[data-theme="light"] .cf2m-login-label    { color: #2e4a62; }
+[data-theme="light"] .cf2m-login-forgot   { color: #4a7090; }
+[data-theme="light"] .cf2m-login-forgot:hover { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-login-back a   { color: #2e4a62; }
+[data-theme="light"] .cf2m-login-back a:hover { color: #0d1e35; }
+
+/* Champs de saisie */
+[data-theme="light"] .cf2m-login-input {
+    background: rgba(0, 60, 120, 0.05);
+    border-color: rgba(0, 60, 120, 0.18);
+    color: #0d1e35;
+}
+[data-theme="light"] .cf2m-login-input::placeholder { color: rgba(0, 30, 60, 0.35); }
+[data-theme="light"] .cf2m-login-input:focus {
+    border-color: var(--cf2m-cyan);
+    background: rgba(0, 180, 216, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.18);
+}
+
+/* Logo : ombre plus douce sur fond clair */
+[data-theme="light"] .cf2m-login-logo {
+    filter: drop-shadow(0 0 10px rgba(0, 100, 160, 0.30));
+}
+
 /* ─── Titres dans les card-header (pages et formations) : plus lumineux ─── */
 /* Titres dans les card-header (pages et formations) : plus lumineux */
 .cf2m-card .card-header h1,
