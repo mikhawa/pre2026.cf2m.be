@@ -1442,7 +1442,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 /* Body */
 [data-theme="light"] body {
     color: #1a2b3c;
-    background-color: #eef4f9;
+    background-color: #c4dff0;
     background-image: none;
 }
 
@@ -1628,13 +1628,23 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
    LIGHT MODE — Hero glassmorphisme & contrastes accueil
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Overlay photo du hero : légèrement plus dense pour contraster le verre blanc */
+/* Hero : la photo est sur le body en dark mode (fixed), on la reporte sur la section en light */
+[data-theme="light"] .cf2m-hero {
+    background-image:
+        linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
+        url('/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+/* Overlay photo : allégé car le verre est maintenant blanc et opaque */
 [data-theme="light"] .cf2m-hero::before {
     background: linear-gradient(
         110deg,
-        rgba(5, 12, 28, 0.55) 0%,
-        rgba(5, 12, 28, 0.38) 45%,
-        rgba(5, 12, 28, 0.18) 100%
+        rgba(5, 12, 28, 0.32) 0%,
+        rgba(5, 12, 28, 0.18) 45%,
+        rgba(5, 12, 28, 0.06) 100%
     );
 }
 
