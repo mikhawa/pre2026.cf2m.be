@@ -742,6 +742,18 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     padding: 1rem 1.25rem;
     line-height: 1.4;
 }
+
+/* Icône thématique dans le card-header (dark mode : blanche par défaut) */
+.cf2m-formation-icon {
+    opacity: 0.90;
+    transition: filter 0.2s, opacity 0.2s;
+}
+
+/* Light mode : filtre invert → icône blanche devient navy */
+[data-theme="light"] .cf2m-formation-icon {
+    filter: invert(1) brightness(0.25) sepia(0.4) saturate(3) hue-rotate(190deg);
+    opacity: 1;
+}
 .cf2m-card .card-body,
 .cf2m-card .card-footer {
     background: transparent;

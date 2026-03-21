@@ -88,12 +88,28 @@
             </div>
         {% else %}
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% set formation_icons = {
+                    'aventure-digitale':                    'download-computer.svg',
+                    'animateur-multimedia':                  'movie-speaker.svg',
+                    'technicien-pc-reseaux':                'network-tree.svg',
+                    'digital-designer':                     'responsive-design.svg',
+                    'web-developer-full-stack':             'collect-computer.svg',
+                    'cheques-tic':                          'multimedia.svg',
+                    'illustration-numerique':               'design-ideas.svg',
+                    'marketing-digital-reseaux-sociaux':    'network-globe.svg'
+                } %}
                 {% for formation in formations %}
                     <div class="col">
                         <div class="card cf2m-card" style="{% if formation.colorPrimary %}--card-color-primary: {{ formation.colorPrimary }};{% endif %}{% if formation.colorSecondary %}--card-color-secondary: {{ formation.colorSecondary }};{% endif %}">
-                            <div class="card-header d-flex justify-content-between align-items-start">
+                            <div class="card-header d-flex justify-content-between align-items-start gap-2">
                                 <span>{{ formation.title }}</span>
-                                <span class="badge badge-status ms-2 flex-shrink-0">Ouverte</span>
+                                {% if formation_icons[formation.slug] is defined %}
+                                    <img src="{{ asset('images/formation-icons/' ~ formation_icons[formation.slug]) }}"
+                                         alt=""
+                                         aria-hidden="true"
+                                         class="cf2m-formation-icon flex-shrink-0"
+                                         width="32" height="32">
+                                {% endif %}
                             </div>
                             <div class="card-body">
                                 {% if formation.descriptionCourte %}
