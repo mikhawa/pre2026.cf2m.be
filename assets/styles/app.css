@@ -15,12 +15,50 @@
 
     --font-display: 'Outfit', sans-serif;
     --font-body:    'DM Sans', sans-serif;
+
+    /* ── Bootstrap dark mode overrides ───────────────────────────────── */
+    --bs-body-color:          rgba(255, 255, 255, 0.87);
+    --bs-body-color-rgb:      255, 255, 255;
+    --bs-secondary-color:     rgba(255, 255, 255, 0.55);
+    --bs-emphasis-color:      #ffffff;
+    --bs-card-color:          rgba(255, 255, 255, 0.87);
+    --bs-card-bg:             transparent;
+    --bs-card-border-color:   rgba(255, 255, 255, 0.10);
+    --bs-link-color:          #48cae4;
+    --bs-link-hover-color:    #ffffff;
+    --bs-heading-color:       #ffffff;
+    --bs-list-group-color:    rgba(255, 255, 255, 0.87);
+    --bs-list-group-bg:       transparent;
+    --bs-border-color:        rgba(255, 255, 255, 0.12);
+    --bs-alert-color:         rgba(255, 255, 255, 0.87);
+}
+
+/* ── Dark mode : surcharges globales Bootstrap ───────────────────────── */
+.text-muted {
+    color: rgba(255, 255, 255, 0.50) !important;
+}
+small {
+    color: rgba(255, 255, 255, 0.50);
+}
+.alert {
+    --bs-alert-color: rgba(255, 255, 255, 0.87);
+}
+a {
+    color: var(--cf2m-cyan-light);
+}
+a:hover {
+    color: var(--cf2m-white);
+}
+/* Labels de section inline (couleur neutre lisible sur fond sombre) */
+.cf2m-muted-label {
+    color: rgba(255, 255, 255, 0.50);
+    letter-spacing: 0.05em;
 }
 
 /* ── Base ────────────────────────────────────────────────────────────── */
 body {
     font-family: var(--font-body);
-    color: #1a2b3c;
+    color: rgba(255, 255, 255, 0.87);
     background-color: #05111f;
     background-image:
         linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
@@ -51,7 +89,7 @@ body:not(.page-home):not(.page-login) .text-muted {
 
 /* Breadcrumbs Bootstrap sur fond sombre */
 body:not(.page-home):not(.page-login) .breadcrumb-item a {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -59,15 +97,15 @@ body:not(.page-home):not(.page-login) .breadcrumb-item a:hover {
     color: var(--cf2m-cyan);
 }
 body:not(.page-home):not(.page-login) .breadcrumb-item.active {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.65);
 }
 body:not(.page-home):not(.page-login) .breadcrumb-item + .breadcrumb-item::before {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.55);
 }
 
-/* Cartes glassmorphisme plus opaques pour lisibilité du texte sombre */
+/* Cartes glassmorphisme sombres sur pages intérieures */
 body:not(.page-home):not(.page-login) .cf2m-card {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(8, 17, 30, 0.72);
     backdrop-filter: blur(16px) saturate(1.3);
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
 }
@@ -646,7 +684,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-section-title {
     font-family: var(--font-display);
     font-weight: 800;
-    color: var(--cf2m-navy);
+    color: var(--cf2m-white);
     margin-bottom: 2.5rem;
     letter-spacing: -0.3px;
 }
@@ -670,19 +708,19 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     background: var(--cf2m-cyan);
 }
 
-/* Cartes formations accueil : fond opaque pour lisibilité */
+/* Cartes formations accueil : glassmorphisme sombre */
 .page-home #formations .cf2m-card {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(8, 17, 30, 0.78);
     backdrop-filter: blur(12px) saturate(1.2);
     -webkit-backdrop-filter: blur(12px) saturate(1.2);
 }
 
 /* ── Cards formations ────────────────────────────────────────────────── */
 .cf2m-card {
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 0.75rem;
-    box-shadow: 0 8px 32px rgba(13, 30, 53, 0.18), inset 0 1px 0 rgba(255,255,255,0.7);
-    background: rgba(255, 255, 255, 0.50);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    background: rgba(8, 17, 30, 0.65);
     backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     -webkit-backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
@@ -720,7 +758,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     border-radius: 0.3rem;
 }
 .cf2m-card .card-text {
-    color: #4a6070;
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.88rem;
     line-height: 1.65;
     hyphens: none;
@@ -728,10 +766,10 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     overflow-wrap: break-word;
 }
 .cf2m-card .btn-outline-secondary {
-    background: var(--cf2m-white);
-    border: 1px solid rgba(0, 180, 216, 0.2);
+    background: rgba(0, 180, 216, 0.08);
+    border: 1px solid rgba(0, 180, 216, 0.35);
     border-radius: 0.6rem;
-    color: var(--card-color-secondary, var(--cf2m-dark));
+    color: var(--cf2m-cyan-light);
     font-family: var(--font-display);
     font-size: 0.82rem;
     font-weight: 600;
@@ -742,27 +780,27 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-card .btn-outline-secondary:hover {
     box-shadow: 0 6px 18px rgba(0, 180, 216, 0.2);
     border-color: var(--cf2m-cyan);
-    color: var(--cf2m-cyan);
+    color: var(--cf2m-white);
     transform: translateY(-2px);
-    background: var(--cf2m-white);
+    background: rgba(0, 180, 216, 0.18);
 }
 
 /* ── Section partenaires ─────────────────────────────────────────────── */
 .cf2m-partners {
-    background: linear-gradient(180deg, var(--cf2m-light) 0%, #ddeef5 100%);
+    background: linear-gradient(180deg, var(--cf2m-navy) 0%, var(--cf2m-dark) 100%);
 }
 .cf2m-partner-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--cf2m-white);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(0, 180, 216, 0.2);
     border-radius: 0.6rem;
     padding: 0.9rem 1.5rem;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--cf2m-navy);
+    color: rgba(255, 255, 255, 0.80);
     text-decoration: none;
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
@@ -1073,6 +1111,42 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 
 
+/* ── Contenu riche formation et pages (SunEditor |raw) ───────────────── */
+.cf2m-formation-description,
+.cf2m-page-content {
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.85;
+    font-size: 0.97rem;
+}
+.cf2m-formation-description h1, .cf2m-page-content h1,
+.cf2m-formation-description h2, .cf2m-page-content h2,
+.cf2m-formation-description h3, .cf2m-page-content h3,
+.cf2m-formation-description h4, .cf2m-page-content h4,
+.cf2m-formation-description h5, .cf2m-page-content h5,
+.cf2m-formation-description h6, .cf2m-page-content h6 {
+    color: var(--cf2m-white);
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+.cf2m-formation-description p,   .cf2m-page-content p   { margin-bottom: 0.9rem; }
+.cf2m-formation-description ul,  .cf2m-page-content ul,
+.cf2m-formation-description ol,  .cf2m-page-content ol  { padding-left: 1.4rem; margin-bottom: 0.9rem; color: rgba(255,255,255,0.80); }
+.cf2m-formation-description li,  .cf2m-page-content li  { margin-bottom: 0.3rem; }
+.cf2m-formation-description strong, .cf2m-page-content strong { color: var(--cf2m-white); font-weight: 600; }
+.cf2m-formation-description em,     .cf2m-page-content em     { color: var(--cf2m-cyan-light); }
+.cf2m-formation-description a,      .cf2m-page-content a      { color: var(--cf2m-cyan-light); text-decoration: underline; }
+.cf2m-formation-description a:hover, .cf2m-page-content a:hover { color: var(--cf2m-white); }
+.cf2m-formation-description table,  .cf2m-page-content table  { color: rgba(255,255,255,0.82); }
+.cf2m-formation-description hr,     .cf2m-page-content hr     { border-color: rgba(255,255,255,0.15); }
+.cf2m-formation-description blockquote, .cf2m-page-content blockquote {
+    border-left: 3px solid var(--cf2m-cyan);
+    padding-left: 1rem;
+    color: rgba(255,255,255,0.65);
+    font-style: italic;
+}
+
 /* ── Liens works sur la page formation ──────────────────────────────── */
 .cf2m-works-link {
     color: var(--cf2m-cyan);
@@ -1102,14 +1176,14 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     pointer-events: none;
 }
 .cf2m-work-breadcrumb .breadcrumb-item a {
-    color: var(--cf2m-muted);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.2s;
 }
 .cf2m-work-breadcrumb .breadcrumb-item a:hover { color: var(--cf2m-cyan); }
-.cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
-.cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.25); }
+.cf2m-work-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.65); font-size: 0.8rem; }
+.cf2m-work-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.55); }
 
 .cf2m-work-label {
     display: inline-block;
@@ -1150,11 +1224,11 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 .cf2m-work-body { background: transparent; }
 
 .cf2m-work-description-card {
-    background: var(--cf2m-white);
+    background: rgba(8, 17, 30, 0.72);
     border: 1px solid rgba(0, 180, 216, 0.12);
     border-radius: 0.75rem;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
 }
 .cf2m-work-description-header {
     background: linear-gradient(135deg, var(--cf2m-dark) 0%, var(--cf2m-navy-md) 100%);
@@ -1170,19 +1244,19 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 .cf2m-work-description-body {
     padding: 1.75rem;
-    color: #2a3f52;
+    color: rgba(255, 255, 255, 0.80);
     font-size: 0.95rem;
     line-height: 1.8;
 }
 
 /* Sidebar */
 .cf2m-work-sidebar-block {
-    background: var(--cf2m-white);
+    background: rgba(8, 17, 30, 0.72);
     border: 1px solid rgba(0, 180, 216, 0.12);
     border-radius: 0.75rem;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1.25rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 .cf2m-work-sidebar-title {
     font-family: var(--font-display);
@@ -1190,7 +1264,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #7a95aa;
+    color: var(--cf2m-cyan-light);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
