@@ -32,6 +32,9 @@ alias ga='git add .'
 alias gc='git commit'
 alias gps='git push'
 alias gpu='git pull'
+alias gr='git remote -v'
+alias gb='git branch'
+alias gf='git fetch --all'
 ```
 
 URL de WSL maison
