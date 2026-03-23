@@ -10,11 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -24,7 +20,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -90,28 +85,19 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        // Un ROLE_ADMIN ne peut ni éditer ni consulter un ROLE_SUPER_ADMIN : on masque les boutons
+        $isSuperAdmin = $this->isGranted('ROLE_SUPER_ADMIN');
+
         return $actions
             ->setPermission(Action::INDEX, 'ROLE_ADMIN')
             ->setPermission(Action::NEW, 'ROLE_ADMIN')
             ->setPermission(Action::EDIT, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(
+                fn (User $user) => $isSuperAdmin || !in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true)
+            ))
         ;
-    }
-
-    public function edit(AdminContext $context): KeyValueStore|Response
-    {
-        /** @var User|null $userToEdit */
-        $userToEdit = $context->getEntity()->getInstance();
-
-        if ($userToEdit !== null
-            && in_array('ROLE_SUPER_ADMIN', $userToEdit->getRoles(), true)
-            && !$this->isGranted('ROLE_SUPER_ADMIN')
-        ) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier un Super Administrateur.');
-        }
-
-        return parent::edit($context);
     }
 
     public function configureCrud(Crud $crud): Crud
