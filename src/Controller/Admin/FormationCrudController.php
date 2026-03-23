@@ -77,6 +77,8 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+
         return $crud
             ->setEntityLabelInSingular('Formation')
             ->setEntityLabelInPlural('Formations')
