@@ -505,6 +505,36 @@ class RevisionService
     }
 
     /**
+     * Envoie un email de notification à tous les formateurs (ROLE_FORMATEUR+)
+     * pour une révision Works soumise par un stagiaire.
+     */
+    public function notifyFormateurs(Revision $revision): void
+    {
+        $formateurs = $this->userRepository->findFormateurs();
+
+        if ([] === $formateurs) {
+            return;
+        }
+
+        foreach ($formateurs as $formateur) {
+            $formateurEmail = $formateur->getEmail();
+            if (null === $formateurEmail || '' === $formateurEmail) {
+                continue;
+            }
+
+            $email = (new TemplatedEmail())
+                ->from(new Address($this->mailFrom, 'CF2m — Révisions'))
+                ->to($formateurEmail)
+                ->subject('[CF2m] Nouvelle révision Works en attente de validation')
+                ->htmlTemplate('emails/revision_pending.html.twig')
+                ->context(['revision' => $revision])
+            ;
+
+            $this->mailer->send($email);
+        }
+    }
+
+    /**
      * Envoie un email de notification à tous les administrateurs
      * pour une révision en attente.
      */

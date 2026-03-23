@@ -75,8 +75,13 @@ Email : alex@cf2m.be
 
 Email : magib@cf2m.be
 - userName : TheMagib
-- Rôle : ROLE_USER
+- Rôle : ROLE_STAGIAIRE
 - Mot de passe : 123magib
+
+Email : nabil@cf2m.be
+- userName : TheNab
+- Rôle : ROLE_USER
+- Mot de passe : 123nabil
 
 
 ---

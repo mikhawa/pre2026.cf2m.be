@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-#[IsGranted('ROLE_FORMATEUR')]
+#[IsGranted('ROLE_STAGIAIRE')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
@@ -88,6 +88,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Contenu');
         yield MenuItem::linkTo(FormationCrudController::class, 'Formations', 'fa fa-graduation-cap')
+            ->setPermission('ROLE_FORMATEUR')
             ->setBadge($pendingFormations > 0 ? $pendingFormations : null, 'danger')
         ;
         yield MenuItem::linkTo(WorksCrudController::class, 'Works', 'fa fa-folder-open')

@@ -62,13 +62,21 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123alex',
         ]);
-        // ── Utilisateur de test ────────────────────────────────────────
+        // ── Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',
             'userName'      => 'TheMagib',
-            'roles'         => ['ROLE_USER'],
+            'roles'         => ['ROLE_STAGIAIRE'],
             'status'        => 1,
             'plainPassword' => '123magib',
+        ]);
+        // ── Stagiaire de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'nabil@cf2m.be',
+            'userName'      => 'TheNab',
+            'roles'         => ['ROLE_USER'],
+            'status'        => 1,
+            'plainPassword' => '123nabil',
         ]);
 
 

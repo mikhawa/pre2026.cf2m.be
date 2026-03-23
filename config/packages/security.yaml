@@ -35,7 +35,7 @@ security:
                 target: app_home
 
     access_control:
-        - { path: ^/admin, roles: ROLE_FORMATEUR }
+        - { path: ^/admin, roles: ROLE_STAGIAIRE }
         - { path: ^/profil, roles: ROLE_USER }
 
 when@test:

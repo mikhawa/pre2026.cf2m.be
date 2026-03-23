@@ -154,7 +154,7 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_SUPER_ADMIN' => 'danger',
                 'ROLE_ADMIN'       => 'warning',
                 'ROLE_FORMATEUR'   => 'info',
-                'ROLE_STAGIAIRE'   => 'primary',
+                'ROLE_STAGIAIRE'   => 'success',
                 'ROLE_USER'        => 'secondary',
             ])
         ;
