@@ -55,6 +55,13 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123piet',
         ]);
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'alex@cf2m.be',
+            'userName'      => 'TheAlexandra',
+            'roles'         => ['ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123alex',
+        ]);
         // ── Utilisateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',
@@ -67,8 +74,8 @@ class AppFixtures extends Fixture
 
         // ── Fakers Utilisateurs ────────────────────────────────────────────────
         $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
-        $formateurs = UserFactory::createMany(8, fn () => ['roles' => ['ROLE_FORMATEUR']]);
-        $etudiants  = UserFactory::createMany(35);
+        $formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
+        $etudiants  = UserFactory::createMany(10);
 
         // Regrouper les utilisateurs manuels, admins et formateurs pour les associer à des formations
         $adminsAndFormateurs = [...$usersManuel, ...$admins, ...$formateurs];
