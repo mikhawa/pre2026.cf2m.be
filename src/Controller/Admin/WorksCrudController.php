@@ -59,7 +59,7 @@ class WorksCrudController extends AbstractCrudController
         $actions
             ->setPermission(Action::NEW, 'ROLE_FORMATEUR')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission('historiqueWorks', 'ROLE_ADMIN')
+            ->setPermission('historiqueWorks', 'ROLE_FORMATEUR')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
@@ -175,7 +175,7 @@ class WorksCrudController extends AbstractCrudController
         WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         /** @var Works $works */
         $works   = $context->getEntity()->getInstance();
@@ -263,7 +263,7 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -295,7 +295,7 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -328,7 +328,7 @@ class WorksCrudController extends AbstractCrudController
         WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
