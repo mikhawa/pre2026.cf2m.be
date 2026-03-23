@@ -125,17 +125,40 @@ class UserCrudController extends AbstractCrudController
         ;
     }
 
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        if ($entityInstance instanceof User && !$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Empêche l'escalade de privilèges : un ROLE_ADMIN ne peut pas assigner ROLE_SUPER_ADMIN
+            $roles = array_values(array_filter(
+                $entityInstance->getRoles(),
+                static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
+            ));
+            $entityInstance->setRoles($roles);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield EmailField::new('email', 'E-mail');
         yield TextField::new('userName', 'Nom d\'utilisateur');
+
+        // ROLE_SUPER_ADMIN voit tous les rôles ; ROLE_ADMIN ne peut attribuer que Formateur ou Administrateur
+        $rolesChoices = $this->isGranted('ROLE_SUPER_ADMIN')
+            ? [
+                'Utilisateur'    => 'ROLE_USER',
+                'Administrateur' => 'ROLE_ADMIN',
+                'Super Admin'    => 'ROLE_SUPER_ADMIN',
+                'Formateur'      => 'ROLE_FORMATEUR',
+            ]
+            : [
+                'Administrateur' => 'ROLE_ADMIN',
+                'Formateur'      => 'ROLE_FORMATEUR',
+            ];
+
         yield ChoiceField::new('roles', 'Rôles')
-            ->setChoices([
-                'Utilisateur'     => 'ROLE_USER',
-                'Administrateur'  => 'ROLE_ADMIN',
-                'Super Admin'     => 'ROLE_SUPER_ADMIN',
-                'Formateur'       => 'ROLE_FORMATEUR',
-            ])
+            ->setChoices($rolesChoices)
             ->allowMultipleChoices()
             ->renderAsBadges([
                 'ROLE_SUPER_ADMIN' => 'danger',
@@ -143,7 +166,6 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_FORMATEUR'   => 'info',
                 'ROLE_USER'        => 'secondary',
             ])
-            ->setPermission('ROLE_SUPER_ADMIN')
         ;
         yield IntegerField::new('status', 'Statut')
             ->hideOnIndex()
