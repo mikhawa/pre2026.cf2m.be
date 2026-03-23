@@ -130,13 +130,15 @@ class UserCrudController extends AbstractCrudController
         yield EmailField::new('email', 'E-mail');
         yield TextField::new('userName', 'Nom d\'utilisateur');
 
-        // ROLE_SUPER_ADMIN voit tous les rôles ; ROLE_ADMIN ne peut attribuer que Formateur ou Administrateur
-        $rolesChoices = $this->isGranted('ROLE_SUPER_ADMIN')
+        // En affichage (index) : tous les rôles sont visibles pour que les badges s'affichent correctement
+        // En formulaire (new/edit) : ROLE_ADMIN ne peut attribuer que Formateur ou Administrateur
+        $isFormPage = in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT], true);
+        $rolesChoices = (!$isFormPage || $this->isGranted('ROLE_SUPER_ADMIN'))
             ? [
-                'Utilisateur'    => 'ROLE_USER',
-                'Administrateur' => 'ROLE_ADMIN',
-                'Super Admin'    => 'ROLE_SUPER_ADMIN',
-                'Formateur'      => 'ROLE_FORMATEUR',
+                'Utilisateur'      => 'ROLE_USER',
+                'Administrateur'   => 'ROLE_ADMIN',
+                'Super Admin'      => 'ROLE_SUPER_ADMIN',
+                'Formateur'        => 'ROLE_FORMATEUR',
             ]
             : [
                 'Administrateur' => 'ROLE_ADMIN',
