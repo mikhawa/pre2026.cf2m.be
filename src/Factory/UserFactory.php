@@ -27,7 +27,7 @@ final class UserFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         $userName = self::faker()->firstNameFemale().'-'.self::faker()->lastName();
-        $email = $userName.'@'.'cf2m.be';
+        $email = str_replace(' ', '-', $userName).'@cf2m.be';
         return [
             'email'                    => $email,
             'userName'                 => $userName,
