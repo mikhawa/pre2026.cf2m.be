@@ -9,6 +9,7 @@ use App\Entity\FormationHistory;
 use App\Repository\FormationHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -134,6 +135,18 @@ class FormationCrudController extends AbstractCrudController
         yield AssociationField::new('responsables', 'Responsables')
             ->hideOnIndex()
             ->setRequired(false)
+            ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
+                ->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->like('entity.roles', ':roleFormateur'),
+                        $qb->expr()->like('entity.roles', ':roleAdmin'),
+                        $qb->expr()->like('entity.roles', ':roleSuperAdmin'),
+                    )
+                )
+                ->setParameter('roleFormateur', '%ROLE_FORMATEUR%')
+                ->setParameter('roleAdmin', '%ROLE_ADMIN%')
+                ->setParameter('roleSuperAdmin', '%ROLE_SUPER_ADMIN%')
+            )
         ;
         yield ColorField::new('colorPrimary', 'Couleur primaire')
             ->hideOnIndex()
