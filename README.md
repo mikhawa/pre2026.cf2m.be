@@ -68,10 +68,20 @@ Email : piet@cf2m.be
 - Rôle : ROLE_FORMATEUR
 - Mot de passe : 123piet
 
+Email : alex@cf2m.be
+- userName : TheAlexandra
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123alex
+
 Email : magib@cf2m.be
 - userName : TheMagib
-- Rôle : ROLE_USER
+- Rôle : ROLE_STAGIAIRE
 - Mot de passe : 123magib
+
+Email : nabil@cf2m.be
+- userName : TheNab
+- Rôle : ROLE_USER
+- Mot de passe : 123nabil
 
 
 ---

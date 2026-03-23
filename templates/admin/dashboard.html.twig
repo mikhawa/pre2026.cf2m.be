@@ -19,6 +19,7 @@
     </div>
     {% endif %}
 
+    {% if is_granted('ROLE_FORMATEUR') %}
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-4">
@@ -30,6 +31,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">

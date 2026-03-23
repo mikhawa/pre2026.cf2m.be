@@ -53,4 +53,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Retourne tous les utilisateurs ayant au moins ROLE_FORMATEUR
+     * (ROLE_FORMATEUR, ROLE_ADMIN, ROLE_SUPER_ADMIN).
+     *
+     * @return User[]
+     */
+    public function findFormateurs(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.roles LIKE :formateur')
+            ->orWhere('u.roles LIKE :admin')
+            ->orWhere('u.roles LIKE :superAdmin')
+            ->setParameter('formateur', '%ROLE_FORMATEUR%')
+            ->setParameter('admin', '%ROLE_ADMIN%')
+            ->setParameter('superAdmin', '%ROLE_SUPER_ADMIN%')
+            ->getQuery()
+            ->getResult();
+    }
 }
