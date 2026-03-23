@@ -135,14 +135,16 @@ class UserCrudController extends AbstractCrudController
         $isFormPage = in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT], true);
         $rolesChoices = (!$isFormPage || $this->isGranted('ROLE_SUPER_ADMIN'))
             ? [
-                'Utilisateur'      => 'ROLE_USER',
-                'Administrateur'   => 'ROLE_ADMIN',
-                'Super Admin'      => 'ROLE_SUPER_ADMIN',
-                'Formateur'        => 'ROLE_FORMATEUR',
+                'Utilisateur'    => 'ROLE_USER',
+                'Stagiaire'      => 'ROLE_STAGIAIRE',
+                'Formateur'      => 'ROLE_FORMATEUR',
+                'Administrateur' => 'ROLE_ADMIN',
+                'Super Admin'    => 'ROLE_SUPER_ADMIN',
             ]
             : [
-                'Administrateur' => 'ROLE_ADMIN',
+                'Stagiaire'      => 'ROLE_STAGIAIRE',
                 'Formateur'      => 'ROLE_FORMATEUR',
+                'Administrateur' => 'ROLE_ADMIN',
             ];
 
         yield ChoiceField::new('roles', 'Rôles')
@@ -152,6 +154,7 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_SUPER_ADMIN' => 'danger',
                 'ROLE_ADMIN'       => 'warning',
                 'ROLE_FORMATEUR'   => 'info',
+                'ROLE_STAGIAIRE'   => 'primary',
                 'ROLE_USER'        => 'secondary',
             ])
         ;
@@ -187,6 +190,7 @@ class UserCrudController extends AbstractCrudController
                 'Super Admin'    => 'ROLE_SUPER_ADMIN',
                 'Administrateur' => 'ROLE_ADMIN',
                 'Formateur'      => 'ROLE_FORMATEUR',
+                'Stagiaire'      => 'ROLE_STAGIAIRE',
             ]))
         ;
     }
