@@ -1770,10 +1770,16 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.18);
 }
 
-/* Logo : ombre plus douce sur fond clair */
-[data-theme="light"] .cf2m-login-logo {
+/* Logo connexion : version claire masquée par défaut (dark mode) */
+.cf2m-login-logo--light { display: none; }
+.cf2m-login-logo--dark  { display: inline-block; }
+
+/* Logo connexion : en mode clair, on swap vers le logo foncé */
+[data-theme="light"] .cf2m-login-logo--light {
+    display: inline-block;
     filter: drop-shadow(0 0 10px rgba(0, 100, 160, 0.30));
 }
+[data-theme="light"] .cf2m-login-logo--dark { display: none; }
 
 /* ─── Titres dans les card-header (pages et formations) : plus lumineux ─── */
 /* Titres dans les card-header (pages et formations) : plus lumineux */

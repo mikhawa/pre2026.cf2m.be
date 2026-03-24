@@ -108,7 +108,7 @@ class DashboardController extends AbstractDashboardController
         ;
 
         yield MenuItem::section('Interactions');
-        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_FORMATEUR');
+        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_STAGIAIRE');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToUrl('Révisions en attente', 'fa fa-clock', $revisionsPendantesUrl)
             ->setPermission('ROLE_ADMIN')
