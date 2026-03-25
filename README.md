@@ -22,7 +22,7 @@ php bin/console asset-map:compile --env=prod
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
-- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --no-interaction)
+- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --no-interaction) 
 
 #### URL du serveur de développement local (Docker) :
 | Service | URL | Description |
