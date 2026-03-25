@@ -28,11 +28,15 @@ Source unique du script Matomo. Pour modifier les paramètres (site ID, domaine)
 
 ### Frontend
 
-`base.html.twig` inclut le partial juste avant `</body>`. Toutes les pages héritant de ce layout sont couvertes : accueil, formations, activités, contact, profil, connexion.
+`base.html.twig` inclut le partial juste avant `</body>`, **uniquement en environnement `prod`** :
+
+```twig
+{% if app.environment == 'prod' %}{% include '_matomo.html.twig' %}{% endif %}
+```
 
 ### EasyAdmin
 
-`templates/bundles/EasyAdminBundle/layout.html.twig` étend `@!EasyAdmin/layout.html.twig` (syntaxe `!` obligatoire pour éviter la récursion) et surcharge le block `body_javascript` en appelant `{{ parent() }}` puis en incluant le partial.
+`templates/bundles/EasyAdminBundle/layout.html.twig` surcharge le block `body_javascript` avec la même condition `prod`.
 
 ---
 
