@@ -10,6 +10,9 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 #### URL du serveur de préproduction :
 - https://pre2026.cf2m.be/
 
+#### URL du serveur de production :
+- https://production.cf2m.be/
+
 #### URL du serveur des raccourcis de développement :
 - [Tous les raccourcis de développement](RACCOURCIS.md)
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)

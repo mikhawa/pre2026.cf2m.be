@@ -67,9 +67,10 @@ jobs:
             php bin/console cache:warmup --env=prod
 
             echo "=== Assets ==="
-            php bin/console importmap:install --env=prod
+            php bin/console importmap:install
+            php bin/console asset-map:compile --env=prod
 
-            echo "=== Permissions uploads ==="
+            echo "=== Permissions ==="
             chmod -R 775 public/uploads
             chmod -R 775 var/
 
