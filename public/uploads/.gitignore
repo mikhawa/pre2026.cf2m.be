@@ -1,5 +1,9 @@
-# Ignorer tous les fichiers uploadés sauf ce fichier
+# Ignorer tous les fichiers uploadés sauf ce fichier et les sous-dossiers trackés
 *
 !.gitignore
 !editor/
 !editor/.gitignore
+!avatars/
+!avatars/.gitignore
+!formation-logos/
+!formation-logos/.gitignore

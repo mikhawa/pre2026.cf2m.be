@@ -11,6 +11,10 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - https://pre2026.cf2m.be/
 
 #### URL du serveur de production :
+composer update
+php bin/console importmap:install
+php bin/console asset-map:compile --env=prod
+
 - https://production.cf2m.be/
 
 #### URL du serveur des raccourcis de développement :
