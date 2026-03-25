@@ -1,0 +1,6 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    {% include '_matomo.html.twig' %}
+{% endblock %}

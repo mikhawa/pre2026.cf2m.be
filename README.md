@@ -52,6 +52,12 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
         php bin/console doctrine:migrations:migrate
         php bin/console doctrine:fixtures:load --no-interaction
 
+# Passage en production
+- À effectuer après validation finale en préproduction et avant de partager l'URL avec les utilisateurs finaux.
+- production/ - 2026-03-24
+- 
+- 
+
 
 ## Utilisateurs et rôles (fixtures de test)
 
