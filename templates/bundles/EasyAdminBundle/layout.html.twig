@@ -2,5 +2,5 @@
 
 {% block body_javascript %}
     {{ parent() }}
-    {% include '_matomo.html.twig' %}
+    {% if app.environment == 'prod' %}{% include '_matomo.html.twig' %}{% endif %}
 {% endblock %}
