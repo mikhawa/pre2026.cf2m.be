@@ -51,6 +51,7 @@ jobs:
           key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
           script: |
             set -e
+            export PATH="/var/www/vhosts/cf2m.be/.phpenv/shims:/var/www/vhosts/cf2m.be/.phpenv/bin:$PATH"
             cd ${{ secrets.PROD_VPS_PATH }}
 
             echo "=== Git pull ==="
