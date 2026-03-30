@@ -9,18 +9,32 @@
 
 ## Fichiers modifiés
 
-- `src/Controller/Admin/FormationCrudController.php`
+- `src/Controller/Admin/FormationCrudController.php` — 4 occurrences corrigées
+- `templates/admin/formation/historique.html.twig` — boutons d'action masqués pour ROLE_FORMATEUR
 
-## Changement
+## Changements
 
+**updateEntity()** :
 ```diff
 - if (!$this->isGranted('ROLE_FORMATEUR')) {
 + if (!$this->isGranted('ROLE_ADMIN')) {
 ```
 
-Commentaire mis à jour en cohérence :
-- `ROLE_FORMATEUR` (sans ROLE_ADMIN) → révision PENDING
-- `ROLE_ADMIN` / `ROLE_SUPER_ADMIN` → révision AUTO_APPROVED
+**approuverHistoriqueFormation(), rejeterHistoriqueFormation(), restaurerHistoriqueFormation()** :
+```diff
+- $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
++ $this->denyAccessUnlessGranted('ROLE_ADMIN');
+```
+
+**historique.html.twig** :
+```diff
+- {% if is_granted('ROLE_FORMATEUR') %}
++ {% if is_granted('ROLE_ADMIN') %}
+```
+
+Comportement après correction :
+- `ROLE_FORMATEUR` → révision PENDING (ne peut ni approuver ni rejeter ni restaurer)
+- `ROLE_ADMIN` / `ROLE_SUPER_ADMIN` → révision AUTO_APPROVED, peut gérer l'historique
 
 ## Contexte
 

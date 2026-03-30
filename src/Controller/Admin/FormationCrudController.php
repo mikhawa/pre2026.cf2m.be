@@ -324,7 +324,7 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -357,7 +357,7 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -390,7 +390,7 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $historyId   = (int) $context->getRequest()->query->get('historyId');
         $history     = $formationHistoryRepo->find($historyId);
