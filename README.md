@@ -11,9 +11,10 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - https://pre2026.cf2m.be/
 
 #### URL du serveur de production :
-composer update
-php bin/console importmap:install
-php bin/console asset-map:compile --env=prod
+        composer update
+        php bin/console importmap:install
+        php bin/console asset-map:compile --env=prod
+est envoyé sur le serveur de production via git et est accessible à l'URL suivante :
 
 - https://production.cf2m.be/
 
@@ -44,6 +45,10 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - 2026-03-20 : design de Clovis:
 
   https://cf2m-dfuse.figma.site/
+
+- 2026-03-30 hiérarchie des rôles et permissions:
+
+    [Hiérarchie](HIERARCHIE.md)
 
 # Passage en préproduction
 
