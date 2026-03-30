@@ -433,15 +433,15 @@ class FormationCrudController extends AbstractCrudController
 
     /**
      * Intercepte la mise à jour pour gérer les révisions.
-     * - ROLE_FORMATEUR et supérieurs : révision AUTO_APPROVED, contenu live mis à jour
-     * - En dessous de ROLE_FORMATEUR : révision PENDING, contenu live inchangé
+     * - ROLE_FORMATEUR (sans ROLE_ADMIN) : révision PENDING, contenu live inchangé
+     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision AUTO_APPROVED, contenu live mis à jour
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Formation $entityInstance */
         $user = $this->getUser();
 
-        if (!$this->isGranted('ROLE_FORMATEUR')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             // Vérifier s'il existe déjà une révision PENDING pour cette formation
             $existingPending = $this->formationHistoryRepo->findPendingForFormation($entityInstance);
 
