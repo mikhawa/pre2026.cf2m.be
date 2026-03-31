@@ -263,7 +263,9 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_APPROVE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -295,7 +297,9 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_REJECT', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -328,7 +332,9 @@ class WorksCrudController extends AbstractCrudController
         WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_RESTORE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -366,9 +372,9 @@ class WorksCrudController extends AbstractCrudController
         /** @var Works $entityInstance */
         $user = $this->getUser();
 
-        if (!$this->isGranted('ROLE_FORMATEUR')) {
-            // Stagiaire : vérification d'appartenance (double sécurité)
-            if (!$entityInstance->getUsers()->contains($user)) {
+        if (!$this->isGranted('WORKS_EDIT_AUTOAPPROVE', $entityInstance)) {
+            // Stagiaires uniquement : vérification d'appartenance au works (double sécurité)
+            if (!$this->isGranted('ROLE_FORMATEUR') && !$entityInstance->getUsers()->contains($user)) {
                 throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
             }
 
@@ -383,7 +389,7 @@ class WorksCrudController extends AbstractCrudController
                 $revision = $this->revisionService->createRevision($entityInstance, $user, false);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
-                $this->revisionService->notifyFormateurs($revision);
+                $this->revisionService->notifyFormateurs($revision, $entityInstance);
                 $this->addFlash('warning', 'Votre modification a été soumise pour validation par un formateur.');
             }
 

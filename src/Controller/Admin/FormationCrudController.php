@@ -324,7 +324,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_APPROVE', $formation);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -357,7 +359,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_REJECT', $formation);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -390,7 +394,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_RESTORE', $formation);
 
         $historyId   = (int) $context->getRequest()->query->get('historyId');
         $history     = $formationHistoryRepo->find($historyId);
@@ -441,7 +447,7 @@ class FormationCrudController extends AbstractCrudController
         /** @var Formation $entityInstance */
         $user = $this->getUser();
 
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('FORMATION_EDIT_AUTOAPPROVE', $entityInstance)) {
             // Vérifier s'il existe déjà une révision PENDING pour cette formation
             $existingPending = $this->formationHistoryRepo->findPendingForFormation($entityInstance);
 
