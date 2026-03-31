@@ -37,6 +37,16 @@ Implémentation de pattern Symfony (Voters), modifications dans plusieurs couche
 - `templates/admin/works/historique.html.twig`
   - `is_granted('ROLE_FORMATEUR')` → `is_granted('WORKS_APPROVE', works)`
 
+## Filtrage des listes et protection des accès (complément)
+
+- `FormationCrudController::createIndexQueryBuilder()` — ajoutée : filtre par `responsables` pour les formateurs non-admin
+- `WorksCrudController::createIndexQueryBuilder()` — ajoutée branche formateur : filtre par `formation.responsables`
+- `FormationCrudController::edit()` — ajout vérification `FORMATION_APPROVE` avant d'autoriser l'édition
+- `WorksCrudController::edit()` — ajout vérification `WORKS_APPROVE` pour les formateurs non-admin
+- `WorksCrudController::configureFields()` — `setQueryBuilder` sur le champ `formation` pour restreindre le dropdown aux formations dont l'utilisateur est responsable
+
+Imports ajoutés dans FormationCrudController : `SearchDto`, `EntityDto`, `FieldCollection`, `FilterCollection`.
+
 ## Résumé
 
 Implémentation de l'Approche 1 du fichier `docs/architecture/permissions-fines-formations.md`.
