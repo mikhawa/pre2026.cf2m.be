@@ -98,6 +98,11 @@ Email : magib@cf2m.be
 - Rôle : ROLE_STAGIAIRE
 - Mot de passe : 123magib
 
+Email : steve@cf2m.be
+- userName : TheSteve
+- Rôle : ROLE_STAGIAIRE
+- Mot de passe : 123steve
+
 Email : nabil@cf2m.be
 - userName : TheNab
 - Rôle : ROLE_USER
