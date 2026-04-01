@@ -1153,8 +1153,15 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 /* ── Modal de recadrage avatar ──────────────────────────────────────── */
 .cf2m-crop-container {
     height: 360px;
-    background: #000;
+    background: #1a1a1a;
     overflow: hidden;
+    position: relative;
+}
+.cf2m-crop-container canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
 }
 .cf2m-crop-modal-content {
     background: #0d1e2e;

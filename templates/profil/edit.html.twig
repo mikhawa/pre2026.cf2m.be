@@ -99,32 +99,20 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content cf2m-crop-modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="avatar-crop-modal-label">Recadrer la photo de profil</h5>
+                                <h5 class="modal-title" id="avatar-crop-modal-label">Recadrer la photo — déplacer et redimensionner le cadre</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                             </div>
                             <div class="modal-body p-0 cf2m-crop-container">
-                                <cropper-canvas background style="width: 100%; height: 100%;">
-                                    <cropper-image data-avatar-crop-target="cropperImage"
-                                                   rotatable scalable translatable></cropper-image>
-                                    <cropper-shade hidden></cropper-shade>
-                                    <cropper-handle action="select" plain></cropper-handle>
-                                    <cropper-selection data-avatar-crop-target="cropperSelection"
-                                                       aspect-ratio="1"
-                                                       initial-coverage="0.8"
-                                                       movable resizable>
-                                        <cropper-grid role="grid" covered></cropper-grid>
-                                        <cropper-crosshair centered></cropper-crosshair>
-                                        <cropper-handle action="move" theme-color="rgba(255,255,255,0.35)"></cropper-handle>
-                                        <cropper-handle action="n-resize"></cropper-handle>
-                                        <cropper-handle action="e-resize"></cropper-handle>
-                                        <cropper-handle action="s-resize"></cropper-handle>
-                                        <cropper-handle action="w-resize"></cropper-handle>
-                                        <cropper-handle action="ne-resize"></cropper-handle>
-                                        <cropper-handle action="nw-resize"></cropper-handle>
-                                        <cropper-handle action="se-resize"></cropper-handle>
-                                        <cropper-handle action="sw-resize"></cropper-handle>
-                                    </cropper-selection>
-                                </cropper-canvas>
+                                <canvas data-avatar-crop-target="cropCanvas"
+                                        data-action="mousedown->avatar-crop#dragStart
+                                                     mousemove->avatar-crop#dragMove
+                                                     mouseup->avatar-crop#dragEnd
+                                                     mouseleave->avatar-crop#dragEnd
+                                                     touchstart->avatar-crop#touchStart
+                                                     touchmove->avatar-crop#touchMove
+                                                     touchend->avatar-crop#dragEnd"
+                                        style="display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;">
+                                </canvas>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary"
