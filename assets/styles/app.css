@@ -1059,6 +1059,12 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: #1a2b3c !important;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
+.cf2m-input::placeholder { color: #6a8090; }
+.cf2m-input::file-selector-button {
+    color: #1a2b3c;
+    background: #e2ecf3;
+    border-color: #c0d0dc;
+}
 .cf2m-input:focus {
     background: #fff;
     border-color: var(--cf2m-cyan);
