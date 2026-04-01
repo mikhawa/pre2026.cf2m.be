@@ -11,6 +11,10 @@ use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -73,6 +77,23 @@ class FormationCrudController extends AbstractCrudController
             )
             ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiqueFormation'])
         ;
+    }
+
+    /**
+     * Filtre la liste pour les formateurs : uniquement les formations dont ils sont responsables.
+     * Les admins et super-admins voient tout.
+     */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+            $qb->join('entity.responsables', 'r_formation')
+                ->andWhere('r_formation.id = :currentUserId')
+                ->setParameter('currentUserId', $this->getUser()?->getId());
+        }
+
+        return $qb;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -200,6 +221,16 @@ class FormationCrudController extends AbstractCrudController
      */
     public function edit(AdminContext $context): KeyValueStore|Response
     {
+        /** @var Formation|null $formation */
+        $formation = $context->getEntity()->getInstance();
+
+        // Un formateur non-admin ne peut éditer que les formations dont il est responsable
+        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+            if ($formation instanceof Formation && !$this->isGranted('FORMATION_APPROVE', $formation)) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de cette formation.');
+            }
+        }
+
         if (!$this->isGranted('ROLE_FORMATEUR')) {
             /** @var Formation|null $formation */
             $formation = $context->getEntity()->getInstance();
@@ -324,7 +355,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_APPROVE', $formation);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -357,7 +390,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_REJECT', $formation);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $formationHistoryRepo->find($historyId);
@@ -390,7 +425,9 @@ class FormationCrudController extends AbstractCrudController
         FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_RESTORE', $formation);
 
         $historyId   = (int) $context->getRequest()->query->get('historyId');
         $history     = $formationHistoryRepo->find($historyId);
@@ -433,15 +470,15 @@ class FormationCrudController extends AbstractCrudController
 
     /**
      * Intercepte la mise à jour pour gérer les révisions.
-     * - ROLE_FORMATEUR et supérieurs : révision AUTO_APPROVED, contenu live mis à jour
-     * - En dessous de ROLE_FORMATEUR : révision PENDING, contenu live inchangé
+     * - ROLE_FORMATEUR (sans ROLE_ADMIN) : révision PENDING, contenu live inchangé
+     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision AUTO_APPROVED, contenu live mis à jour
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Formation $entityInstance */
         $user = $this->getUser();
 
-        if (!$this->isGranted('ROLE_FORMATEUR')) {
+        if (!$this->isGranted('FORMATION_EDIT_AUTOAPPROVE', $entityInstance)) {
             // Vérifier s'il existe déjà une révision PENDING pour cette formation
             $existingPending = $this->formationHistoryRepo->findPendingForFormation($entityInstance);
 
