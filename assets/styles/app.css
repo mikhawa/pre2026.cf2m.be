@@ -1150,6 +1150,44 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
 }
 
 
+/* ── Modal de recadrage avatar ──────────────────────────────────────── */
+.cf2m-crop-container {
+    height: 360px;
+    background: #1a1a1a;
+    overflow: hidden;
+    position: relative;
+}
+.cf2m-crop-container canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+.cf2m-crop-modal-content {
+    background: #0d1e2e;
+    border: 1px solid rgba(0, 180, 216, 0.2);
+    color: rgba(255, 255, 255, 0.87);
+}
+.cf2m-crop-modal-content .modal-header,
+.cf2m-crop-modal-content .modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.cf2m-crop-modal-content .btn-close {
+    filter: invert(1) grayscale(1);
+}
+[data-theme="light"] .cf2m-crop-modal-content {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #1a2b3c;
+}
+[data-theme="light"] .cf2m-crop-modal-content .modal-header,
+[data-theme="light"] .cf2m-crop-modal-content .modal-footer {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .cf2m-crop-modal-content .btn-close {
+    filter: none;
+}
+
 /* ── Contenu riche formation et pages (SunEditor |raw) ───────────────── */
 .cf2m-formation-description,
 .cf2m-page-content {
