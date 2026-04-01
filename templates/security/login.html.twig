@@ -34,6 +34,14 @@
                 <p class="cf2m-login-subtitle">Accédez à votre espace CF2m</p>
             </div>
 
+            {# Flash messages (ex: mot de passe réinitialisé) #}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+            {% endfor %}
+
             {# Message d'erreur #}
             {% if error %}
                 <div class="cf2m-login-error" role="alert">
