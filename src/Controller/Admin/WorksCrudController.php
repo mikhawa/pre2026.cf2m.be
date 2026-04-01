@@ -77,15 +77,25 @@ class WorksCrudController extends AbstractCrudController
     }
 
     /**
-     * Filtre la liste pour les stagiaires : uniquement les Works dont ils font partie.
+     * Filtre la liste selon le rôle :
+     * - Stagiaire : uniquement les Works dont il fait partie
+     * - Formateur non-admin : uniquement les Works des formations dont il est responsable
+     * - Admin/Super-admin : tous les Works
      */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
         if (!$this->isGranted('ROLE_FORMATEUR')) {
+            // Stagiaire : uniquement les works où il est étudiant
             $qb->join('entity.users', 'u_stagiaire')
                 ->andWhere('u_stagiaire.id = :currentUserId')
+                ->setParameter('currentUserId', $this->getUser()?->getId());
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            // Formateur non-admin : uniquement les works des formations dont il est responsable
+            $qb->join('entity.formation', 'f_works')
+                ->join('f_works.responsables', 'r_works')
+                ->andWhere('r_works.id = :currentUserId')
                 ->setParameter('currentUserId', $this->getUser()?->getId());
         }
 
@@ -94,15 +104,21 @@ class WorksCrudController extends AbstractCrudController
 
     /**
      * Empêche un stagiaire d'éditer un Works dont il ne fait pas partie.
+     * Empêche un formateur non-responsable d'éditer un Works hors de ses formations.
      */
     public function edit(AdminContext $context): KeyValueStore|\Symfony\Component\HttpFoundation\Response
     {
-        if (!$this->isGranted('ROLE_FORMATEUR')) {
-            /** @var Works|null $works */
-            $works = $context->getEntity()->getInstance();
+        /** @var Works|null $works */
+        $works = $context->getEntity()->getInstance();
 
+        if (!$this->isGranted('ROLE_FORMATEUR')) {
             if ($works !== null && !$works->getUsers()->contains($this->getUser())) {
                 throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
+            }
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            // Formateur non-admin : doit être responsable de la formation parente
+            if ($works !== null && !$this->isGranted('WORKS_APPROVE', $works)) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de ce work.');
             }
         }
 
@@ -124,7 +140,15 @@ class WorksCrudController extends AbstractCrudController
     {
         yield TextField::new('title', 'Titre');
         yield TextField::new('slug', 'Slug');
-        yield AssociationField::new('formation', 'Formation');
+        yield AssociationField::new('formation', 'Formation')
+            ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+                    $qb->join('entity.responsables', 'r_form')
+                        ->andWhere('r_form.id = :userId')
+                        ->setParameter('userId', $this->getUser()?->getId());
+                }
+                return $qb;
+            });
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
                 'Brouillon'  => 'draft',
@@ -263,7 +287,9 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_APPROVE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -295,7 +321,9 @@ class WorksCrudController extends AbstractCrudController
         AdminContext $context,
         WorksHistoryRepository $worksHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_REJECT', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -328,7 +356,9 @@ class WorksCrudController extends AbstractCrudController
         WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_RESTORE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $worksHistoryRepo->find($historyId);
@@ -366,9 +396,9 @@ class WorksCrudController extends AbstractCrudController
         /** @var Works $entityInstance */
         $user = $this->getUser();
 
-        if (!$this->isGranted('ROLE_FORMATEUR')) {
-            // Stagiaire : vérification d'appartenance (double sécurité)
-            if (!$entityInstance->getUsers()->contains($user)) {
+        if (!$this->isGranted('WORKS_EDIT_AUTOAPPROVE', $entityInstance)) {
+            // Stagiaires uniquement : vérification d'appartenance au works (double sécurité)
+            if (!$this->isGranted('ROLE_FORMATEUR') && !$entityInstance->getUsers()->contains($user)) {
                 throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
             }
 
@@ -383,7 +413,7 @@ class WorksCrudController extends AbstractCrudController
                 $revision = $this->revisionService->createRevision($entityInstance, $user, false);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
-                $this->revisionService->notifyFormateurs($revision);
+                $this->revisionService->notifyFormateurs($revision, $entityInstance);
                 $this->addFlash('warning', 'Votre modification a été soumise pour validation par un formateur.');
             }
 

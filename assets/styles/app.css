@@ -43,6 +43,26 @@ small {
 .alert {
     --bs-alert-color: rgba(255, 255, 255, 0.87);
 }
+.alert-success {
+    --bs-alert-color:        rgba(255, 255, 255, 0.87);
+    --bs-alert-bg:           rgba(25, 135, 84, 0.20);
+    --bs-alert-border-color: rgba(25, 135, 84, 0.40);
+}
+.alert-warning {
+    --bs-alert-color:        rgba(255, 255, 255, 0.87);
+    --bs-alert-bg:           rgba(255, 193, 7, 0.18);
+    --bs-alert-border-color: rgba(255, 193, 7, 0.40);
+}
+.alert-danger {
+    --bs-alert-color:        rgba(255, 255, 255, 0.87);
+    --bs-alert-bg:           rgba(220, 53, 69, 0.20);
+    --bs-alert-border-color: rgba(220, 53, 69, 0.40);
+}
+.alert-info {
+    --bs-alert-color:        rgba(255, 255, 255, 0.87);
+    --bs-alert-bg:           rgba(13, 202, 240, 0.15);
+    --bs-alert-border-color: rgba(13, 202, 240, 0.35);
+}
 a {
     color: var(--cf2m-cyan-light);
 }
@@ -1039,6 +1059,12 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     color: #1a2b3c !important;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
+.cf2m-input::placeholder { color: #6a8090; }
+.cf2m-input::file-selector-button {
+    color: #1a2b3c;
+    background: #e2ecf3;
+    border-color: #c0d0dc;
+}
 .cf2m-input:focus {
     background: #fff;
     border-color: var(--cf2m-cyan);
@@ -1621,11 +1647,27 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 /* Profil : labels de section */
 [data-theme="light"] .cf2m-muted-label { color: #6c757d; }
 
-/* Alertes Bootstrap : fond clair → texte sombre */
-[data-theme="light"] .alert-success { color: #0a3622; }
-[data-theme="light"] .alert-warning { color: #664d03; }
-[data-theme="light"] .alert-danger  { color: #58151c; }
-[data-theme="light"] .alert-info    { color: #055160; }
+/* Alertes Bootstrap : fond clair → texte sombre + restauration des couleurs Bootstrap */
+[data-theme="light"] .alert-success {
+    --bs-alert-color:        #0a3622;
+    --bs-alert-bg:           #d1e7dd;
+    --bs-alert-border-color: #badbcc;
+}
+[data-theme="light"] .alert-warning {
+    --bs-alert-color:        #664d03;
+    --bs-alert-bg:           #fff3cd;
+    --bs-alert-border-color: #ffecb5;
+}
+[data-theme="light"] .alert-danger {
+    --bs-alert-color:        #58151c;
+    --bs-alert-bg:           #f8d7da;
+    --bs-alert-border-color: #f5c2c7;
+}
+[data-theme="light"] .alert-info {
+    --bs-alert-color:        #055160;
+    --bs-alert-bg:           #cff4fc;
+    --bs-alert-border-color: #b6effb;
+}
 
 /* Bouton thème : adapter si on veut (la navbar reste sombre, donc pas de changement) */
 [data-theme="light"] .cf2m-theme-toggle:hover {
