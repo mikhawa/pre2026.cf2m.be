@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -56,8 +57,8 @@ class FormationCrudController extends AbstractCrudController
         $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueFormation')
             ->asWarningAction()
-            ->setLabel(static function (Formation $entity) use ($formationHistoryRepo): string {
-                return sprintf('Historique (%d)', count($formationHistoryRepo->findHistoryForFormation($entity)));
+            ->setLabel(static function (Formation $entity) use ($formationHistoryRepo): TranslatableMessage {
+                return new TranslatableMessage('Historique (%count%)', ['%count%' => count($formationHistoryRepo->findHistoryForFormation($entity))]);
             })
         ;
 
@@ -112,7 +113,7 @@ class FormationCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $formationHistoryRepo = $this->formationHistoryRepo;
-        yield TextField::new('revisionPendante', ' ')
+        yield TextField::new('revisionPendante', false)
             ->onlyOnIndex()
             ->renderAsHtml()
             ->setSortable(false)

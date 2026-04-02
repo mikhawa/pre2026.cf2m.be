@@ -97,6 +97,10 @@
 # ── Général frontend ──────────────────────────────────────────────────────
 'Révisions en attente': 'Révisions en attente'
 
+# ── EasyAdmin — champs et actions ─────────────────────────────────────────
+'Logo': 'Logo'
+'Historique (%count%)': 'Historique (%count%)'
+
 # ── Formulaire de modification du profil (frontend) ──────────────────────
 'Photo de profil': 'Photo de profil'
 'Supprimer la photo actuelle': 'Supprimer la photo actuelle'
