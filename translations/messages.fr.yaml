@@ -94,6 +94,18 @@
 'Site web': 'Site web'
 'Logo (nom fichier)': 'Logo (nom fichier)'
 
+# ── Formulaire de modification du profil (frontend) ──────────────────────
+'Photo de profil': 'Photo de profil'
+'Supprimer la photo actuelle': 'Supprimer la photo actuelle'
+'Présentation': 'Présentation'
+'Quelques mots sur vous…': 'Quelques mots sur vous…'
+'Lien 1': 'Lien 1'
+'Lien 2': 'Lien 2'
+'Lien 3': 'Lien 3'
+'https://linkedin.com/in/vous': 'https://linkedin.com/in/vous'
+'https://github.com/vous': 'https://github.com/vous'
+'https://votre-site.be': 'https://votre-site.be'
+
 # ── Formulaire de contact (frontend) ──────────────────────────────────────
 'Votre nom': 'Votre nom'
 'Jean Dupont': 'Jean Dupont'
