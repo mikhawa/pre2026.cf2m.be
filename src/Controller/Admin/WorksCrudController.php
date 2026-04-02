@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -51,8 +52,8 @@ class WorksCrudController extends AbstractCrudController
         $historique = Action::new('historiqueWorks', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueWorks')
             ->asWarningAction()
-            ->setLabel(static function (Works $entity) use ($worksHistoryRepo): string {
-                return sprintf('Historique (%d)', count($worksHistoryRepo->findHistoryForWorks($entity)));
+            ->setLabel(static function (Works $entity) use ($worksHistoryRepo): TranslatableMessage {
+                return new TranslatableMessage('Historique (%count%)', ['%count%' => count($worksHistoryRepo->findHistoryForWorks($entity))]);
             })
         ;
 

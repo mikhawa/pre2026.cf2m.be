@@ -31,7 +31,7 @@
 
                             {# Avatar #}
                             <div class="mb-4">
-                                <label class="cf2m-form-label">{{ form_label(form.avatarFile) }}</label>
+                                {{ form_label(form.avatarFile, null, {label_attr: {class: 'cf2m-form-label'}}) }}
                                 <div class="cf2m-avatar-upload d-flex align-items-center gap-3">
                                     <div class="cf2m-avatar-wrap flex-shrink-0">
                                         {% if user.avatarName %}

@@ -11,6 +11,7 @@ use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -45,8 +46,8 @@ class PageCrudController extends AbstractCrudController
         $historique = Action::new('historiquePage', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiquePage')
             ->asWarningAction()
-            ->setLabel(static function (Page $entity) use ($pageHistoryRepo): string {
-                return sprintf('Historique (%d)', count($pageHistoryRepo->findHistoryForPage($entity)));
+            ->setLabel(static function (Page $entity) use ($pageHistoryRepo): TranslatableMessage {
+                return new TranslatableMessage('Historique (%count%)', ['%count%' => count($pageHistoryRepo->findHistoryForPage($entity))]);
             })
         ;
 
