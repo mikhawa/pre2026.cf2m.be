@@ -70,6 +70,8 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - Création du serveur de production (https://production.cf2m.be/) avec les mêmes étapes que pour la préproduction, en veillant à utiliser les configurations d'environnement appropriées pour la production (ex. Mailjet pour l'envoi d'emails, paramètres de base de données sécurisés, etc.). - 2026-03-25
 - Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
 
+## FIX PROD
+- 2026-04-01 : plus moyen de mettre à jour le profil en production, https://production.cf2m.be/profil/modifier 422 (Unprocessable Content)
 
 ## Utilisateurs et rôles (fixtures de test)
 
