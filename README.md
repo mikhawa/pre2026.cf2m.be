@@ -46,16 +46,18 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
   https://cf2m-dfuse.figma.site/
 
-- 2026-03-30 hiérarchie des rôles et permissions:
+- 2026-03-30 hiérarchie des rôles et permissions pour la gestion des utilisateurs et des accès à différentes parties du site, basée sur les besoins fonctionnels du projet et les meilleures pratiques de sécurité :
 
     [Hiérarchie](HIERARCHIE.md)
 
 # Passage en préproduction
 
-- À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via git et avant de partager l'URL avec les utilisateurs finaux.
+- À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via Git et avant de partager l'URL avec les utilisateurs finaux.
 - preprod/v02 - 2026-03-21
 - preprod/v03 - 2026-03-24 (ajout de Mailjet pour l'envoi d'emails en préprod)
 - preprod/v04 - 2026-03-25 (ajout des fixtures de test pour les utilisateurs et rôles)
+
+Les branches sont désormais libres à utiliser pour la préproduction, mais il est recommandé de suivre une convention de nommage claire pour les commits et les branches (ex. `preprod/v01`, `preprod/v02`, etc.) pour faciliter la traçabilité des changements.
 
         php bin/console cache:clear --no-warmup
         composer require symfony/mailjet-mailer
@@ -70,8 +72,6 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - Création du serveur de production (https://production.cf2m.be/) avec les mêmes étapes que pour la préproduction, en veillant à utiliser les configurations d'environnement appropriées pour la production (ex. Mailjet pour l'envoi d'emails, paramètres de base de données sécurisés, etc.). - 2026-03-25
 - Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
 
-## FIX PROD
-- 2026-04-01 : plus moyen de mettre à jour le profil en production, https://production.cf2m.be/profil/modifier 422 (Unprocessable Content)
 
 ## Utilisateurs et rôles (fixtures de test)
 
