@@ -86,11 +86,14 @@
                         {{ entry.diff|raw }}
                     </div>
 
-                    {# Pied : boutons d'action (ROLE_ADMIN ou formateur responsable de la formation parente) #}
-                    {% if is_granted('WORKS_APPROVE', works) %}
-                        {% set hasActions = (entry.approuverUrl is defined) or (entry.restaurerUrl is defined) %}
-                        {% if hasActions %}
-                        <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">
+                    {# Pied : prévisualisation (toujours visible) + actions (WORKS_APPROVE seulement) #}
+                    <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">
+                        <a href="{{ path('admin_preview_history_works', {id: rev.id}) }}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-eye me-1"></i> Prévisualiser v{{ rev.version }}
+                        </a>
+                        {% if is_granted('WORKS_APPROVE', works) %}
                             {% if isPending and entry.approuverUrl is defined %}
                                 <a href="{{ entry.approuverUrl }}"
                                    class="btn btn-sm btn-success"
@@ -110,9 +113,8 @@
                                     <i class="fa fa-rotate-left me-1"></i> Restaurer cette version
                                 </a>
                             {% endif %}
-                        </div>
                         {% endif %}
-                    {% endif %}
+                    </div>
 
                 </div>
             {% endfor %}
