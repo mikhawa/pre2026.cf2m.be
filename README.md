@@ -10,12 +10,20 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 #### URL du serveur de préproduction :
 - https://pre2026.cf2m.be/
 
+#### URL du serveur de production :
+        composer update
+        php bin/console importmap:install
+        php bin/console asset-map:compile --env=prod
+est envoyé sur le serveur de production via git et est accessible à l'URL suivante :
+
+- https://production.cf2m.be/
+
 #### URL du serveur des raccourcis de développement :
 - [Tous les raccourcis de développement](RACCOURCIS.md)
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
-- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --no-interaction)
+- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --no-interaction) 
 
 #### URL du serveur de développement local (Docker) :
 | Service | URL | Description |
@@ -38,6 +46,10 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
   https://cf2m-dfuse.figma.site/
 
+- 2026-03-30 hiérarchie des rôles et permissions:
+
+    [Hiérarchie](HIERARCHIE.md)
+
 # Passage en préproduction
 
 - À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via git et avant de partager l'URL avec les utilisateurs finaux.
@@ -52,6 +64,14 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
         php bin/console doctrine:migrations:migrate
         php bin/console doctrine:fixtures:load --no-interaction
 
+# Passage en production
+- À effectuer après validation finale en préproduction et avant de partager l'URL avec les utilisateurs finaux.
+- production/ - 2026-03-24
+- Création du serveur de production (https://production.cf2m.be/) avec les mêmes étapes que pour la préproduction, en veillant à utiliser les configurations d'environnement appropriées pour la production (ex. Mailjet pour l'envoi d'emails, paramètres de base de données sécurisés, etc.). - 2026-03-25
+- Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
+
+## FIX PROD
+- 2026-04-01 : plus moyen de mettre à jour le profil en production, https://production.cf2m.be/profil/modifier 422 (Unprocessable Content)
 
 ## Utilisateurs et rôles (fixtures de test)
 
@@ -79,6 +99,11 @@ Email : magib@cf2m.be
 - userName : TheMagib
 - Rôle : ROLE_STAGIAIRE
 - Mot de passe : 123magib
+
+Email : steve@cf2m.be
+- userName : TheSteve
+- Rôle : ROLE_STAGIAIRE
+- Mot de passe : 123steve
 
 Email : nabil@cf2m.be
 - userName : TheNab

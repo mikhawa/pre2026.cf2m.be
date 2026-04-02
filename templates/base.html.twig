@@ -302,5 +302,6 @@
             </div>
         </footer>
 
+        {% if app.environment == 'prod' %}{% include '_matomo.html.twig' %}{% endif %}
     </body>
 </html>

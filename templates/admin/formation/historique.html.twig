@@ -86,8 +86,8 @@
                         {{ entry.diff|raw }}
                     </div>
 
-                    {# Pied : boutons d'action (ROLE_FORMATEUR et supérieurs) #}
-                    {% if is_granted('ROLE_FORMATEUR') %}
+                    {# Pied : boutons d'action (ROLE_ADMIN ou formateur responsable de cette formation) #}
+                    {% if is_granted('FORMATION_APPROVE', formation) %}
                         {% set hasActions = (entry.approuverUrl is defined) or (entry.restaurerUrl is defined) %}
                         {% if hasActions %}
                         <div class="card-footer bg-transparent py-2 d-flex gap-2 flex-wrap">

@@ -9,6 +9,15 @@ framework:
     #esi: true
     #fragments: true
 
+when@prod:
+    framework:
+        # Plesk/Apache termine le SSL au niveau du reverse proxy.
+        # Sans trusted_proxies, $request->isSecure() = false → le cookie CSRF
+        # côté serveur cherche "submit_TOKEN" mais le navigateur a posé "__Host-submit_TOKEN".
+        # Ce mismatch provoque une erreur 422 sur tous les formulaires en production.
+        trusted_proxies: '127.0.0.1'
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port']
+
 when@test:
     framework:
         test: true
