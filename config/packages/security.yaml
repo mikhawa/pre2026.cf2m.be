@@ -3,9 +3,10 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
     role_hierarchy:
-        ROLE_FORMATEUR:   ROLE_USER
-        ROLE_ADMIN:       [ROLE_FORMATEUR, ROLE_USER]
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_FORMATEUR, ROLE_USER]
+        ROLE_STAGIAIRE:   ROLE_USER
+        ROLE_FORMATEUR:   [ROLE_STAGIAIRE, ROLE_USER]
+        ROLE_ADMIN:       [ROLE_FORMATEUR, ROLE_STAGIAIRE, ROLE_USER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_FORMATEUR, ROLE_STAGIAIRE, ROLE_USER]
 
     providers:
         app_user_provider:
@@ -34,7 +35,7 @@ security:
                 target: app_home
 
     access_control:
-        - { path: ^/admin, roles: ROLE_FORMATEUR }
+        - { path: ^/admin, roles: ROLE_STAGIAIRE }
         - { path: ^/profil, roles: ROLE_USER }
 
 when@test:

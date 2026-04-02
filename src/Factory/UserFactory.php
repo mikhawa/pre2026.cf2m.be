@@ -26,9 +26,11 @@ final class UserFactory extends PersistentObjectFactory
     #[\Override]
     protected function defaults(): array|callable
     {
+        $userName = self::faker()->firstNameFemale().'-'.self::faker()->lastName();
+        $email = str_replace(' ', '-', $userName).'@cf2m.be';
         return [
-            'email'                    => self::faker()->unique()->safeEmail(),
-            'userName'                 => self::faker()->unique()->regexify('[a-zA-Z][a-zA-Z0-9_]{5,14}'),
+            'email'                    => $email,
+            'userName'                 => $userName,
             'roles'                    => [],
             'status'                   => 1,
             'biography'                => self::faker()->optional(0.7)->realText(200),

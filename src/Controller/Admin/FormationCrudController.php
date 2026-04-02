@@ -5,22 +5,34 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Formation;
-use App\Repository\RevisionRepository;
+use App\Entity\FormationHistory;
+use App\Repository\FormationHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +41,7 @@ class FormationCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
-        private readonly RevisionRepository $revisionRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
     ) {
     }
 
@@ -40,20 +52,20 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $repo = $this->revisionRepository;
+        $formationHistoryRepo = $this->formationHistoryRepo;
 
         $historique = Action::new('historiqueFormation', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueFormation')
             ->asWarningAction()
-            ->setLabel(static function (Formation $entity) use ($repo): string {
-                return sprintf('Historique (%d)', $repo->countByEntityId('formation', $entity->getId()));
+            ->setLabel(static function (Formation $entity) use ($formationHistoryRepo): TranslatableMessage {
+                return new TranslatableMessage('Historique (%count%)', ['%count%' => count($formationHistoryRepo->findHistoryForFormation($entity))]);
             })
         ;
 
         return $actions
             ->setPermission(Action::NEW, 'ROLE_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission('historiqueFormation', 'ROLE_ADMIN')
+            ->setPermission('historiqueFormation', 'ROLE_FORMATEUR')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
@@ -68,8 +80,27 @@ class FormationCrudController extends AbstractCrudController
         ;
     }
 
+    /**
+     * Filtre la liste pour les formateurs : uniquement les formations dont ils sont responsables.
+     * Les admins et super-admins voient tout.
+     */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+            $qb->join('entity.responsables', 'r_formation')
+                ->andWhere('r_formation.id = :currentUserId')
+                ->setParameter('currentUserId', $this->getUser()?->getId());
+        }
+
+        return $qb;
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+
         return $crud
             ->setEntityLabelInSingular('Formation')
             ->setEntityLabelInPlural('Formations')
@@ -81,6 +112,22 @@ class FormationCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $formationHistoryRepo = $this->formationHistoryRepo;
+        yield TextField::new('revisionPendante', false)
+            ->onlyOnIndex()
+            ->renderAsHtml()
+            ->setSortable(false)
+            ->formatValue(static function (mixed $value, ?Formation $entity) use ($formationHistoryRepo): string {
+                if ($entity === null) {
+                    return '';
+                }
+                $pending = $formationHistoryRepo->findPendingForFormation($entity);
+
+                return $pending !== null
+                    ? '<span class="badge text-bg-warning text-nowrap"><i class="fa fa-clock me-1"></i>En attente</span>'
+                    : '';
+            })
+        ;
         yield TextField::new('title', 'Titre');
         yield TextField::new('slug', 'Slug');
         yield ChoiceField::new('status', 'Statut')
@@ -112,6 +159,18 @@ class FormationCrudController extends AbstractCrudController
         yield AssociationField::new('responsables', 'Responsables')
             ->hideOnIndex()
             ->setRequired(false)
+            ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
+                ->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->like('entity.roles', ':roleFormateur'),
+                        $qb->expr()->like('entity.roles', ':roleAdmin'),
+                        $qb->expr()->like('entity.roles', ':roleSuperAdmin'),
+                    )
+                )
+                ->setParameter('roleFormateur', '%ROLE_FORMATEUR%')
+                ->setParameter('roleAdmin', '%ROLE_ADMIN%')
+                ->setParameter('roleSuperAdmin', '%ROLE_SUPER_ADMIN%')
+            )
         ;
         yield ColorField::new('colorPrimary', 'Couleur primaire')
             ->hideOnIndex()
@@ -122,6 +181,22 @@ class FormationCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(false)
             ->showValue()
+        ;
+        yield TextareaField::new('descriptionCourte', 'Description courte (accueil, max 800 car.)')
+            ->hideOnIndex()
+            ->setRequired(false)
+            ->setHelp('Texte affiché sur la page d\'accueil à la place de la description longue. 800 caractères maximum.')
+        ;
+        yield Field::new('logoFile', 'Logo')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])
+            ->hideOnIndex()
+            ->setRequired(false)
+        ;
+        yield ImageField::new('logo', 'Logo')
+            ->setBasePath('/uploads/formation-logos/')
+            ->hideOnForm()
+            ->setRequired(false)
         ;
         yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()
@@ -142,24 +217,64 @@ class FormationCrudController extends AbstractCrudController
     }
 
     /**
+     * Surcharge l'action edit pour pré-remplir le formulaire avec les données de la révision PENDING
+     * lorsqu'un formateur a déjà soumis une modification en attente de validation.
+     */
+    public function edit(AdminContext $context): KeyValueStore|Response
+    {
+        /** @var Formation|null $formation */
+        $formation = $context->getEntity()->getInstance();
+
+        // Un formateur non-admin ne peut éditer que les formations dont il est responsable
+        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+            if ($formation instanceof Formation && !$this->isGranted('FORMATION_APPROVE', $formation)) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de cette formation.');
+            }
+        }
+
+        if (!$this->isGranted('ROLE_FORMATEUR')) {
+            /** @var Formation|null $formation */
+            $formation = $context->getEntity()->getInstance();
+
+            if ($formation instanceof Formation) {
+                $pending = $this->formationHistoryRepo->findPendingForFormation($formation);
+
+                if ($pending !== null && $pending->getCreatedBy()?->getId() === $this->getUser()?->getId()) {
+                    // Injecter les données de la révision dans l'entité en mémoire
+                    // Le formulaire affichera les modifications en attente, pas les données live
+                    $this->revisionService->applyRevisionDataToFormation(
+                        $formation,
+                        $this->revisionService->snapshotFromFormationHistory($pending)
+                    );
+
+                    if ($context->getRequest()->isMethod('GET')) {
+                        $this->addFlash('info', 'Vous visualisez vos modifications en attente de validation. Vous pouvez les modifier jusqu\'à ce qu\'elles soient traitées.');
+                    }
+                }
+            }
+        }
+
+        return parent::edit($context);
+    }
+
+    /**
      * Page d'historique des révisions pour une Formation donnée.
      * Affiche toutes les versions sous forme de timeline git-like avec diffs.
      */
     #[AdminRoute(path: '/{entityId}/historique', name: 'historique_formation')]
     public function historiqueFormation(
         AdminContext $context,
-        RevisionRepository $revisionRepository,
+        FormationHistoryRepository $formationHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         /** @var Formation $formation */
-        $formation = $context->getEntity()->getInstance();
+        $formation  = $context->getEntity()->getInstance();
         $formationId = $formation->getId();
 
-        $revisions = $revisionRepository->findByFormationId($formationId);
+        $entries = $formationHistoryRepo->findHistoryForFormation($formation);
 
-        // URL de cette page (utilisée comme returnUrl pour revenir après action)
         $historiqueUrl = $adminUrlGenerator
             ->setController(self::class)
             ->setAction('historiqueFormation')
@@ -174,43 +289,55 @@ class FormationCrudController extends AbstractCrudController
 
         $liveSnapshot = $this->revisionService->getLiveFormationSnapshot($formation);
 
-        $historique = [];
-        foreach ($revisions as $revision) {
-            $isCurrent = $revision->getData() === $liveSnapshot;
+        // Pré-calcul des snapshots pour chaque entrée
+        $snapshots = [];
+        foreach ($entries as $i => $entry) {
+            $snapshots[$i] = $this->revisionService->snapshotFromFormationHistory($entry);
+        }
 
-            $entry = [
-                'revision'  => $revision,
-                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+        $historique = [];
+        foreach ($entries as $i => $entry) {
+            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+
+            $diff = $this->revisionService->buildTypedHistoryDiffHtml(
+                $snapshots[$i],
+                $snapshots[$i + 1] ?? null
+            );
+
+            $histEntry = [
+                'revision'  => $entry,
+                'diff'      => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            $baseUrl = $adminUrlGenerator
-                ->setController(FormationRevisionCrudController::class)
-                ->setEntityId($revision->getId())
-                ->generateUrl();
-
-            if ($revision->getStatus() === \App\Entity\Revision::STATUS_PENDING) {
-                $entry['approuverUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('approuverRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-                $entry['rejeterUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('rejeterRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            if ($entry->getRevisionStatus() === FormationHistory::STATUS_PENDING) {
+                $histEntry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('approuverHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
+                $histEntry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('rejeterHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
-            if ($revision->getStatus() === \App\Entity\Revision::STATUS_APPROVED && !$isCurrent) {
-                $entry['appliquerUrl'] = $adminUrlGenerator
-                    ->setController(FormationRevisionCrudController::class)
-                    ->setAction('appliquerVersion')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            $restaurable = [FormationHistory::STATUS_APPROVED, FormationHistory::STATUS_AUTO_APPROVED];
+            if (!$isCurrent && in_array($entry->getRevisionStatus(), $restaurable, true)) {
+                $histEntry['restaurerUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('restaurerHistoriqueFormation')
+                    ->setEntityId($formationId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId();
             }
 
-            $historique[] = $entry;
+            $historique[] = $histEntry;
         }
 
         return $this->render('admin/formation/historique.html.twig', [
@@ -218,6 +345,115 @@ class FormationCrudController extends AbstractCrudController
             'historique' => $historique,
             'editUrl'    => $editUrl,
         ]);
+    }
+
+    /**
+     * Approuve et applique une version de l'historique typé Formation.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/approuver', name: 'approuver_historique_formation')]
+    public function approuverHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_APPROVE', $formation);
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $formationHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== FormationHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->approuverFormationHistory($history, $reviewer);
+        $this->revisionService->notifyAuthorFromHistory($history, true);
+
+        $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Rejette une version de l'historique typé Formation.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/rejeter', name: 'rejeter_historique_formation')]
+    public function rejeterHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_REJECT', $formation);
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $formationHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== FormationHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->rejeterFormationHistory($history, $reviewer);
+        $this->revisionService->notifyAuthorFromHistory($history, false);
+
+        $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Restaure une version de l'historique Formation sur l'entité live.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/restaurer', name: 'restaurer_historique_formation')]
+    public function restaurerHistoriqueFormation(
+        AdminContext $context,
+        FormationHistoryRepository $formationHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_RESTORE', $formation);
+
+        $historyId   = (int) $context->getRequest()->query->get('historyId');
+        $history     = $formationHistoryRepo->find($historyId);
+        $formationId = $context->getEntity()->getInstance()?->getId();
+
+        $returnUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiqueFormation')
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $restaurable = [FormationHistory::STATUS_APPROVED, FormationHistory::STATUS_AUTO_APPROVED];
+        if (!$history || !in_array($history->getRevisionStatus(), $restaurable, true)) {
+            $this->addFlash('danger', 'Version introuvable ou non restaurable.');
+
+            return $this->redirect($returnUrl);
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->restaurerFormationHistory($history, $reviewer);
+
+        $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
+
+        return $this->redirect($returnUrl);
     }
 
     /**
@@ -236,21 +472,31 @@ class FormationCrudController extends AbstractCrudController
     /**
      * Intercepte la mise à jour pour gérer les révisions.
      * - ROLE_FORMATEUR (sans ROLE_ADMIN) : révision PENDING, contenu live inchangé
-     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision APPROVED, contenu live mis à jour
+     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision AUTO_APPROVED, contenu live mis à jour
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Formation $entityInstance */
         $user = $this->getUser();
-        $isAdmin = $this->isGranted('ROLE_ADMIN');
 
-        if (!$isAdmin) {
-            // Formateur : créer une révision PENDING et annuler la modification live
-            $revision = $this->revisionService->createRevision($entityInstance, $user, false);
-            $entityManager->refresh($entityInstance);
-            $entityManager->flush();
-            $this->revisionService->notifyAdmins($revision);
-            $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
+        if (!$this->isGranted('FORMATION_EDIT_AUTOAPPROVE', $entityInstance)) {
+            // Vérifier s'il existe déjà une révision PENDING pour cette formation
+            $existingPending = $this->formationHistoryRepo->findPendingForFormation($entityInstance);
+
+            if ($existingPending !== null) {
+                // Mettre à jour la révision PENDING existante (sans re-notifier les admins)
+                $this->revisionService->updatePendingTypedHistory($entityInstance);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->addFlash('warning', 'Votre modification en attente a été mise à jour. Elle reste soumise à validation.');
+            } else {
+                // Première soumission : créer une nouvelle révision PENDING et notifier les admins
+                $revision = $this->revisionService->createRevision($entityInstance, $user, false);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->revisionService->notifyAdmins($revision);
+                $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
+            }
 
             return;
         }

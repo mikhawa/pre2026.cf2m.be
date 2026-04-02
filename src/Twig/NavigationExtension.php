@@ -6,9 +6,11 @@ namespace App\Twig;
 
 use App\Entity\Formation;
 use App\Entity\Page;
+use App\Repository\FormationHistoryRepository;
 use App\Repository\FormationRepository;
+use App\Repository\PageHistoryRepository;
 use App\Repository\PageRepository;
-use App\Repository\RevisionRepository;
+use App\Repository\WorksHistoryRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -28,7 +30,9 @@ final class NavigationExtension extends AbstractExtension
     public function __construct(
         private readonly FormationRepository $formationRepository,
         private readonly PageRepository $pageRepository,
-        private readonly RevisionRepository $revisionRepository,
+        private readonly FormationHistoryRepository $formationHistoryRepo,
+        private readonly PageHistoryRepository $pageHistoryRepo,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
     ) {
     }
 
@@ -79,7 +83,9 @@ final class NavigationExtension extends AbstractExtension
     public function getPendingRevisionsCount(): int
     {
         if ($this->pendingRevisionsCount === null) {
-            $this->pendingRevisionsCount = $this->revisionRepository->findPendingCount();
+            $this->pendingRevisionsCount = $this->formationHistoryRepo->countPending()
+                + $this->pageHistoryRepo->countPending()
+                + $this->worksHistoryRepo->countPending();
         }
 
         return $this->pendingRevisionsCount;

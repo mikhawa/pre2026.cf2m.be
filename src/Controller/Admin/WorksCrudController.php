@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Revision;
 use App\Entity\Works;
-use App\Repository\RevisionRepository;
+use App\Entity\WorksHistory;
+use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -29,7 +36,7 @@ class WorksCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RevisionService $revisionService,
-        private readonly RevisionRepository $revisionRepository,
+        private readonly WorksHistoryRepository $worksHistoryRepo,
     ) {
     }
 
@@ -40,19 +47,20 @@ class WorksCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $repo = $this->revisionRepository;
+        $worksHistoryRepo = $this->worksHistoryRepo;
 
         $historique = Action::new('historiqueWorks', 'Historique', 'fa fa-history')
             ->linkToCrudAction('historiqueWorks')
             ->asWarningAction()
-            ->setLabel(static function (Works $entity) use ($repo): string {
-                return sprintf('Historique (%d)', $repo->countByEntityId('works', $entity->getId()));
+            ->setLabel(static function (Works $entity) use ($worksHistoryRepo): TranslatableMessage {
+                return new TranslatableMessage('Historique (%count%)', ['%count%' => count($worksHistoryRepo->findHistoryForWorks($entity))]);
             })
         ;
 
-        return $actions
+        $actions
+            ->setPermission(Action::NEW, 'ROLE_FORMATEUR')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission('historiqueWorks', 'ROLE_ADMIN')
+            ->setPermission('historiqueWorks', 'ROLE_FORMATEUR')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
@@ -65,6 +73,57 @@ class WorksCrudController extends AbstractCrudController
             )
             ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiqueWorks'])
         ;
+
+        return $actions;
+    }
+
+    /**
+     * Filtre la liste selon le rôle :
+     * - Stagiaire : uniquement les Works dont il fait partie
+     * - Formateur non-admin : uniquement les Works des formations dont il est responsable
+     * - Admin/Super-admin : tous les Works
+     */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        if (!$this->isGranted('ROLE_FORMATEUR')) {
+            // Stagiaire : uniquement les works où il est étudiant
+            $qb->join('entity.users', 'u_stagiaire')
+                ->andWhere('u_stagiaire.id = :currentUserId')
+                ->setParameter('currentUserId', $this->getUser()?->getId());
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            // Formateur non-admin : uniquement les works des formations dont il est responsable
+            $qb->join('entity.formation', 'f_works')
+                ->join('f_works.responsables', 'r_works')
+                ->andWhere('r_works.id = :currentUserId')
+                ->setParameter('currentUserId', $this->getUser()?->getId());
+        }
+
+        return $qb;
+    }
+
+    /**
+     * Empêche un stagiaire d'éditer un Works dont il ne fait pas partie.
+     * Empêche un formateur non-responsable d'éditer un Works hors de ses formations.
+     */
+    public function edit(AdminContext $context): KeyValueStore|\Symfony\Component\HttpFoundation\Response
+    {
+        /** @var Works|null $works */
+        $works = $context->getEntity()->getInstance();
+
+        if (!$this->isGranted('ROLE_FORMATEUR')) {
+            if ($works !== null && !$works->getUsers()->contains($this->getUser())) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
+            }
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            // Formateur non-admin : doit être responsable de la formation parente
+            if ($works !== null && !$this->isGranted('WORKS_APPROVE', $works)) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de ce work.');
+            }
+        }
+
+        return parent::edit($context);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -82,7 +141,15 @@ class WorksCrudController extends AbstractCrudController
     {
         yield TextField::new('title', 'Titre');
         yield TextField::new('slug', 'Slug');
-        yield AssociationField::new('formation', 'Formation');
+        yield AssociationField::new('formation', 'Formation')
+            ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+                    $qb->join('entity.responsables', 'r_form')
+                        ->andWhere('r_form.id = :userId')
+                        ->setParameter('userId', $this->getUser()?->getId());
+                }
+                return $qb;
+            });
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
                 'Brouillon'  => 'draft',
@@ -130,16 +197,16 @@ class WorksCrudController extends AbstractCrudController
     #[AdminRoute(path: '/{entityId}/historique', name: 'historique_works')]
     public function historiqueWorks(
         AdminContext $context,
-        RevisionRepository $revisionRepository,
+        WorksHistoryRepository $worksHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         /** @var Works $works */
-        $works = $context->getEntity()->getInstance();
+        $works   = $context->getEntity()->getInstance();
         $worksId = $works->getId();
 
-        $revisions = $revisionRepository->findByEntityId('works', $worksId);
+        $entries = $worksHistoryRepo->findHistoryForWorks($works);
 
         $historiqueUrl = $adminUrlGenerator
             ->setController(self::class)
@@ -155,38 +222,55 @@ class WorksCrudController extends AbstractCrudController
 
         $liveSnapshot = $this->revisionService->getLiveWorksSnapshot($works);
 
-        $historique = [];
-        foreach ($revisions as $revision) {
-            $isCurrent = $revision->getData() === $liveSnapshot;
+        // Pré-calcul des snapshots pour chaque entrée
+        $snapshots = [];
+        foreach ($entries as $i => $entry) {
+            $snapshots[$i] = $this->revisionService->snapshotFromWorksHistory($entry);
+        }
 
-            $entry = [
-                'revision'  => $revision,
-                'diff'      => $this->revisionService->buildHistoryDiffHtml($revision),
+        $historique = [];
+        foreach ($entries as $i => $entry) {
+            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+
+            $diff = $this->revisionService->buildTypedHistoryDiffHtml(
+                $snapshots[$i],
+                $snapshots[$i + 1] ?? null
+            );
+
+            $histEntry = [
+                'revision'  => $entry,
+                'diff'      => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            if ($revision->getStatus() === Revision::STATUS_PENDING) {
-                $entry['approuverUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('approuverRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
-                $entry['rejeterUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('rejeterRevision')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            if ($entry->getRevisionStatus() === WorksHistory::STATUS_PENDING) {
+                $histEntry['approuverUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('approuverHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
+                $histEntry['rejeterUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('rejeterHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId()
+                    . '&returnUrl=' . urlencode($historiqueUrl);
             }
 
-            if ($revision->getStatus() === Revision::STATUS_APPROVED && !$isCurrent) {
-                $entry['appliquerUrl'] = $adminUrlGenerator
-                    ->setController(WorksRevisionCrudController::class)
-                    ->setAction('appliquerVersion')
-                    ->setEntityId($revision->getId())
-                    ->generateUrl() . '?returnUrl=' . urlencode($historiqueUrl);
+            $restaurable = [WorksHistory::STATUS_APPROVED, WorksHistory::STATUS_AUTO_APPROVED];
+            if (!$isCurrent && in_array($entry->getRevisionStatus(), $restaurable, true)) {
+                $histEntry['restaurerUrl'] = $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('restaurerHistoriqueWorks')
+                    ->setEntityId($worksId)
+                    ->generateUrl()
+                    . '?historyId=' . $entry->getId();
             }
 
-            $historique[] = $entry;
+            $historique[] = $histEntry;
         }
 
         return $this->render('admin/works/historique.html.twig', [
@@ -197,14 +281,147 @@ class WorksCrudController extends AbstractCrudController
     }
 
     /**
-     * Intercepte la mise à jour pour créer une révision.
-     * Works : toujours auto-approuvée, contenu live mis à jour normalement.
+     * Approuve et applique une version de l'historique typé Works.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/approuver', name: 'approuver_historique_works')]
+    public function approuverHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+    ): Response {
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_APPROVE', $works);
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->approuverWorksHistory($history, $reviewer);
+        $this->revisionService->notifyAuthorFromHistory($history, true);
+
+        $this->addFlash('success', sprintf('La révision de « %s » a été approuvée et appliquée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Rejette une version de l'historique typé Works.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/rejeter', name: 'rejeter_historique_works')]
+    public function rejeterHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+    ): Response {
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_REJECT', $works);
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+
+        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+            $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
+            $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+            return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->rejeterWorksHistory($history, $reviewer);
+        $this->revisionService->notifyAuthorFromHistory($history, false);
+
+        $this->addFlash('info', sprintf('La révision de « %s » a été rejetée.', $history->getTitle()));
+
+        $returnUrl = $context->getRequest()->query->get('returnUrl');
+
+        return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
+    }
+
+    /**
+     * Restaure une version de l'historique Works sur l'entité live.
+     */
+    #[AdminRoute(path: '/{entityId}/historique/restaurer', name: 'restaurer_historique_works')]
+    public function restaurerHistoriqueWorks(
+        AdminContext $context,
+        WorksHistoryRepository $worksHistoryRepo,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Works $works */
+        $works = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('WORKS_RESTORE', $works);
+
+        $historyId = (int) $context->getRequest()->query->get('historyId');
+        $history   = $worksHistoryRepo->find($historyId);
+        $worksId   = $context->getEntity()->getInstance()?->getId();
+
+        $returnUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('historiqueWorks')
+            ->setEntityId($worksId)
+            ->generateUrl();
+
+        $restaurable = [WorksHistory::STATUS_APPROVED, WorksHistory::STATUS_AUTO_APPROVED];
+        if (!$history || !in_array($history->getRevisionStatus(), $restaurable, true)) {
+            $this->addFlash('danger', 'Version introuvable ou non restaurable.');
+
+            return $this->redirect($returnUrl);
+        }
+
+        /** @var \App\Entity\User $reviewer */
+        $reviewer = $this->getUser();
+        $this->revisionService->restaurerWorksHistory($history, $reviewer);
+
+        $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
+
+        return $this->redirect($returnUrl);
+    }
+
+    /**
+     * Intercepte la mise à jour pour gérer les révisions.
+     * - ROLE_STAGIAIRE : révision PENDING, contenu live inchangé, notifie les formateurs
+     * - ROLE_FORMATEUR / ROLE_ADMIN / ROLE_SUPER_ADMIN : révision auto-approuvée
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Works $entityInstance */
         $user = $this->getUser();
 
+        if (!$this->isGranted('WORKS_EDIT_AUTOAPPROVE', $entityInstance)) {
+            // Stagiaires uniquement : vérification d'appartenance au works (double sécurité)
+            if (!$this->isGranted('ROLE_FORMATEUR') && !$entityInstance->getUsers()->contains($user)) {
+                throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
+            }
+
+            $existingPending = $this->worksHistoryRepo->findPendingForWorks($entityInstance);
+
+            if ($existingPending !== null) {
+                $this->revisionService->updatePendingTypedHistory($entityInstance);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->addFlash('warning', 'Votre modification en attente a été mise à jour. Elle reste soumise à validation.');
+            } else {
+                $revision = $this->revisionService->createRevision($entityInstance, $user, false);
+                $entityManager->refresh($entityInstance);
+                $entityManager->flush();
+                $this->revisionService->notifyFormateurs($revision, $entityInstance);
+                $this->addFlash('warning', 'Votre modification a été soumise pour validation par un formateur.');
+            }
+
+            return;
+        }
+
+        // Formateur et supérieur : auto-approuvé, contenu live mis à jour normalement
         $this->revisionService->createRevision($entityInstance, $user, true);
         parent::updateEntity($entityManager, $entityInstance);
     }

@@ -55,26 +55,42 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123piet',
         ]);
-        // ── Utilisateur de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'alex@cf2m.be',
+            'userName'      => 'TheAlexandra',
+            'roles'         => ['ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123alex',
+        ]);
+        // ── Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',
             'userName'      => 'TheMagib',
-            'roles'         => ['ROLE_USER'],
+            'roles'         => ['ROLE_STAGIAIRE'],
             'status'        => 1,
             'plainPassword' => '123magib',
+        ]);
+        // ── Stagiaire de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'nabil@cf2m.be',
+            'userName'      => 'TheNab',
+            'roles'         => ['ROLE_USER'],
+            'status'        => 1,
+            'plainPassword' => '123nabil',
         ]);
 
 
         // ── Fakers Utilisateurs ────────────────────────────────────────────────
         $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
-        $formateurs = UserFactory::createMany(8, fn () => ['roles' => ['ROLE_FORMATEUR']]);
-        $etudiants  = UserFactory::createMany(35);
+        $formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
+        $stagiaires = UserFactory::createMany(30, fn () => ['roles' => ['ROLE_STAGIAIRE']]);
+        $commentateurs  = UserFactory::createMany(10);
 
         // Regrouper les utilisateurs manuels, admins et formateurs pour les associer à des formations
         $adminsAndFormateurs = [...$usersManuel, ...$admins, ...$formateurs];
 
         // Regrouper tous les utilisateurs pour les associer à des commentaires, notations, etc.
-        $tousLesUsers = [...$usersManuel, ...$admins, ...$formateurs, ...$etudiants];
+        $tousLesUsers = [...$usersManuel, ...$admins, ...$formateurs, ...$stagiaires, ...$commentateurs];
 
         // ── Partenaires ─────────────────────────────────────────────────
         PartenaireFactory::createMany(6);
@@ -252,7 +268,7 @@ class AppFixtures extends Fixture
             // Associer des étudiants comme auteurs du travail
             foreach ($newWorks as $work) {
                 $nbAuteurs = random_int(1, 3);
-                $auteurs = array_slice($etudiants, 0, $nbAuteurs);
+                $auteurs = array_slice($stagiaires, 0, $nbAuteurs);
                 foreach ($auteurs as $auteur) {
                     $work->addUser($auteur);
                 }
@@ -285,7 +301,7 @@ class AppFixtures extends Fixture
             $nbRatings = random_int(1, 5);
             for ($i = 0; $i < $nbRatings; ++$i) {
                 $rating = RatingFactory::createOne([
-                    'user'  => $etudiants[array_rand($etudiants)],
+                    'user'  => $commentateurs[array_rand($commentateurs)],
                     'value' => random_int(1, 5),
                 ]);
                 $rating->addWork($work);

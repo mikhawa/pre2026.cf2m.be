@@ -25,6 +25,9 @@ class FormationTest extends TestCase
         self::assertNull($this->formation->getTitle());
         self::assertNull($this->formation->getSlug());
         self::assertNull($this->formation->getDescription());
+        self::assertNull($this->formation->getDescriptionCourte());
+        self::assertNull($this->formation->getLogo());
+        self::assertNull($this->formation->getLogoFile());
         self::assertNull($this->formation->getCreatedAt());
         self::assertNull($this->formation->getPublishedAt());
         self::assertNull($this->formation->getUpdatedAt());
@@ -47,6 +50,8 @@ class FormationTest extends TestCase
         self::assertSame($this->formation, $this->formation->setTitle('Formation PHP'));
         self::assertSame($this->formation, $this->formation->setSlug('formation-php'));
         self::assertSame($this->formation, $this->formation->setDescription('Description'));
+        self::assertSame($this->formation, $this->formation->setDescriptionCourte('Description courte'));
+        self::assertSame($this->formation, $this->formation->setLogo('logo.png'));
         self::assertSame($this->formation, $this->formation->setStatus('published'));
         self::assertSame($this->formation, $this->formation->setPublishedAt(new \DateTimeImmutable()));
         self::assertSame($this->formation, $this->formation->setUpdatedAt(new \DateTimeImmutable()));
@@ -54,6 +59,28 @@ class FormationTest extends TestCase
         self::assertSame($this->formation, $this->formation->setUpdatedBy(new User()));
         self::assertSame($this->formation, $this->formation->setColorPrimary('#1a2e4a'));
         self::assertSame($this->formation, $this->formation->setColorSecondary('#00b4d8'));
+    }
+
+    public function testDescriptionCourte(): void
+    {
+        self::assertNull($this->formation->getDescriptionCourte());
+
+        $this->formation->setDescriptionCourte('Présentation rapide de la formation.');
+        self::assertSame('Présentation rapide de la formation.', $this->formation->getDescriptionCourte());
+
+        $this->formation->setDescriptionCourte(null);
+        self::assertNull($this->formation->getDescriptionCourte());
+    }
+
+    public function testLogo(): void
+    {
+        self::assertNull($this->formation->getLogo());
+
+        $this->formation->setLogo('logo-formation.png');
+        self::assertSame('logo-formation.png', $this->formation->getLogo());
+
+        $this->formation->setLogo(null);
+        self::assertNull($this->formation->getLogo());
     }
 
     public function testColorFields(): void

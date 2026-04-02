@@ -68,10 +68,62 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-075 (2026-03-19)
+086 (2026-03-20) — pas de nouveaux fichiers `documentations-dev/` créés lors de la session 2026-03-21
 
 ## Dernier numéro .claude-tasks
-082 (2026-03-19)
+102 (2026-03-21)
+
+## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
+Tâches 096 à 102. Fichiers principaux modifiés :
+- `assets/styles/app.css` — dark mode complet + `[data-theme="light"]` complet
+- `assets/controllers/theme_controller.js` — Stimulus controller CSS-driven (localStorage)
+- `templates/base.html.twig` — script anti-flash + bouton mobile (pill, centré, hors collapse) + bouton desktop (cercle 36px, dans auth)
+
+### Architecture du toggle
+- `html[data-theme]` piloté par CSS : `.cf2m-theme-sun` / `.cf2m-theme-moon` via `display`
+- Deux boutons synchronisés automatiquement (desktop `d-none d-lg-flex` + mobile `d-flex d-lg-none mx-auto`)
+- Anti-flash inline dans `<head>` : applique le thème avant le rendu
+
+### Couleurs white mode
+- Fond universel : `rgb(196, 223, 240)` = `#c4dff0`
+- Hero : reçoit son propre `background-image: url('/images/hero-bg.jpg')` en light (le body n'en a plus)
+- Hero glass : `rgba(255,255,255,0.88)` + 3 couches d'ombre portée → verre blanc opaque
+- Textes hero : `h1` → `#0d1e35`, `.lead` → `#2e4a62`
+- Cards : fond blanc + triple box-shadow bleue sombre
+- Section formations : `#c4dff0` + `border-top 2px` + inset shadow
+- Navbar/dropdowns : texte blanc protégé (`!important`) même en light
+
+## Refactorisation tables d'historique typées — TERMINÉE ✅
+**État au 2026-03-20 — 5 phases terminées.**
+
+### Objectif
+Remplacer la table `revision` polymorphique (JSON) par 3 tables d'historique typées :
+- `formation_history` + `formation_history_responsable`
+- `page_history` + `page_history_user`
+- `works_history` + `works_history_user`
+
+### Phase 1 ✅ TERMINÉE (tâche 084)
+Fichiers créés :
+- `src/Entity/Trait/RevisionWorkflowTrait.php` — trait partagé (statuts 0=pending/1=approved/2=rejected/3=auto, champs workflow)
+- `src/Entity/FormationHistory.php` — snapshot typé + `fromFormation(Formation, User, int): self`
+- `src/Entity/PageHistory.php` — snapshot typé + `fromPage(Page, User, int): self`
+- `src/Entity/WorksHistory.php` — snapshot typé + `fromWorks(Works, User, int): self`
+- `src/Repository/FormationHistoryRepository.php` — `getNextVersion()`, `findHistoryForFormation()`, `findPendingForFormation()`, `countPending()`
+- `src/Repository/PageHistoryRepository.php` — idem pour Page
+- `src/Repository/WorksHistoryRepository.php` — idem pour Works
+- `migrations/Version20260320113106.php` — 6 tables créées, **migration déjà exécutée**
+
+### Phase 2 ✅ TERMINÉE (tâche 085)
+`src/Command/MigrateRevisionsCommand.php` créé. Options `--dry-run` et `--force`. Migration exécutée : 11 formations, 3 pages, 12 works, 0 ignorées.
+
+### Phase 3 ✅ TERMINÉE (tâche 086)
+`RevisionService` écrit en double (table `revision` + tables typées). Méthodes impactées : `createRevision()`, `updatePendingRevision()`, `applyRevision()`. `ContentRevisionListener` couvert automatiquement.
+
+### Phase 4 ✅ TERMINÉE (tâche 087)
+Controllers Formation/Page/Works basculés vers tables typées. RevisionService +9 méthodes. Templates mis à jour (`rev.revisionStatus`, `v{{ rev.version }}`). Bridge notification garde l'ancienne Revision pour les emails.
+
+### Phase 5 ✅ TERMINÉE (tâche 088)
+`DROP TABLE revision` — Migration `Version20260320195434`. `Revision.php` → DTO transient pur. `RevisionRepository`, `RevisionCrudController` et 3 sous-controllers supprimés. `RevisionService.notifyAuthorFromHistory()` gère les emails. 89/89 tests verts.
 
 ## Mailer : Mailpit (dev) vs Mailjet (preprod/*)
 - `symfony/mailjet-mailer 7.4.*` est installé dans `composer.json` — ne jamais le retirer

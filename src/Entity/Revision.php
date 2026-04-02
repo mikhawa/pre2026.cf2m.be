@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\RevisionRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-
-#[ORM\Entity(repositoryClass: RevisionRepository::class)]
-#[ORM\HasLifecycleCallbacks]
+/**
+ * DTO transient pour les emails de notification de révision.
+ * N'est plus persisté en base de données depuis la Phase 5 (tables d'historique typées).
+ * Les données réelles sont stockées dans formation_history, page_history, works_history.
+ */
 class Revision
 {
     /** Révision en attente de validation */
@@ -21,56 +20,31 @@ class Revision
     /** Révision rejetée */
     public const STATUS_REJECTED = 2;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
     private ?string $entityType = null;
 
-    #[ORM\Column(options: ['unsigned' => true])]
     private ?int $entityId = null;
 
-    #[ORM\Column(length: 255)]
     private ?string $entityTitle = null;
 
     /** @var array<string, mixed> */
-    #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
-    /** Snapshot de l'état précédent (avant application de cette révision). */
     /** @var array<string, mixed>|null */
-    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $previousData = null;
 
-    #[ORM\Column(type: 'smallint', options: ['default' => 0, 'unsigned' => true])]
     private int $status = self::STATUS_PENDING;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
 
-    #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
     private ?User $reviewedBy = null;
 
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $reviewedAt = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $reviewNote = null;
-
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        if ($this->createdAt === null) {
-            $this->createdAt = new \DateTimeImmutable();
-        }
-    }
 
     public function __toString(): string
     {
@@ -79,8 +53,7 @@ class Revision
 
     /**
      * Getter virtuel retournant une chaîne vide.
-     * Utilisé comme accroche par RevisionCrudController pour afficher
-     * le tableau de diff via formatValue (EasyAdmin ne supporte pas array sur TextField).
+     * Utilisé comme accroche pour les templates de diff.
      */
     public function getDiffDisplay(): string
     {

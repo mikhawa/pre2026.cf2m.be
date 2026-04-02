@@ -10,7 +10,7 @@
     <div class="container">
 
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-8" data-controller="avatar-crop">
 
                 <div class="card cf2m-card mb-0">
                     <div class="card-header d-flex justify-content-between align-items-center gap-2">
@@ -25,19 +25,22 @@
                         {{ form_start(form, {attr: {
                             novalidate: 'novalidate',
                             enctype: 'multipart/form-data',
-                            class: 'cf2m-profile-form'
+                            class: 'cf2m-profile-form',
+                            'data-turbo': 'false'
                         }}) }}
 
                             {# Avatar #}
                             <div class="mb-4">
-                                <label class="cf2m-form-label">{{ form_label(form.avatarFile) }}</label>
+                                {{ form_label(form.avatarFile, null, {label_attr: {class: 'cf2m-form-label'}}) }}
                                 <div class="cf2m-avatar-upload d-flex align-items-center gap-3">
                                     <div class="cf2m-avatar-wrap flex-shrink-0">
                                         {% if user.avatarName %}
                                             <img src="{{ asset('uploads/avatars/' ~ user.avatarName) }}"
-                                                 alt="" class="cf2m-avatar-img" id="avatar-preview">
+                                                 alt="" class="cf2m-avatar-img"
+                                                 data-avatar-crop-target="preview">
                                         {% else %}
-                                            <div class="cf2m-avatar-placeholder" id="avatar-preview-placeholder">
+                                            <div class="cf2m-avatar-placeholder"
+                                                 data-avatar-crop-target="previewPlaceholder">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                      fill="none" stroke="currentColor" stroke-width="1.2"
                                                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -48,7 +51,12 @@
                                         {% endif %}
                                     </div>
                                     <div class="flex-grow-1">
-                                        {{ form_widget(form.avatarFile, {attr: {class: 'form-control cf2m-input cf2m-file-input', id: 'avatar-file-input'}}) }}
+                                        {{ form_widget(form.avatarFile, {attr: {
+                                            class: 'form-control cf2m-input cf2m-file-input',
+                                            id: 'avatar-file-input',
+                                            'data-avatar-crop-target': 'fileInput',
+                                            'data-action': 'change->avatar-crop#fileChanged'
+                                        }}) }}
                                         {{ form_errors(form.avatarFile) }}
                                         <small class="text-muted d-block mt-1">JPEG, PNG ou WebP — 10 Mo max.</small>
                                     </div>
@@ -85,37 +93,43 @@
                     </div>
                 </div>
 
+                {# ── Modal de recadrage avatar ─────────────────────────────── #}
+                <div class="modal fade" id="avatar-crop-modal" tabindex="-1"
+                     aria-labelledby="avatar-crop-modal-label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content cf2m-crop-modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="avatar-crop-modal-label">Recadrer la photo — déplacer et redimensionner le cadre</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                            </div>
+                            <div class="modal-body p-0 cf2m-crop-container">
+                                <canvas data-avatar-crop-target="cropCanvas"
+                                        data-action="mousedown->avatar-crop#dragStart
+                                                     mousemove->avatar-crop#dragMove
+                                                     mouseup->avatar-crop#dragEnd
+                                                     mouseleave->avatar-crop#dragEnd
+                                                     touchstart->avatar-crop#touchStart
+                                                     touchmove->avatar-crop#touchMove
+                                                     touchend->avatar-crop#dragEnd"
+                                        style="display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;">
+                                </canvas>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn cf2m-btn-submit"
+                                        data-action="click->avatar-crop#confirm">
+                                    Valider le recadrage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
     </div>
 </section>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const fileInput = document.getElementById('avatar-file-input');
-    if (!fileInput) return;
-
-    fileInput.addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file || !file.type.startsWith('image/')) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            let preview = document.getElementById('avatar-preview');
-            const placeholder = document.getElementById('avatar-preview-placeholder');
-            if (!preview) {
-                preview = document.createElement('img');
-                preview.id = 'avatar-preview';
-                preview.className = 'cf2m-avatar-img';
-                preview.alt = '';
-                if (placeholder) placeholder.replaceWith(preview);
-            }
-            preview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    });
-});
-</script>
 
 {% endblock %}
