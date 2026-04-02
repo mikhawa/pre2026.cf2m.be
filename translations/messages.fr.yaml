@@ -94,6 +94,30 @@
 'Site web': 'Site web'
 'Logo (nom fichier)': 'Logo (nom fichier)'
 
+# ── Général frontend ──────────────────────────────────────────────────────
+'Révisions en attente': 'Révisions en attente'
+
+# ── EasyAdmin — champs et actions ─────────────────────────────────────────
+'Logo': 'Logo'
+'Historique (%count%)': 'Historique (%count%)'
+'Sauvegarder et continuer les changements': 'Sauvegarder et continuer les changements'
+'Couleur primaire': 'Couleur primaire'
+'Couleur secondaire': 'Couleur secondaire'
+'Description courte (accueil, max 800 car.)': 'Description courte (accueil, max 800 car.)'
+'Texte affiché sur la page d''accueil à la place de la description longue. 800 caractères maximum.': 'Texte affiché sur la page d''accueil à la place de la description longue. 800 caractères maximum.'
+
+# ── Formulaire de modification du profil (frontend) ──────────────────────
+'Photo de profil': 'Photo de profil'
+'Supprimer la photo actuelle': 'Supprimer la photo actuelle'
+'Présentation': 'Présentation'
+'Quelques mots sur vous…': 'Quelques mots sur vous…'
+'Lien 1': 'Lien 1'
+'Lien 2': 'Lien 2'
+'Lien 3': 'Lien 3'
+'https://linkedin.com/in/vous': 'https://linkedin.com/in/vous'
+'https://github.com/vous': 'https://github.com/vous'
+'https://votre-site.be': 'https://votre-site.be'
+
 # ── Formulaire de contact (frontend) ──────────────────────────────────────
 'Votre nom': 'Votre nom'
 'Jean Dupont': 'Jean Dupont'
