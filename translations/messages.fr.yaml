@@ -94,6 +94,9 @@
 'Site web': 'Site web'
 'Logo (nom fichier)': 'Logo (nom fichier)'
 
+# ── Général frontend ──────────────────────────────────────────────────────
+'Révisions en attente': 'Révisions en attente'
+
 # ── Formulaire de modification du profil (frontend) ──────────────────────
 'Photo de profil': 'Photo de profil'
 'Supprimer la photo actuelle': 'Supprimer la photo actuelle'
