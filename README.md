@@ -11,12 +11,15 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - https://pre2026.cf2m.be/
 
 #### URL du serveur de production :
-        composer update
-        php bin/console importmap:install
-        php bin/console asset-map:compile --env=prod
-est envoyé sur le serveur de production via git et est accessible à l'URL suivante :
-
 - https://production.cf2m.be/
+
+#### URL du serveur de développement local (Docker) :
+| Service       | URL                   | Description                  |
+|---------------|-----------------------|------------------------------|
+| App Symfony   | http://localhost:8085 | Application principale       |
+| phpMyAdmin    | http://localhost:8181 | Interface de gestion BDD     |
+| Mailpit       | http://localhost:8025 | Boîte mail de test SMTP      |
+| BDD (MariaDB) | localhost:3307        | Connexion directe (non HTTP) |
 
 #### URL du serveur des raccourcis de développement :
 - [Tous les raccourcis de développement](RACCOURCIS.md)
@@ -24,14 +27,6 @@ est envoyé sur le serveur de production via git et est accessible à l'URL suiv
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
 - Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --no-interaction) 
-
-#### URL du serveur de développement local (Docker) :
-| Service | URL | Description |
-|---------|-----|-------------|
-| App Symfony | http://localhost:8085 | Application principale |
-| phpMyAdmin | http://localhost:8181 | Interface de gestion BDD |
-| Mailpit | http://localhost:8025 | Boîte mail de test SMTP |
-| BDD (MariaDB) | localhost:3307 | Connexion directe (non HTTP) |
 
 
 ## Création via les recommendations de Claude
@@ -46,23 +41,22 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
   https://cf2m-dfuse.figma.site/
 
-- 2026-03-30 hiérarchie des rôles et permissions:
+- 2026-03-30 hiérarchie des rôles et permissions pour la gestion des utilisateurs et des accès à différentes parties du site, basée sur les besoins fonctionnels du projet et les meilleures pratiques de sécurité :
 
     [Hiérarchie](HIERARCHIE.md)
 
+- 2026-04-01 CI/CD avec GitHub Actions pour automatiser les tests, les builds et les déploiements sur les serveurs de préproduction et de production, en utilisant des workflows définis dans `.github/workflows/` :
+
+
+
 # Passage en préproduction
 
-- À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via git et avant de partager l'URL avec les utilisateurs finaux.
+- À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via Git et avant de partager l'URL avec les utilisateurs finaux.
 - preprod/v02 - 2026-03-21
 - preprod/v03 - 2026-03-24 (ajout de Mailjet pour l'envoi d'emails en préprod)
 - preprod/v04 - 2026-03-25 (ajout des fixtures de test pour les utilisateurs et rôles)
 
-        php bin/console cache:clear --no-warmup
-        composer require symfony/mailjet-mailer
-        composer update
-        php bin/console importmap:install
-        php bin/console doctrine:migrations:migrate
-        php bin/console doctrine:fixtures:load --no-interaction
+
 
 # Passage en production
 - À effectuer après validation finale en préproduction et avant de partager l'URL avec les utilisateurs finaux.
@@ -70,8 +64,6 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - Création du serveur de production (https://production.cf2m.be/) avec les mêmes étapes que pour la préproduction, en veillant à utiliser les configurations d'environnement appropriées pour la production (ex. Mailjet pour l'envoi d'emails, paramètres de base de données sécurisés, etc.). - 2026-03-25
 - Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
 
-## FIX PROD
-- 2026-04-01 : plus moyen de mettre à jour le profil en production, https://production.cf2m.be/profil/modifier 422 (Unprocessable Content)
 
 ## Utilisateurs et rôles (fixtures de test)
 
@@ -161,7 +153,7 @@ open http://localhost:8080
 
 ## Installer les fixtures en ligne
 
-```bashbash
+```bash
 php bin/console doctrine:fixtures:load
 ```
 
