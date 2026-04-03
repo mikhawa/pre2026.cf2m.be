@@ -31,6 +31,10 @@ class Inscription
     #[Assert\Email(message: 'L\'email "{{ value }}" n\'est pas une adresse email valide.')]
     private ?string $email = null;
 
+    #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide.')]
+    private ?string $telephone = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
 
@@ -108,6 +112,18 @@ class Inscription
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(string $telephone): static
+    {
+        $this->telephone = $telephone;
 
         return $this;
     }

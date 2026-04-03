@@ -8,6 +8,7 @@ use App\Entity\Inscription;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +30,10 @@ class InscriptionType extends AbstractType
             ->add('email', EmailType::class, [
                 'label'    => 'Adresse e-mail',
                 'attr'     => ['placeholder' => 'votre@email.com'],
+            ])
+            ->add('telephone', TelType::class, [
+                'label'    => 'Téléphone',
+                'attr'     => ['placeholder' => '+32 4xx xx xx xx'],
             ])
             ->add('age', IntegerType::class, [
                 'label'    => 'Âge',
