@@ -18,7 +18,7 @@ class FormationController extends AbstractController
     {
         $formation = $formationRepo->findOneBySlug($slug);
 
-        if ($formation === null || $formation->getStatus() !== 'published') {
+        if ($formation === null || !in_array($formation->getStatus(), ['published', 'recruiting'], true)) {
             throw $this->createNotFoundException('Formation introuvable.');
         }
 

@@ -23,13 +23,21 @@ class FormationRepository extends ServiceEntityRepository
         return $this->findOneBy(['slug' => $slug]);
     }
 
-    /** @return Formation[] */
+    /**
+     * Retourne les formations visibles sur le site (publiées + en recrutement).
+     * Les formations en recrutement apparaissent en premier.
+     *
+     * @return Formation[]
+     */
     public function findAllPublished(): array
     {
         return $this->createQueryBuilder('f')
-            ->where('f.status = :status')
-            ->setParameter('status', 'published')
-            ->orderBy('f.publishedAt', 'DESC')
+            ->addSelect('CASE WHEN f.status = :recruiting THEN 0 ELSE 1 END AS HIDDEN statusOrder')
+            ->where('f.status IN (:statuses)')
+            ->setParameter('statuses', ['published', 'recruiting'])
+            ->setParameter('recruiting', 'recruiting')
+            ->orderBy('statusOrder', 'ASC')
+            ->addOrderBy('f.publishedAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
