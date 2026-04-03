@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
@@ -53,6 +54,9 @@ class InscriptionCrudController extends AbstractCrudController
         yield TextField::new('nom', 'Nom');
         yield TextField::new('prenom', 'Prénom');
         yield EmailField::new('email', 'E-mail');
+        yield IntegerField::new('age', 'Âge')
+            ->hideOnIndex()
+        ;
         yield AssociationField::new('formation', 'Formation');
         yield BooleanField::new('treat', 'Traitée')
             ->renderAsSwitch(true)

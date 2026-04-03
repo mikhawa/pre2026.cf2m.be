@@ -149,7 +149,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
 
-            {% set inscriptionForm = inscriptionForm is defined ? inscriptionForm : createForm('App\\Form\\InscriptionType', null) %}
             {{ form_start(inscriptionForm, {
                 action: path('app_inscription_create', {formationSlug: formation.slug}),
                 method: 'POST',
