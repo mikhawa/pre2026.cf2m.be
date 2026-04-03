@@ -58,9 +58,15 @@ class InscriptionController extends AbstractController
             // Vérification Cloudflare Turnstile
             $token = (string) $request->request->get('cf-turnstile-response', '');
             if (!$this->turnstile->verify($token, $request->getClientIp())) {
-                $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+                $works = $worksRepo->findPublishedByFormation($formation->getId());
 
-                return $this->redirectToRoute('app_formation_show', ['slug' => $formationSlug]);
+                return $this->render('formation/show.html.twig', [
+                    'formation'            => $formation,
+                    'works'                => $works,
+                    'inscriptionForm'      => $form,
+                    'showInscriptionModal' => true,
+                    'turnstileError'       => 'La vérification anti-robot a échoué. Veuillez réessayer.',
+                ]);
             }
 
             $em->persist($inscription);
@@ -96,7 +102,7 @@ class InscriptionController extends AbstractController
             ;
             $mailer->send($emailAr);
 
-            $this->addFlash('success', 'Votre demande de préinscription a bien été enregistrée. Vous recevrez un accusé de réception par e-mail.');
+            $this->addFlash('inscription_success', '1');
 
             return $this->redirectToRoute('app_formation_show', ['slug' => $formationSlug]);
         }
