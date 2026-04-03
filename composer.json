@@ -30,7 +30,7 @@
         "symfony/mailer": "7.4.*",
         "symfony/mailjet-mailer": "7.4.*",
         "symfony/mime": "7.4.*",
-        "symfony/monolog-bundle": "^3.0|^4.0.1",
+        "symfony/monolog-bundle": "^3.0|^4.0.2",
         "symfony/notifier": "7.4.*",
         "symfony/process": "7.4.*",
         "symfony/property-access": "7.4.*",
@@ -104,7 +104,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "phpunit/phpunit": "^13.0.6",
+        "phpunit/phpunit": "^13.1.0",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
         "symfony/debug-bundle": "7.4.*",
