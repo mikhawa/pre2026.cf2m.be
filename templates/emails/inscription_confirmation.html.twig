@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre demande de préinscription — CF2m</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f6fa;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0f6fa;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+
+                <table width="600" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color: #ffffff; border-collapse: collapse;">
+
+                    {# Header #}
+                    <tr>
+                        <td style="background-color: #08111e; padding: 28px 32px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td>
+                                        <span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #ffffff;">CF</span><span style="font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #00b4d8;">2m</span>
+                                    </td>
+                                    <td align="right">
+                                        <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">Accusé de réception</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {# Message de bienvenue #}
+                    <tr>
+                        <td style="padding: 32px 32px 0;">
+                            <p style="font-family: Arial, sans-serif; font-size: 16px; color: #1a2b3c; margin: 0 0 12px;">
+                                Bonjour <strong>{{ inscription.prenom }} {{ inscription.nom }}</strong>,
+                            </p>
+                            <p style="font-family: Arial, sans-serif; font-size: 15px; color: #3d5a73; line-height: 1.7; margin: 0 0 16px;">
+                                Nous avons bien reçu votre demande de préinscription pour la formation
+                                <strong>{{ formation.title }}</strong>.<br>
+                                Notre équipe prendra contact avec vous dans les meilleurs délais.
+                            </p>
+                        </td>
+                    </tr>
+
+                    {# Récapitulatif #}
+                    <tr>
+                        <td style="padding: 0 32px 32px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                   style="background-color: #f8fafc; border-left: 3px solid #00b4d8; padding: 20px;">
+                                <tr>
+                                    <td style="padding: 16px 20px;">
+                                        <p style="font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #7a95aa; margin: 0 0 12px; letter-spacing: 0.05em;">RÉCAPITULATIF DE VOTRE DEMANDE</p>
+
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0; width: 120px;">Formation</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0; font-weight: bold;">{{ formation.title }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0;">Nom</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0;">{{ inscription.nom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0;">Prénom</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0;">{{ inscription.prenom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0;">E-mail</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0;">{{ inscription.email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0;">Âge</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0;">{{ inscription.age }} ans</td>
+                                            </tr>
+                                            {% if inscription.message %}
+                                            <tr>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #7a95aa; padding: 4px 0; vertical-align: top;">Message</td>
+                                                <td style="font-family: Arial, sans-serif; font-size: 13px; color: #1a2b3c; padding: 4px 0;">{{ inscription.message|nl2br }}</td>
+                                            </tr>
+                                            {% endif %}
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {# Footer #}
+                    <tr>
+                        <td style="background-color: #f0f6fa; border-top: 1px solid #dde8f0; padding: 16px 32px;">
+                            <span style="font-family: Arial, sans-serif; font-size: 12px; color: #7a95aa;">
+                                Demande envoyée le {{ inscription.createdAt|date('d/m/Y à H:i') }} &mdash; CF2m Centre de Formation
+                            </span>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
