@@ -97,10 +97,13 @@
                                     {% else %}
                                         {% for formation in _nav_formations %}
                                             <li>
-                                                <a class="dropdown-item cf2m-dropdown-item"
+                                                <a class="dropdown-item cf2m-dropdown-item{% if formation.status == 'recruiting' %} cf2m-dropdown-item--recruiting{% endif %}"
                                                    href="{{ path('app_formation_show', {slug: formation.slug}) }}">
                                                     <span class="cf2m-dropdown-arrow">›</span>
                                                     {{ formation.title }}
+                                                    {% if formation.status == 'recruiting' %}
+                                                        <span class="badge bg-warning text-dark ms-1" style="font-size: .65rem;">Recrutement</span>
+                                                    {% endif %}
                                                 </a>
                                             </li>
                                         {% endfor %}

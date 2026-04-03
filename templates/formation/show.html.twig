@@ -41,7 +41,11 @@
                     <div class="card-header d-flex justify-content-between align-items-center gap-3">
                         <h1 class="h3 mb-0">{{ formation.title }}</h1>
                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                            <span class="badge badge-status">Ouverte</span>
+                            {% if formation.status == 'recruiting' %}
+                                <span class="badge bg-warning text-dark">Recrutement en cours</span>
+                            {% else %}
+                                <span class="badge badge-status">Ouverte</span>
+                            {% endif %}
                             {% if formation_icons[formation.slug] is defined %}
                                 <img src="{{ asset('images/formation-icons/' ~ formation_icons[formation.slug]) }}"
                                      alt=""
@@ -59,6 +63,24 @@
                                     Publiée le {{ formation.publishedAt|date('d/m/Y') }}
                                 </small>
                             </p>
+                        {% endif %}
+
+                        {% if app.flashes('success') is not empty %}
+                            {% for msg in app.flashes('success') %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ msg }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if app.flashes('error') is not empty %}
+                            {% for msg in app.flashes('error') %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ msg }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                            {% endfor %}
                         {% endif %}
 
                         {% if formation.description %}
@@ -95,9 +117,14 @@
                         <a href="{{ path('app_home') }}#formations" class="btn btn-outline-secondary btn-sm">
                             ← Retour aux formations
                         </a>
-                        <a href="#" class="btn btn-primary btn-sm">
-                            S'inscrire
-                        </a>
+                        {% if formation.status == 'recruiting' %}
+                            <button type="button"
+                                    class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalInscription">
+                                S'inscrire
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -106,5 +133,155 @@
 
     </div>
 </section>
+
+{# ── Modale de préinscription (uniquement si recrutement en cours) ── #}
+{% if formation.status == 'recruiting' %}
+
+{% set successFlashes = app.flashes('inscription_success') %}
+{% set modalOpen = successFlashes is not empty or (showInscriptionModal is defined and showInscriptionModal) %}
+
+<div class="modal fade" id="modalInscription" tabindex="-1"
+     aria-labelledby="modalInscriptionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content cf2m-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalInscriptionLabel">
+                    Demande de préinscription pour <strong>{{ formation.title }}</strong>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+
+            {% if successFlashes is not empty %}
+
+                {# ── Message de remerciement ── #}
+                <div class="modal-body text-center py-5">
+                    <div class="mb-3" style="font-size: 3rem;">✅</div>
+                    <h4 class="mb-3">Merci pour votre demande !</h4>
+                    <p class="mb-1">Votre demande de préinscription pour <strong>{{ formation.title }}</strong> a bien été enregistrée.</p>
+                    <p class="mb-0" style="opacity:.75; font-size:.9rem;">Un accusé de réception vous a été envoyé par e-mail. Notre équipe prendra contact avec vous dans les meilleurs délais.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+
+            {% else %}
+
+                {# ── Formulaire ── #}
+                {{ form_start(inscriptionForm, {
+                    action: path('app_inscription_create', {formationSlug: formation.slug}),
+                    method: 'POST',
+                    attr: {novalidate: 'novalidate', class: 'needs-validation', 'data-turbo': 'false'}
+                }) }}
+
+                <div class="modal-body">
+
+                    {% if turnstileError is defined %}
+                        <div class="alert alert-danger">{{ turnstileError }}</div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(inscriptionForm.nom, null, {label_attr: {class: 'form-label'}}) }}
+                                {{ form_widget(inscriptionForm.nom, {attr: {class: 'form-control' ~ (inscriptionForm.nom.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                                {% if inscriptionForm.nom.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback">
+                                        {% for error in inscriptionForm.nom.vars.errors %}{{ error.message }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(inscriptionForm.prenom, null, {label_attr: {class: 'form-label'}}) }}
+                                {{ form_widget(inscriptionForm.prenom, {attr: {class: 'form-control' ~ (inscriptionForm.prenom.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                                {% if inscriptionForm.prenom.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback">
+                                        {% for error in inscriptionForm.prenom.vars.errors %}{{ error.message }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(inscriptionForm.email, null, {label_attr: {class: 'form-label'}}) }}
+                        {{ form_widget(inscriptionForm.email, {attr: {class: 'form-control' ~ (inscriptionForm.email.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                        {% if inscriptionForm.email.vars.errors|length > 0 %}
+                            <div class="invalid-feedback">
+                                {% for error in inscriptionForm.email.vars.errors %}{{ error.message }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                {{ form_label(inscriptionForm.telephone, null, {label_attr: {class: 'form-label'}}) }}
+                                {{ form_widget(inscriptionForm.telephone, {attr: {class: 'form-control' ~ (inscriptionForm.telephone.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                                {% if inscriptionForm.telephone.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback">
+                                        {% for error in inscriptionForm.telephone.vars.errors %}{{ error.message }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ form_label(inscriptionForm.age, null, {label_attr: {class: 'form-label'}}) }}
+                                {{ form_widget(inscriptionForm.age, {attr: {class: 'form-control' ~ (inscriptionForm.age.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                                {% if inscriptionForm.age.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback">
+                                        {% for error in inscriptionForm.age.vars.errors %}{{ error.message }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(inscriptionForm.message, null, {label_attr: {class: 'form-label'}}) }}
+                        {{ form_widget(inscriptionForm.message, {attr: {class: 'form-control' ~ (inscriptionForm.message.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                        {% if inscriptionForm.message.vars.errors|length > 0 %}
+                            <div class="invalid-feedback">
+                                {% for error in inscriptionForm.message.vars.errors %}{{ error.message }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Turnstile #}
+                    <div class="mb-3">
+                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                        <div class="cf-turnstile"
+                             data-sitekey="{{ turnstile_site_key }}"
+                             data-theme="auto"
+                             data-language="fr"></div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-warning">Envoyer ma demande</button>
+                </div>
+
+                {{ form_end(inscriptionForm) }}
+
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% if modalOpen %}
+<script type="module">
+    import { Modal } from 'bootstrap';
+    Modal.getOrCreateInstance(document.getElementById('modalInscription')).show();
+</script>
+{% endif %}
+
+{% endif %}
 
 {% endblock %}

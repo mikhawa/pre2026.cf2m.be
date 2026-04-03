@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-086 (2026-03-20) — pas de nouveaux fichiers `documentations-dev/` créés lors de la session 2026-03-21
+097 (2026-04-03) — Popup préinscription formations recrutement
 
 ## Dernier numéro .claude-tasks
-102 (2026-03-21)
+130 (2026-04-03)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
