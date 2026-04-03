@@ -58,9 +58,9 @@ MAILER_DSN=smtp://...
 ```
 
 ## TODO (mise en production)
-- [ ] Créer et configurer tous les secrets GitHub
-- [ ] Ajouter l'étape SSH de déploiement dans le workflow (`appleboy/ssh-action` ou équivalent)
-- [ ] Configurer le virtualhost Nginx + PHP-FPM sur le VPS via Plesk
-- [ ] Mettre en place les sauvegardes automatiques de la BDD (Plesk ou cron)
-- [ ] Configurer le certificat SSL (Let's Encrypt via Plesk)
-- [ ] Séparer le workflow de tests du workflow de déploiement
+- [X] Créer et configurer tous les secrets GitHub
+- [X] Ajouter l'étape SSH de déploiement dans le workflow (`appleboy/ssh-action` ou équivalent)
+- [X] Configurer le virtualhost Nginx + PHP-FPM sur le VPS via Plesk
+- [X] Mettre en place les sauvegardes automatiques de la BDD (Plesk ou cron)
+- [X] Configurer le certificat SSL (Let's Encrypt via Plesk)
+- [X] Séparer le workflow de tests du workflow de déploiement
