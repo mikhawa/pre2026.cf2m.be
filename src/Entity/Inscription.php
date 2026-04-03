@@ -34,6 +34,15 @@ class Inscription
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
 
+    #[ORM\Column(options: ['unsigned' => true])]
+    #[Assert\NotBlank(message: 'L\'âge ne peut pas être vide.')]
+    #[Assert\Range(
+        min: 16,
+        max: 99,
+        notInRangeMessage: 'L\'âge doit être compris entre {{ min }} et {{ max }} ans.',
+    )]
+    private ?int $age = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -111,6 +120,18 @@ class Inscription
     public function setMessage(?string $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(int $age): static
+    {
+        $this->age = $age;
 
         return $this;
     }
