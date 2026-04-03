@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Inscription;
+use App\Form\InscriptionType;
 use App\Repository\FormationRepository;
 use App\Repository\WorksRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,15 +20,21 @@ class FormationController extends AbstractController
     {
         $formation = $formationRepo->findOneBySlug($slug);
 
-        if ($formation === null || $formation->getStatus() !== 'published') {
+        if ($formation === null || !in_array($formation->getStatus(), ['published', 'recruiting'], true)) {
             throw $this->createNotFoundException('Formation introuvable.');
         }
 
         $works = $worksRepo->findPublishedByFormation($formation->getId());
 
+        $inscriptionForm = null;
+        if ($formation->getStatus() === 'recruiting') {
+            $inscriptionForm = $this->createForm(InscriptionType::class, new Inscription());
+        }
+
         return $this->render('formation/show.html.twig', [
-            'formation' => $formation,
-            'works'     => $works,
+            'formation'       => $formation,
+            'works'           => $works,
+            'inscriptionForm' => $inscriptionForm,
         ]);
     }
 }

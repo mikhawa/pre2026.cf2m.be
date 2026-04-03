@@ -52,6 +52,7 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 # Passage en préproduction
 
 - À effectuer après déploiement sur le serveur de préproduction (https://pre2026.cf2m.be/) via Git et avant de partager l'URL avec les utilisateurs finaux.
+- preprod/v01 - Envoi sur cette branche pour la préproduction dorénavant.
 - preprod/v02 - 2026-03-21
 - preprod/v03 - 2026-03-24 (ajout de Mailjet pour l'envoi d'emails en préprod)
 - preprod/v04 - 2026-03-25 (ajout des fixtures de test pour les utilisateurs et rôles)
