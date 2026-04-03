@@ -1188,6 +1188,89 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     filter: none;
 }
 
+/* ── Modale générique CF2m (dark mode par défaut) ────────────────────── */
+.cf2m-modal {
+    background: #0d1e2e;
+    color: rgba(255, 255, 255, 0.87);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+.cf2m-modal .modal-header,
+.cf2m-modal .modal-footer {
+    border-color: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.87);
+}
+.cf2m-modal .modal-title {
+    color: rgba(255, 255, 255, 0.95);
+}
+.cf2m-modal .btn-close {
+    filter: invert(1) grayscale(1);
+}
+.cf2m-modal .form-label {
+    color: rgba(255, 255, 255, 0.80);
+}
+.cf2m-modal .form-control,
+.cf2m-modal .form-select {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.87);
+    border-color: rgba(255, 255, 255, 0.20);
+}
+.cf2m-modal .form-control:focus,
+.cf2m-modal .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.95);
+    border-color: var(--cf2m-cyan);
+    box-shadow: 0 0 0 0.2rem rgba(0, 180, 216, 0.25);
+}
+.cf2m-modal .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+.cf2m-modal .form-control.is-invalid,
+.cf2m-modal .form-select.is-invalid {
+    border-color: rgba(220, 53, 69, 0.70);
+}
+.cf2m-modal .invalid-feedback {
+    color: #ff8fa3;
+}
+/* Light mode */
+[data-theme="light"] .cf2m-modal {
+    background: #ffffff;
+    color: #1a2b3c;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+[data-theme="light"] .cf2m-modal .modal-header,
+[data-theme="light"] .cf2m-modal .modal-footer {
+    border-color: rgba(0, 0, 0, 0.10);
+    color: #1a2b3c;
+}
+[data-theme="light"] .cf2m-modal .modal-title {
+    color: #0d1e35;
+}
+[data-theme="light"] .cf2m-modal .btn-close {
+    filter: none;
+}
+[data-theme="light"] .cf2m-modal .form-label {
+    color: #1a2b3c;
+}
+[data-theme="light"] .cf2m-modal .form-control,
+[data-theme="light"] .cf2m-modal .form-select {
+    background-color: #ffffff;
+    color: #1a2b3c;
+    border-color: #ced4da;
+}
+[data-theme="light"] .cf2m-modal .form-control:focus,
+[data-theme="light"] .cf2m-modal .form-select:focus {
+    background-color: #ffffff;
+    color: #1a2b3c;
+    border-color: var(--cf2m-cyan);
+    box-shadow: 0 0 0 0.2rem rgba(0, 180, 216, 0.20);
+}
+[data-theme="light"] .cf2m-modal .form-control::placeholder {
+    color: #9fb3c8;
+}
+[data-theme="light"] .cf2m-modal .invalid-feedback {
+    color: #dc3545;
+}
+
 /* ── Contenu riche formation et pages (SunEditor |raw) ───────────────── */
 .cf2m-formation-description,
 .cf2m-page-content {

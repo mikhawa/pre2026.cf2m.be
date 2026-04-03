@@ -31,8 +31,21 @@ class Inscription
     #[Assert\Email(message: 'L\'email "{{ value }}" n\'est pas une adresse email valide.')]
     private ?string $email = null;
 
+    #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide.')]
+    private ?string $telephone = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
+
+    #[ORM\Column(options: ['unsigned' => true])]
+    #[Assert\NotBlank(message: 'L\'âge ne peut pas être vide.')]
+    #[Assert\Range(
+        min: 16,
+        max: 99,
+        notInRangeMessage: 'L\'âge doit être compris entre {{ min }} et {{ max }} ans.',
+    )]
+    private ?int $age = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -103,6 +116,18 @@ class Inscription
         return $this;
     }
 
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(string $telephone): static
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
     public function getMessage(): ?string
     {
         return $this->message;
@@ -111,6 +136,18 @@ class Inscription
     public function setMessage(?string $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(int $age): static
+    {
+        $this->age = $age;
 
         return $this;
     }

@@ -100,9 +100,14 @@
                 } %}
                 {% for formation in formations %}
                     <div class="col">
-                        <div class="card cf2m-card" style="{% if formation.colorPrimary %}--card-color-primary: {{ formation.colorPrimary }};{% endif %}{% if formation.colorSecondary %}--card-color-secondary: {{ formation.colorSecondary }};{% endif %}">
+                        <div class="card cf2m-card{% if formation.status == 'recruiting' %} cf2m-card--recruiting{% endif %}" style="{% if formation.colorPrimary %}--card-color-primary: {{ formation.colorPrimary }};{% endif %}{% if formation.colorSecondary %}--card-color-secondary: {{ formation.colorSecondary }};{% endif %}">
                             <div class="card-header d-flex justify-content-between align-items-start gap-2">
-                                <span>{{ formation.title }}</span>
+                                <div>
+                                    <span>{{ formation.title }}</span>
+                                    {% if formation.status == 'recruiting' %}
+                                        <span class="badge bg-warning text-dark d-block mt-1" style="font-size: .7rem; width: fit-content;">Recrutement en cours</span>
+                                    {% endif %}
+                                </div>
                                 {% if formation_icons[formation.slug] is defined %}
                                     <img src="{{ asset('images/formation-icons/' ~ formation_icons[formation.slug]) }}"
                                          alt=""
@@ -123,9 +128,9 @@
                             </div>
                             <div class="card-footer border-0 pb-3">
                                 <a href="{{ path('app_formation_show', {slug: formation.slug}) }}"
-                                   class="btn btn-outline-secondary btn-sm w-100"
+                                   class="btn {% if formation.status == 'recruiting' %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm w-100"
                                    aria-label="Voir la formation {{ formation.title }}">
-                                    En savoir plus
+                                    {% if formation.status == 'recruiting' %}S'inscrire{% else %}En savoir plus{% endif %}
                                 </a>
                             </div>
                         </div>
