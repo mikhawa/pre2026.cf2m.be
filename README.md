@@ -135,6 +135,9 @@ php bin/console doctrine:database:create &&
 php bin/console doctrine:migrations:migrate --no-interaction &&
 php bin/console doctrine:fixtures:load --group=app --append
 
+# 4.2 (optionnel) Lancer les tests pour vérifier que tout est en ordre
+php vendor/bin/phpunit
+
 # 5. Ouvrir dans le navigateur
 open http://localhost:8080
 ```
