@@ -14,15 +14,21 @@ use App\Factory\RatingFactory;
 use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Service\RevisionService;
 use faker\Factory as Faker;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
         private readonly RevisionService $revisionService,
     ) {
+    }
+
+    public static function getGroups(): array
+    {
+        return ['app'];
     }
 
     public function load(ObjectManager $manager): void

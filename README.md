@@ -129,8 +129,11 @@ docker compose exec php composer install
 docker compose exec php bin/console doctrine:database:create
 docker compose exec php bin/console doctrine:migrations:migrate
 
-# 4.1 (optionnel) Charger les fixtures de test AppFixtures
-docker compose exec php bin/console doctrine:fixtures:load --no-interaction
+# 4.1 (optionnel) Charger les fixtures de test AppFixtures depuis l'image PHP
+php bin/console doctrine:database:drop --force &&
+php bin/console doctrine:database:create &&
+php bin/console doctrine:migrations:migrate --no-interaction &&
+php bin/console doctrine:fixtures:load --group=app --append
 
 # 5. Ouvrir dans le navigateur
 open http://localhost:8080

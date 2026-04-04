@@ -29,6 +29,8 @@ final class InscriptionFactory extends PersistentObjectFactory
             'nom'       => self::faker()->lastName(),
             'prenom'    => self::faker()->firstName(),
             'email'     => self::faker()->safeEmail(),
+            'telephone' => self::faker()->phoneNumber(),
+            'age'       => self::faker()->numberBetween(16, 65),
             'message'   => self::faker()->optional(0.8)->paragraph(),
             'formation' => FormationFactory::new(),
             'treat'     => false,
