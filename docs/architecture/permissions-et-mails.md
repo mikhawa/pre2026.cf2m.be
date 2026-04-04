@@ -1,6 +1,6 @@
 # Qui reçoit un mail et quand — CF2m
 
-**Dernière mise à jour** : 2026-04-04
+**Dernière mise à jour** : 2026-04-04 (ajout ROLE_PEDAGO)
 
 ---
 
@@ -8,9 +8,9 @@
 
 | Déclencheur | Expéditeur logique | Destinataire(s) | Template |
 |---|---|---|---|
-| Préinscription à une formation | CF2m — Préinscriptions | Tous les `ROLE_ADMIN` | `inscription_admin.html.twig` |
+| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
 | Préinscription à une formation | CF2m — Centre de Formation | L'internaute qui s'est inscrit | `inscription_confirmation.html.twig` |
-| Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (variable d'env) | `contact.html.twig` |
+| Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (fixe) + `ROLE_PEDAGO` (copies) | `contact.html.twig` |
 | Création d'un compte utilisateur par un admin | CF2m Administration | Le nouvel utilisateur | `user_bienvenue.html.twig` |
 | Demande de réinitialisation de mot de passe | CF2m Administration | L'utilisateur connecté | `reset_password.html.twig` |
 | Révision Works soumise par un stagiaire | CF2m — Révisions | Responsables de la formation parente | `revision_pending.html.twig` |

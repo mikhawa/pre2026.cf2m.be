@@ -43,35 +43,40 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 | **Mail contact** | Reçoit en copie (via `findContactRecipients()`, en plus de `MAIL_ADMIN`) |
 | **Mail révision** | Ne reçoit pas |
 
-### Voter `CONTENT_MANAGER`
-
-`src/Security/Voter/ContentManagerVoter.php` — attribut sans sujet, retourne `true` pour `ROLE_ADMIN` ou `ROLE_PEDAGO`. Utilisé dans `setPermission()`, `denyAccessUnlessGranted()` et `isGranted()` pour les ressources partagées entre les deux rôles.
-
 ---
 
 ## Voters Symfony
 
 ### `FormationVoter` — `src/Security/Voter/FormationVoter.php`
 
-| Attribut | Accordé si |
-|---|---|
-| `FORMATION_EDIT_AUTOAPPROVE` | `ROLE_ADMIN` **ou** (`ROLE_FORMATEUR` + responsable de la formation) |
-| `FORMATION_APPROVE` | idem |
-| `FORMATION_REJECT` | idem |
-| `FORMATION_RESTORE` | idem |
+| Attribut | Accordé si | Sujet |
+|---|---|---|
+| `FORMATION_CREATE` | `ROLE_ADMIN` ou `ROLE_PEDAGO` | aucun |
+| `FORMATION_EDIT_AUTOAPPROVE` | `ROLE_ADMIN`, `ROLE_PEDAGO` ou (`ROLE_FORMATEUR` + responsable) | `Formation` |
+| `FORMATION_APPROVE` | idem | `Formation` |
+| `FORMATION_REJECT` | idem | `Formation` |
+| `FORMATION_RESTORE` | idem | `Formation` |
 
-**Sujet attendu** : instance de `Formation`.
+`FORMATION_CREATE` ne requiert pas de sujet — utilisé dans `setPermission(Action::NEW, 'FORMATION_CREATE')`.
 
 ### `WorksVoter` — `src/Security/Voter/WorksVoter.php`
 
-| Attribut | Accordé si |
-|---|---|
-| `WORKS_EDIT_AUTOAPPROVE` | `ROLE_ADMIN` **ou** (`ROLE_FORMATEUR` + responsable de la formation parente du Works) |
-| `WORKS_APPROVE` | idem |
-| `WORKS_REJECT` | idem |
-| `WORKS_RESTORE` | idem |
+| Attribut | Accordé si | Sujet |
+|---|---|---|
+| `WORKS_EDIT_AUTOAPPROVE` | `ROLE_ADMIN` ou (`ROLE_FORMATEUR` + responsable de la formation parente) | `Works` |
+| `WORKS_APPROVE` | idem | `Works` |
+| `WORKS_REJECT` | idem | `Works` |
+| `WORKS_RESTORE` | idem | `Works` |
 
-**Sujet attendu** : instance de `Works`. Le voter remonte à `$works->getFormation()` pour vérifier les responsables. Si la formation parente est `null`, accès refusé.
+Le voter remonte à `$works->getFormation()` pour vérifier les responsables. Si la formation parente est `null`, accès refusé. `ROLE_PEDAGO` n'a pas accès à ces attributs (lecture seule sur Works).
+
+### `ContentManagerVoter` — `src/Security/Voter/ContentManagerVoter.php`
+
+| Attribut | Accordé si | Sujet |
+|---|---|---|
+| `CONTENT_MANAGER` | `ROLE_ADMIN` ou `ROLE_PEDAGO` | aucun |
+
+Utilisé dans `setPermission()`, `denyAccessUnlessGranted()` et les menus EasyAdmin pour toutes les ressources partagées entre `ROLE_ADMIN` et `ROLE_PEDAGO` : Pages, Inscriptions, Utilisateurs, Messages de contact.
 
 ---
 
@@ -84,10 +89,11 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 | ROLE_STAGIAIRE | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | ROLE_FORMATEUR (non responsable) | ✗ (filtré) | ✗ | ✗ | ✗ | ✓ (ses formations) | ✗ |
 | ROLE_FORMATEUR (responsable) | ✓ (ses formations) | ✗ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
+| ROLE_PEDAGO | ✓ (tout) | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
 | ROLE_ADMIN | ✓ (tout) | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
 | ROLE_SUPER_ADMIN | ✓ (tout) | ✓ | ✓ AUTO_APPROVED | ✓ | ✓ | ✓ |
 
-**Filtre liste** (`createIndexQueryBuilder`) : un formateur non-admin ne voit que les formations dont il est responsable (jointure sur `formation_user`).
+**Filtre liste** (`createIndexQueryBuilder`) : un formateur non-admin **et non-pédago** ne voit que les formations dont il est responsable.
 
 ### Works
 
@@ -96,17 +102,24 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 | ROLE_STAGIAIRE | ✓ (ses works) | ✓ | ✓ → PENDING | ✗ | ✗ | ✗ |
 | ROLE_FORMATEUR (non responsable) | ✗ (filtré) | ✓ | ✗ | ✗ | ✓ (ses formations) | ✗ |
 | ROLE_FORMATEUR (responsable) | ✓ (formations dont responsable) | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
+| ROLE_PEDAGO | ✓ (tout) | ✗ | ✗ | ✗ | ✓ | ✗ |
 | ROLE_ADMIN | ✓ (tout) | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
 | ROLE_SUPER_ADMIN | ✓ (tout) | ✓ | ✓ AUTO_APPROVED | ✓ | ✓ | ✓ |
 
 **Filtre liste** (`createIndexQueryBuilder`) :
 - Stagiaire → jointure `works_user`, uniquement les works où il est étudiant
-- Formateur non-admin → jointure `formation.responsables`, uniquement les works des formations dont il est responsable
-- Admin/Super-admin → tout
+- Formateur non-admin **et non-pédago** → jointure `formation.responsables`
+- Admin / Super-admin / Pédago → tout
 
-**Édition** (action `edit`) : vérification supplémentaire avant que EasyAdmin ne traite la requête :
-- Stagiaire : doit être dans `works.users`
-- Formateur non-admin : doit passer `WORKS_APPROVE` (= être responsable de la formation parente)
+**Édition** (action `edit`) : ROLE_PEDAGO est explicitement bloqué côté serveur (`createAccessDeniedException`) en plus du masquage des boutons.
+
+### Pages
+
+| Rôle | Voir | Créer | Modifier | Supprimer | Historique | Approuver/Rejeter/Restaurer |
+|---|---|---|---|---|---|---|
+| ROLE_PEDAGO | ✓ | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
+| ROLE_ADMIN | ✓ | ✓ | ✓ AUTO_APPROVED | ✗ | ✓ | ✓ |
+| ROLE_SUPER_ADMIN | ✓ | ✓ | ✓ AUTO_APPROVED | ✓ | ✓ | ✓ |
 
 ---
 
@@ -116,8 +129,9 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 
 | Acteur | Résultat de la modification |
 |---|---|
-| ROLE_FORMATEUR non responsable | Accès refusé (impossible d'atteindre l'écran d'édition) |
-| ROLE_FORMATEUR responsable | Révision `AUTO_APPROVED` (contenu live mis à jour immédiatement) |
+| ROLE_FORMATEUR non responsable | Accès refusé |
+| ROLE_FORMATEUR responsable | Révision `AUTO_APPROVED` |
+| ROLE_PEDAGO | Révision `AUTO_APPROVED` |
 | ROLE_ADMIN / ROLE_SUPER_ADMIN | Révision `AUTO_APPROVED` |
 
 ### Works
@@ -126,14 +140,23 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 |---|---|
 | ROLE_STAGIAIRE (dans le works) | Révision `PENDING` — notifie les responsables de la formation parente |
 | ROLE_FORMATEUR responsable | Révision `AUTO_APPROVED` |
+| ROLE_PEDAGO | Accès refusé (lecture seule) |
+| ROLE_ADMIN / ROLE_SUPER_ADMIN | Révision `AUTO_APPROVED` |
+
+### Pages
+
+| Acteur | Résultat de la modification |
+|---|---|
+| ROLE_FORMATEUR | Révision `PENDING` — notifie les admins |
+| ROLE_PEDAGO | Révision `AUTO_APPROVED` |
 | ROLE_ADMIN / ROLE_SUPER_ADMIN | Révision `AUTO_APPROVED` |
 
 ---
 
 ## Notifications (`RevisionService`)
 
-- **`notifyFormateurs()`** : notifie uniquement les responsables de la formation parente du Works (`$formation->getResponsables()`), pas tous les formateurs.
-- **`notifyAdmins()`** : notifie tous les utilisateurs ayant `ROLE_ADMIN`.
+- **`notifyFormateurs()`** : notifie uniquement les responsables de la formation parente du Works (`$formation->getResponsables()`).
+- **`notifyAdmins()`** : notifie tous les utilisateurs ayant `ROLE_ADMIN` uniquement — `ROLE_PEDAGO` ne reçoit pas les notifications de révision.
 
 ---
 
@@ -143,8 +166,8 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 
 | Méthode | Vérification |
 |---|---|
-| `configureActions()` | `Action::NEW` → `ROLE_ADMIN` ; `Action::DELETE` → `ROLE_SUPER_ADMIN` ; `historiqueFormation` → `ROLE_FORMATEUR` |
-| `createIndexQueryBuilder()` | Filtre formateur non-admin sur `responsables` |
+| `configureActions()` | `Action::NEW` → `FORMATION_CREATE` ; `Action::DELETE` → `ROLE_SUPER_ADMIN` ; `historiqueFormation` → `ROLE_FORMATEUR` |
+| `createIndexQueryBuilder()` | Filtre formateur non-admin **et non-pédago** sur `responsables` |
 | `configureCrud()` | `denyAccessUnlessGranted('ROLE_FORMATEUR')` |
 | `updateEntity()` | `isGranted('FORMATION_EDIT_AUTOAPPROVE', $formation)` → détermine PENDING ou AUTO_APPROVED |
 | `approuverHistoriqueFormation()` | `denyAccessUnlessGranted('FORMATION_APPROVE', $formation)` |
@@ -155,13 +178,28 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 
 | Méthode | Vérification |
 |---|---|
-| `configureActions()` | `Action::NEW` → `ROLE_FORMATEUR` ; `historiqueWorks` → `ROLE_FORMATEUR` |
-| `createIndexQueryBuilder()` | Filtre stagiaire sur `users` ; filtre formateur non-admin sur `formation.responsables` |
-| `edit()` | Vérifie appartenance (stagiaire) ou `WORKS_APPROVE` (formateur non-admin) |
-| `updateEntity()` | `isGranted('WORKS_EDIT_AUTOAPPROVE', $works)` → détermine PENDING ou AUTO_APPROVED |
+| `configureActions()` | `Action::NEW` → `ROLE_FORMATEUR` ; PEDAGO : `disable(NEW, EDIT)` |
+| `createIndexQueryBuilder()` | Filtre stagiaire sur `users` ; filtre formateur non-admin **et non-pédago** sur `formation.responsables` |
+| `edit()` | Deny PEDAGO ; vérifie appartenance (stagiaire) ou `WORKS_APPROVE` (formateur non-admin) |
+| `updateEntity()` | Deny PEDAGO ; `isGranted('WORKS_EDIT_AUTOAPPROVE', $works)` → détermine PENDING ou AUTO_APPROVED |
 | `approuverHistoriqueWorks()` | `denyAccessUnlessGranted('WORKS_APPROVE', $works)` |
 | `rejeterHistoriqueWorks()` | `denyAccessUnlessGranted('WORKS_REJECT', $works)` |
 | `restaurerHistoriqueWorks()` | `denyAccessUnlessGranted('WORKS_RESTORE', $works)` |
+
+### `PageCrudController`
+
+| Méthode | Vérification |
+|---|---|
+| `configureActions()` | Toutes actions → `CONTENT_MANAGER` sauf DELETE → `ROLE_SUPER_ADMIN` |
+| `historiquePage()`, `approuver*()`, `rejeter*()`, `restaurer*()` | `denyAccessUnlessGranted('CONTENT_MANAGER')` |
+
+### `InscriptionCrudController` / `UserCrudController` / `ContactMessageCrudController`
+
+| Controller | Vérification |
+|---|---|
+| `InscriptionCrudController` | INDEX, EDIT, DETAIL → `CONTENT_MANAGER` |
+| `UserCrudController` | INDEX, NEW, EDIT, DETAIL → `CONTENT_MANAGER` |
+| `ContactMessageCrudController` | INDEX, EDIT, DETAIL → `CONTENT_MANAGER` |
 
 ### Templates
 
@@ -177,9 +215,12 @@ Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation Ma
 `Formation.responsables` — ManyToMany vers `User`, table `formation_user` (existait avant l'implémentation des voters, aucune migration nécessaire).
 
 ```php
-// FormationVoter — logique de décision
-if ($this->security->isGranted('ROLE_ADMIN')) {
+// FormationVoter — logique de décision (simplifiée)
+if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_PEDAGO')) {
     return true;
+}
+if ($attribute === self::CREATE) {
+    return false; // réservé admin/pédago
 }
 if (!$this->security->isGranted('ROLE_FORMATEUR')) {
     return false;
@@ -188,6 +229,12 @@ return $formation->getResponsables()->contains($user);
 ```
 
 ```php
-// WorksVoter — idem via la formation parente
+// WorksVoter — idem via la formation parente (ROLE_PEDAGO non couvert = lecture seule)
+if ($this->security->isGranted('ROLE_ADMIN')) {
+    return true;
+}
+if (!$this->security->isGranted('ROLE_FORMATEUR')) {
+    return false;
+}
 return $formation->getResponsables()->contains($user);
 ```
