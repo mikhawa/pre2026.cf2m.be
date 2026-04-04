@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Controller\Admin\InscriptionCrudController;
 use App\Entity\Inscription;
 use App\Form\InscriptionType;
 use App\Repository\FormationRepository;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/preinscription', name: 'app_inscription_')]
 class InscriptionController extends AbstractController
@@ -74,6 +76,11 @@ class InscriptionController extends AbstractController
 
             // Notification aux administrateurs
             $admins = $userRepo->findAdmins();
+            $adminListUrl = $this->generateUrl('admin', [
+                'crudAction'          => 'index',
+                'crudControllerFqcn'  => InscriptionCrudController::class,
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+
             foreach ($admins as $admin) {
                 $emailAdmin = (new TemplatedEmail())
                     ->from(new Address($this->mailForm, 'CF2m — Préinscriptions'))
@@ -82,8 +89,9 @@ class InscriptionController extends AbstractController
                     ->subject('[CF2m] Nouvelle préinscription — ' . $formation->getTitle())
                     ->htmlTemplate('emails/inscription_admin.html.twig')
                     ->context([
-                        'inscription' => $inscription,
-                        'formation'   => $formation,
+                        'inscription'  => $inscription,
+                        'formation'    => $formation,
+                        'adminListUrl' => $adminListUrl,
                     ])
                 ;
                 $mailer->send($emailAdmin);
