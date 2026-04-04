@@ -47,13 +47,13 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123joe',
         ]);
-        // ── Administrateur de test ────────────────────────────────────────
+        // ── Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'thejoe@cf2m.be',
-            'userName'      => 'TheJoe',
-            'roles'         => ['ROLE_ADMIN'],
+            'email'         => 'thenoemie@cf2m.be',
+            'userName'      => 'TheNoemie',
+            'roles'         => ['ROLE_PEDAGO'],
             'status'        => 1,
-            'plainPassword' => '123joe',
+            'plainPassword' => '123noemie',
         ]);
         // ── Formateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
