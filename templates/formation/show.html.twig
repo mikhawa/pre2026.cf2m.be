@@ -172,10 +172,11 @@
                 {{ form_start(inscriptionForm, {
                     action: path('app_inscription_create', {formationSlug: formation.slug}),
                     method: 'POST',
-                    attr: {novalidate: 'novalidate', class: 'needs-validation', 'data-turbo': 'false'}
+                    attr: {novalidate: 'novalidate', class: 'needs-validation', 'data-turbo': 'false',
+                           style: 'display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden;'}
                 }) }}
 
-                <div class="modal-body">
+                <div class="modal-body" style="flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
 
                     {% if turnstileError is defined %}
                         <div class="alert alert-danger">{{ turnstileError }}</div>
@@ -251,13 +252,10 @@
                         {% endif %}
                     </div>
 
-                    {# Turnstile #}
+                    {# Turnstile — rendu explicite (le widget ne s'initialise pas dans un display:none) #}
                     <div class="mb-3">
-                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-                        <div class="cf-turnstile"
-                             data-sitekey="{{ turnstile_site_key }}"
-                             data-theme="auto"
-                             data-language="fr"></div>
+                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+                        <div id="cf-turnstile-container"></div>
                     </div>
 
                 </div>
@@ -274,6 +272,35 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    var modalEl = document.getElementById('modalInscription');
+    if (!modalEl) return;
+
+    var widgetId = null;
+
+    function renderTurnstile() {
+        if (typeof turnstile === 'undefined') {
+            setTimeout(renderTurnstile, 100);
+            return;
+        }
+        var container = document.getElementById('cf-turnstile-container');
+        if (!container) return;
+        if (widgetId !== null) {
+            turnstile.reset(widgetId);
+        } else {
+            widgetId = turnstile.render(container, {
+                sitekey: '{{ turnstile_site_key }}',
+                theme: 'auto',
+                language: 'fr'
+            });
+        }
+    }
+
+    modalEl.addEventListener('shown.bs.modal', renderTurnstile);
+})();
+</script>
 
 {% if modalOpen %}
 <script type="module">
