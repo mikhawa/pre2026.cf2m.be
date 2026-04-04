@@ -63,7 +63,7 @@ class FormationCrudController extends AbstractCrudController
         ;
 
         return $actions
-            ->setPermission(Action::NEW, 'ROLE_ADMIN')
+            ->setPermission(Action::NEW, 'FORMATION_CREATE')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission('historiqueFormation', 'ROLE_FORMATEUR')
             ->add(Crud::PAGE_INDEX, $historique)
@@ -82,13 +82,13 @@ class FormationCrudController extends AbstractCrudController
 
     /**
      * Filtre la liste pour les formateurs : uniquement les formations dont ils sont responsables.
-     * Les admins et super-admins voient tout.
+     * Les admins, super-admins et pédagos voient tout.
      */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_FORMATEUR') && !$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_PEDAGO')) {
             $qb->join('entity.responsables', 'r_formation')
                 ->andWhere('r_formation.id = :currentUserId')
                 ->setParameter('currentUserId', $this->getUser()?->getId());

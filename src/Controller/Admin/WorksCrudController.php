@@ -57,6 +57,8 @@ class WorksCrudController extends AbstractCrudController
             })
         ;
 
+        $isPedago = $this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN');
+
         $actions
             ->setPermission(Action::NEW, 'ROLE_FORMATEUR')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
@@ -73,6 +75,11 @@ class WorksCrudController extends AbstractCrudController
             )
             ->reorder(Crud::PAGE_EDIT, [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE, 'historiqueWorks'])
         ;
+
+        // ROLE_PEDAGO : lecture seule — masquer les boutons de création et d'édition
+        if ($isPedago) {
+            $actions->disable(Action::NEW, Action::EDIT);
+        }
 
         return $actions;
     }
@@ -92,8 +99,8 @@ class WorksCrudController extends AbstractCrudController
             $qb->join('entity.users', 'u_stagiaire')
                 ->andWhere('u_stagiaire.id = :currentUserId')
                 ->setParameter('currentUserId', $this->getUser()?->getId());
-        } elseif (!$this->isGranted('ROLE_ADMIN')) {
-            // Formateur non-admin : uniquement les works des formations dont il est responsable
+        } elseif (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_PEDAGO')) {
+            // Formateur non-admin et non-pédago : uniquement les works des formations dont il est responsable
             $qb->join('entity.formation', 'f_works')
                 ->join('f_works.responsables', 'r_works')
                 ->andWhere('r_works.id = :currentUserId')
@@ -104,11 +111,15 @@ class WorksCrudController extends AbstractCrudController
     }
 
     /**
-     * Empêche un stagiaire d'éditer un Works dont il ne fait pas partie.
-     * Empêche un formateur non-responsable d'éditer un Works hors de ses formations.
+     * Empêche ROLE_PEDAGO, les stagiaires hors de leur works, et les formateurs non-responsables d'éditer.
      */
     public function edit(AdminContext $context): KeyValueStore|\Symfony\Component\HttpFoundation\Response
     {
+        // ROLE_PEDAGO : lecture seule
+        if ($this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('ROLE_PEDAGO a un accès lecture seule sur les works.');
+        }
+
         /** @var Works|null $works */
         $works = $context->getEntity()->getInstance();
 
@@ -391,9 +402,14 @@ class WorksCrudController extends AbstractCrudController
      * Intercepte la mise à jour pour gérer les révisions.
      * - ROLE_STAGIAIRE : révision PENDING, contenu live inchangé, notifie les formateurs
      * - ROLE_FORMATEUR / ROLE_ADMIN / ROLE_SUPER_ADMIN : révision auto-approuvée
+     * - ROLE_PEDAGO : accès refusé (lecture seule)
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        if ($this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('ROLE_PEDAGO a un accès lecture seule sur les works.');
+        }
+
         /** @var Works $entityInstance */
         $user = $this->getUser();
 
