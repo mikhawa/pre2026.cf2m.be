@@ -30,11 +30,15 @@ class FormationVoter extends Voter
     /** Restauration d'une version antérieure */
     public const RESTORE = 'FORMATION_RESTORE';
 
+    /** Création d'une nouvelle formation (ROLE_ADMIN ou ROLE_PEDAGO) */
+    public const CREATE = 'FORMATION_CREATE';
+
     private const ATTRIBUTES = [
         self::EDIT_AUTOAPPROVE,
         self::APPROVE,
         self::REJECT,
         self::RESTORE,
+        self::CREATE,
     ];
 
     public function __construct(
@@ -44,8 +48,16 @@ class FormationVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, self::ATTRIBUTES, true)
-            && $subject instanceof Formation;
+        if (!in_array($attribute, self::ATTRIBUTES, true)) {
+            return false;
+        }
+
+        // FORMATION_CREATE ne requiert pas de sujet
+        if ($attribute === self::CREATE) {
+            return true;
+        }
+
+        return $subject instanceof Formation;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -58,9 +70,14 @@ class FormationVoter extends Voter
         /** @var Formation $formation */
         $formation = $subject;
 
-        // Les admins et super-admins ont toujours accès
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        // Les admins, super-admins et pédagos ont toujours accès
+        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_PEDAGO')) {
             return true;
+        }
+
+        // FORMATION_CREATE est réservé aux admins/pédagos (déjà accordé ci-dessus)
+        if ($attribute === self::CREATE) {
+            return false;
         }
 
         // Les non-formateurs n'ont jamais accès

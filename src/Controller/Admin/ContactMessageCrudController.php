@@ -40,6 +40,9 @@ class ContactMessageCrudController extends AbstractCrudController
     {
         return $actions
             ->disable(Action::NEW, Action::DELETE)
+            ->setPermission(Action::INDEX, 'CONTENT_MANAGER')
+            ->setPermission(Action::EDIT, 'CONTENT_MANAGER')
+            ->setPermission(Action::DETAIL, 'CONTENT_MANAGER')
         ;
     }
 

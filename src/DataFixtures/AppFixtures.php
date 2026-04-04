@@ -14,15 +14,21 @@ use App\Factory\RatingFactory;
 use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Service\RevisionService;
 use faker\Factory as Faker;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
         private readonly RevisionService $revisionService,
     ) {
+    }
+
+    public static function getGroups(): array
+    {
+        return ['app'];
     }
 
     public function load(ObjectManager $manager): void
@@ -47,7 +53,15 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123joe',
         ]);
-        // ── Formateur de test ────────────────────────────────────────
+        // ── Administrateur Pédagogique de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'thenoemie@cf2m.be',
+            'userName'      => 'TheNoemie',
+            'roles'         => ['ROLE_PEDAGO'],
+            'status'        => 1,
+            'plainPassword' => '123noemie',
+        ]);
+        // ── Formateurs de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'piet@cf2m.be',
             'userName'      => 'ThePiet',

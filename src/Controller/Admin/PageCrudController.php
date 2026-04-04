@@ -52,12 +52,12 @@ class PageCrudController extends AbstractCrudController
         ;
 
         return $actions
-            ->setPermission(Action::INDEX, 'ROLE_ADMIN')
-            ->setPermission(Action::NEW, 'ROLE_ADMIN')
-            ->setPermission(Action::EDIT, 'ROLE_ADMIN')
+            ->setPermission(Action::INDEX, 'CONTENT_MANAGER')
+            ->setPermission(Action::NEW, 'CONTENT_MANAGER')
+            ->setPermission(Action::EDIT, 'CONTENT_MANAGER')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
-            ->setPermission('historiquePage', 'ROLE_ADMIN')
+            ->setPermission(Action::DETAIL, 'CONTENT_MANAGER')
+            ->setPermission('historiquePage', 'CONTENT_MANAGER')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
@@ -136,7 +136,7 @@ class PageCrudController extends AbstractCrudController
         PageHistoryRepository $pageHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         /** @var Page $page */
         $page   = $context->getEntity()->getInstance();
@@ -224,7 +224,7 @@ class PageCrudController extends AbstractCrudController
         AdminContext $context,
         PageHistoryRepository $pageHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $pageHistoryRepo->find($historyId);
@@ -256,7 +256,7 @@ class PageCrudController extends AbstractCrudController
         AdminContext $context,
         PageHistoryRepository $pageHistoryRepo,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $pageHistoryRepo->find($historyId);
@@ -289,7 +289,7 @@ class PageCrudController extends AbstractCrudController
         PageHistoryRepository $pageHistoryRepo,
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
         $history   = $pageHistoryRepo->find($historyId);
