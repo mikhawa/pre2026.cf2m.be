@@ -24,6 +24,8 @@ class InscriptionTest extends TestCase
         self::assertNull($this->inscription->getNom());
         self::assertNull($this->inscription->getPrenom());
         self::assertNull($this->inscription->getEmail());
+        self::assertNull($this->inscription->getTelephone());
+        self::assertNull($this->inscription->getAge());
         self::assertNull($this->inscription->getMessage());
         self::assertNull($this->inscription->getCreatedAt());
         self::assertNull($this->inscription->getTreatAt());
@@ -37,11 +39,31 @@ class InscriptionTest extends TestCase
         self::assertSame($this->inscription, $this->inscription->setNom('Dupont'));
         self::assertSame($this->inscription, $this->inscription->setPrenom('Jean'));
         self::assertSame($this->inscription, $this->inscription->setEmail('jean@cf2m.be'));
+        self::assertSame($this->inscription, $this->inscription->setTelephone('0471 12 34 56'));
+        self::assertSame($this->inscription, $this->inscription->setAge(25));
         self::assertSame($this->inscription, $this->inscription->setMessage('Je suis motivé'));
         self::assertSame($this->inscription, $this->inscription->setTreat(true));
         self::assertSame($this->inscription, $this->inscription->setTreatAt(new \DateTimeImmutable()));
         self::assertSame($this->inscription, $this->inscription->setFormation(new Formation()));
         self::assertSame($this->inscription, $this->inscription->setTreatBy(new User()));
+    }
+
+    public function testTelephone(): void
+    {
+        $this->inscription->setTelephone('0471 12 34 56');
+        self::assertSame('0471 12 34 56', $this->inscription->getTelephone());
+    }
+
+    public function testAge(): void
+    {
+        $this->inscription->setAge(25);
+        self::assertSame(25, $this->inscription->getAge());
+
+        $this->inscription->setAge(16);
+        self::assertSame(16, $this->inscription->getAge());
+
+        $this->inscription->setAge(99);
+        self::assertSame(99, $this->inscription->getAge());
     }
 
     public function testToStringEmpty(): void

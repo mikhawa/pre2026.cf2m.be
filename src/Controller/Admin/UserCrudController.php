@@ -51,6 +51,22 @@ class UserCrudController extends AbstractCrudController
             return;
         }
 
+        if ($this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')) {
+            // ROLE_PEDAGO ne peut pas créer un utilisateur ROLE_ADMIN ou ROLE_SUPER_ADMIN
+            $roles = array_values(array_filter(
+                $entityInstance->getRoles(),
+                static fn(string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
+            ));
+            $entityInstance->setRoles($roles);
+        } elseif (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // ROLE_ADMIN ne peut pas créer un utilisateur ROLE_SUPER_ADMIN
+            $roles = array_values(array_filter(
+                $entityInstance->getRoles(),
+                static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
+            ));
+            $entityInstance->setRoles($roles);
+        }
+
         $plainPassword = $this->generatePassword();
         $entityInstance->setPassword(
             $this->passwordHasher->hashPassword($entityInstance, $plainPassword)
@@ -113,13 +129,22 @@ class UserCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        if ($entityInstance instanceof User && !$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Empêche l'escalade de privilèges : un ROLE_ADMIN ne peut pas assigner ROLE_SUPER_ADMIN
-            $roles = array_values(array_filter(
-                $entityInstance->getRoles(),
-                static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
-            ));
-            $entityInstance->setRoles($roles);
+        if ($entityInstance instanceof User) {
+            if ($this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')) {
+                // ROLE_PEDAGO ne peut pas assigner ROLE_ADMIN ni ROLE_SUPER_ADMIN
+                $roles = array_values(array_filter(
+                    $entityInstance->getRoles(),
+                    static fn(string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
+                ));
+                $entityInstance->setRoles($roles);
+            } elseif (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+                // ROLE_ADMIN ne peut pas assigner ROLE_SUPER_ADMIN
+                $roles = array_values(array_filter(
+                    $entityInstance->getRoles(),
+                    static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
+                ));
+                $entityInstance->setRoles($roles);
+            }
         }
 
         parent::updateEntity($entityManager, $entityInstance);
@@ -142,12 +167,19 @@ class UserCrudController extends AbstractCrudController
                 'Administrateur' => 'ROLE_ADMIN',
                 'Super Admin'    => 'ROLE_SUPER_ADMIN',
             ]
-            : [
-                'Stagiaire'      => 'ROLE_STAGIAIRE',
-                'Formateur'      => 'ROLE_FORMATEUR',
-                'Pédago'         => 'ROLE_PEDAGO',
-                'Administrateur' => 'ROLE_ADMIN',
-            ];
+            : ($isFormPage && $this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')
+                ? [
+                    'Stagiaire'      => 'ROLE_STAGIAIRE',
+                    'Formateur'      => 'ROLE_FORMATEUR',
+                    'Pédago'         => 'ROLE_PEDAGO',
+                ]
+                : [
+                    'Stagiaire'      => 'ROLE_STAGIAIRE',
+                    'Formateur'      => 'ROLE_FORMATEUR',
+                    'Pédago'         => 'ROLE_PEDAGO',
+                    'Administrateur' => 'ROLE_ADMIN',
+                ]
+            );
 
         yield ChoiceField::new('roles', 'Rôles')
             ->setChoices($rolesChoices)
