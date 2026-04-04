@@ -1,6 +1,6 @@
 # Qui reçoit un mail et quand — CF2m
 
-**Dernière mise à jour** : 2026-04-04
+**Dernière mise à jour** : 2026-04-04 (ajout ROLE_PEDAGO)
 
 ---
 
@@ -8,9 +8,9 @@
 
 | Déclencheur | Expéditeur logique | Destinataire(s) | Template |
 |---|---|---|---|
-| Préinscription à une formation | CF2m — Préinscriptions | Tous les `ROLE_ADMIN` | `inscription_admin.html.twig` |
+| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
 | Préinscription à une formation | CF2m — Centre de Formation | L'internaute qui s'est inscrit | `inscription_confirmation.html.twig` |
-| Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (variable d'env) | `contact.html.twig` |
+| Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (fixe) + `ROLE_PEDAGO` (copies) | `contact.html.twig` |
 | Création d'un compte utilisateur par un admin | CF2m Administration | Le nouvel utilisateur | `user_bienvenue.html.twig` |
 | Demande de réinitialisation de mot de passe | CF2m Administration | L'utilisateur connecté | `reset_password.html.twig` |
 | Révision Works soumise par un stagiaire | CF2m — Révisions | Responsables de la formation parente | `revision_pending.html.twig` |
@@ -27,8 +27,8 @@
 **Source** : `InscriptionController::create()` — route `POST /preinscription/{formationSlug}`  
 **Condition** : formation avec `status = 'recruiting'`, formulaire valide, Turnstile OK
 
-**Mail 1 — Notification aux admins**
-- **Destinataires** : tous les utilisateurs ayant `ROLE_ADMIN` (via `UserRepository::findAdmins()`)
+**Mail 1 — Notification aux admins et pédagos**
+- **Destinataires** : tous les utilisateurs ayant `ROLE_ADMIN`, `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findInscriptionRecipients()`)
 - **Reply-To** : email de l'internaute inscrit
 - **Sujet** : `[CF2m] Nouvelle préinscription — {titre formation}`
 - **Contenu** : nom, prénom, email, téléphone, âge, message (si renseigné), date de réception
@@ -48,7 +48,8 @@
 **Source** : `ContactController::index()` — route `POST /contact`  
 **Condition** : formulaire valide, Turnstile OK
 
-- **Destinataire** : adresse définie par la variable d'env `MAIL_ADMIN` (adresse unique, pas une liste de rôles)
+- **Destinataire principal** : adresse fixe `MAIL_ADMIN` (variable d'env)
+- **Copies** : tous les `ROLE_PEDAGO` (via `UserRepository::findContactRecipients()`) — sauf si leur email est identique à `MAIL_ADMIN`
 - **Reply-To** : email de l'expéditeur
 - **Sujet** : `[CF2m] {sujet saisi}`
 - **Template** : `templates/emails/contact.html.twig`
@@ -138,9 +139,10 @@ En préprod/prod : `MAILER_DSN=mailjet+api://...` défini dans `.env.local` sur 
 | Rôle / Profil | Reçoit |
 |---|---|
 | `ROLE_ADMIN` | Nouvelles préinscriptions · Révisions Formation/Page en attente |
+| `ROLE_PEDAGO` | Nouvelles préinscriptions · Messages de contact (copie) |
 | Responsables d'une formation (`formation_user`) | Révisions Works en attente sur leurs formations |
 | Auteur d'une révision (tout rôle) | Décision (approbation ou rejet) sur sa révision |
 | Nouvel utilisateur (tout rôle) | Mail de bienvenue avec identifiants |
 | Utilisateur connecté (tout rôle) | Lien de réinitialisation de mot de passe |
 | Internaute (non connecté) | Accusé de réception de préinscription |
-| `MAIL_ADMIN` (adresse fixe) | Messages du formulaire de contact |
+| `MAIL_ADMIN` (adresse fixe) | Messages du formulaire de contact (destinataire principal) |

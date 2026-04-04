@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\ContactMessage;
 use App\Form\ContactType;
+use App\Repository\UserRepository;
 use App\Service\TurnstileVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -33,6 +34,7 @@ class ContactController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         MailerInterface $mailer,
+        UserRepository $userRepo,
     ): Response {
         $message = new ContactMessage();
         $form = $this->createForm(ContactType::class, $message);
@@ -55,6 +57,7 @@ class ContactController extends AbstractController
             $em->persist($message);
             $em->flush();
 
+            // Mail vers l'adresse administrative fixe (MAIL_ADMIN)
             $email = (new TemplatedEmail())
                 ->from(new Address($this->mailForm, 'CF2m — Contact'))
                 ->to($this->mailAdmin)
@@ -63,8 +66,23 @@ class ContactController extends AbstractController
                 ->htmlTemplate('emails/contact.html.twig')
                 ->context(['message' => $message])
             ;
-
             $mailer->send($email);
+
+            // Copies aux ROLE_PEDAGO (en plus de MAIL_ADMIN)
+            foreach ($userRepo->findContactRecipients() as $recipient) {
+                if ($recipient->getEmail() === null || $recipient->getEmail() === $this->mailAdmin) {
+                    continue;
+                }
+                $copy = (new TemplatedEmail())
+                    ->from(new Address($this->mailForm, 'CF2m — Contact'))
+                    ->to(new Address($recipient->getEmail(), (string) $recipient))
+                    ->replyTo(new Address($message->getEmail(), $message->getNom()))
+                    ->subject('[CF2m] ' . $message->getSujet())
+                    ->htmlTemplate('emails/contact.html.twig')
+                    ->context(['message' => $message])
+                ;
+                $mailer->send($copy);
+            }
 
             return $this->redirectToRoute('app_contact_success');
         }

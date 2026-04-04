@@ -74,8 +74,8 @@ class InscriptionController extends AbstractController
             $em->persist($inscription);
             $em->flush();
 
-            // Notification aux administrateurs
-            $admins = $userRepo->findAdmins();
+            // Notification aux administrateurs et pédagos
+            $admins = $userRepo->findInscriptionRecipients();
             $adminListUrl = $this->generateUrl('admin', [
                 'crudAction'          => 'index',
                 'crudControllerFqcn'  => InscriptionCrudController::class,
