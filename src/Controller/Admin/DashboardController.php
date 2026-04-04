@@ -95,15 +95,15 @@ class DashboardController extends AbstractDashboardController
             ->setBadge($pendingWorks > 0 ? $pendingWorks : null, 'danger')
         ;
         yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fa fa-file-alt')
-            ->setPermission('ROLE_ADMIN')
+            ->setPermission('CONTENT_MANAGER')
             ->setBadge($pendingPages > 0 ? $pendingPages : null, 'danger')
         ;
 
-        yield MenuItem::section('Utilisateurs')->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users')->setPermission('ROLE_ADMIN');
+        yield MenuItem::section('Utilisateurs')->setPermission('CONTENT_MANAGER');
+        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users')->setPermission('CONTENT_MANAGER');
         $untreatedCount = $this->inscriptionRepository->findUntreatedCount();
         yield MenuItem::linkTo(InscriptionCrudController::class, 'Inscriptions', 'fa fa-clipboard-list')
-            ->setPermission('ROLE_ADMIN')
+            ->setPermission('CONTENT_MANAGER')
             ->setBadge($untreatedCount > 0 ? $untreatedCount : null, 'danger')
         ;
 
@@ -116,7 +116,7 @@ class DashboardController extends AbstractDashboardController
         ;
 
         yield MenuItem::section('Communication');
-        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('CONTENT_MANAGER');
         yield MenuItem::linkTo(PartenaireCrudController::class, 'Partenaires', 'fa fa-handshake')->setPermission('ROLE_ADMIN');
     }
 }

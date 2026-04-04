@@ -89,10 +89,10 @@ class UserCrudController extends AbstractCrudController
         $isSuperAdmin = $this->isGranted('ROLE_SUPER_ADMIN');
 
         return $actions
-            ->setPermission(Action::INDEX, 'ROLE_ADMIN')
-            ->setPermission(Action::NEW, 'ROLE_ADMIN')
-            ->setPermission(Action::EDIT, 'ROLE_ADMIN')
-            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission(Action::INDEX, 'CONTENT_MANAGER')
+            ->setPermission(Action::NEW, 'CONTENT_MANAGER')
+            ->setPermission(Action::EDIT, 'CONTENT_MANAGER')
+            ->setPermission(Action::DETAIL, 'CONTENT_MANAGER')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(
                 fn (User $user) => $isSuperAdmin || !in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true)
@@ -138,12 +138,14 @@ class UserCrudController extends AbstractCrudController
                 'Utilisateur'    => 'ROLE_USER',
                 'Stagiaire'      => 'ROLE_STAGIAIRE',
                 'Formateur'      => 'ROLE_FORMATEUR',
+                'Pédago'         => 'ROLE_PEDAGO',
                 'Administrateur' => 'ROLE_ADMIN',
                 'Super Admin'    => 'ROLE_SUPER_ADMIN',
             ]
             : [
                 'Stagiaire'      => 'ROLE_STAGIAIRE',
                 'Formateur'      => 'ROLE_FORMATEUR',
+                'Pédago'         => 'ROLE_PEDAGO',
                 'Administrateur' => 'ROLE_ADMIN',
             ];
 
@@ -153,6 +155,7 @@ class UserCrudController extends AbstractCrudController
             ->renderAsBadges([
                 'ROLE_SUPER_ADMIN' => 'danger',
                 'ROLE_ADMIN'       => 'warning',
+                'ROLE_PEDAGO'      => 'primary',
                 'ROLE_FORMATEUR'   => 'info',
                 'ROLE_STAGIAIRE'   => 'success',
                 'ROLE_USER'        => 'secondary',

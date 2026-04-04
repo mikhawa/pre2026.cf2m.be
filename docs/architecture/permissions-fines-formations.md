@@ -11,17 +11,41 @@
 ROLE_USER
   └── ROLE_STAGIAIRE
         └── ROLE_FORMATEUR
-              └── ROLE_ADMIN
-                    └── ROLE_SUPER_ADMIN
+              ├── ROLE_ADMIN
+              │     └── ROLE_SUPER_ADMIN
+              └── ROLE_PEDAGO
 ```
 
-Défini dans `config/packages/security.yaml`.
+Défini dans `config/packages/security.yaml`. `ROLE_PEDAGO` est au même niveau que `ROLE_ADMIN` mais sans en hériter — droits distincts (voir section dédiée ci-dessous).
 
 ---
 
 ## Principe des permissions contextuelles
 
 Un `ROLE_FORMATEUR` désigné comme **responsable** d'une Formation (relation ManyToMany `formation_user`) obtient les mêmes droits qu'un `ROLE_ADMIN` **sur cette formation uniquement** — et sur les Works dont cette formation est parente.
+
+---
+
+## ROLE_PEDAGO — droits spécifiques
+
+`ROLE_PEDAGO` est un rôle pédagogique au même niveau hiérarchique que `ROLE_ADMIN`, avec un périmètre différent.
+
+| Ressource | Droits |
+|---|---|
+| **Formations** | Créer (`FORMATION_CREATE`), modifier (AUTO_APPROVED), voir tout, historique |
+| **Works** | Lecture seule — INDEX et DETAIL uniquement (pas de NEW, pas d'EDIT) |
+| **Pages** | Accès complet via `CONTENT_MANAGER` (comme ROLE_ADMIN) |
+| **Inscriptions** | Gérer via `CONTENT_MANAGER` (voir, éditer, marquer comme traité) |
+| **Utilisateurs** | Créer et gérer via `CONTENT_MANAGER` |
+| **Messages de contact** | Voir et marquer comme lu via `CONTENT_MANAGER` |
+| **Révisions en attente** | Non accessible (menu masqué, route protégée par `ROLE_ADMIN`) |
+| **Mail préinscription** | Reçoit (via `findInscriptionRecipients()`) |
+| **Mail contact** | Reçoit en copie (via `findContactRecipients()`, en plus de `MAIL_ADMIN`) |
+| **Mail révision** | Ne reçoit pas |
+
+### Voter `CONTENT_MANAGER`
+
+`src/Security/Voter/ContentManagerVoter.php` — attribut sans sujet, retourne `true` pour `ROLE_ADMIN` ou `ROLE_PEDAGO`. Utilisé dans `setPermission()`, `denyAccessUnlessGranted()` et `isGranted()` pour les ressources partagées entre les deux rôles.
 
 ---
 
