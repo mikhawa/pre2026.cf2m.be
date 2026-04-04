@@ -55,7 +55,7 @@ class AppFixtures extends Fixture
             'status'        => 1,
             'plainPassword' => '123noemie',
         ]);
-        // ── Formateur de test ────────────────────────────────────────
+        // ── Formateurs de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'piet@cf2m.be',
             'userName'      => 'ThePiet',
