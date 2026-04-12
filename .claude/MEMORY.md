@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-097 (2026-04-03) — Popup préinscription formations recrutement
+100 (2026-04-04) — Création ROLE_PEDAGO et restrictions permissions
 
 ## Dernier numéro .claude-tasks
-130 (2026-04-03)
+135 (2026-04-04)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -142,6 +142,27 @@ Le projet utilise le mécanisme stateless de Symfony (`SameOriginCsrfTokenManage
 - `assets/controllers/csrf_protection_controller.js` : intercepte `submit`, remplace le token par un token base64, l'écrit dans un cookie
 - **Ce fichier DOIT être importé dans `assets/app.js`** : `import './controllers/csrf_protection_controller.js';`
 - Sans cet import, les formulaires retournent "Jeton CSRF invalide"
+
+## ROLE_PEDAGO — TERMINÉ ✅ (2026-04-04, branche fix/02)
+
+### Hiérarchie
+`ROLE_PEDAGO: [ROLE_FORMATEUR, ROLE_STAGIAIRE, ROLE_USER]` — parallèle à ROLE_ADMIN, sans lien.
+
+### Permissions
+- Formations : créer + modifier les siennes (auto-approve) — voter `FORMATION_CREATE`
+- Works : lecture seule (NEW/EDIT désactivés dans WorksCrudController)
+- Pages, Inscriptions, Messages contact, Utilisateurs : accès complet via voter `CONTENT_MANAGER`
+- Mails : reçoit préinscriptions + contact, **pas** les mails de révision
+
+### Restriction création utilisateurs
+ROLE_PEDAGO (sans ROLE_ADMIN) ne peut attribuer que ROLE_STAGIAIRE / ROLE_FORMATEUR / ROLE_PEDAGO.
+Protection à 3 niveaux : `configureFields()` (UI) + `persistEntity()` + `updateEntity()` (serveur).
+Pattern utilisé : `isGranted('ROLE_PEDAGO') && !isGranted('ROLE_ADMIN')` → cumul ADMIN+PEDAGO = droits ADMIN.
+
+### Fichiers clés
+- `src/Security/Voter/ContentManagerVoter.php` (créé)
+- `src/Controller/Admin/UserCrudController.php` (restrictions rôles)
+- `src/Repository/UserRepository.php` (`findInscriptionRecipients`, `findContactRecipients`)
 
 ## Règle absolue : aucune initiative
 Ne jamais modifier un fichier qui n'a pas été explicitement demandé. Toujours demander avant d'étendre une modification à d'autres fichiers.
