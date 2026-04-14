@@ -20,7 +20,7 @@ alias ddo='docker compose down'
 ```bash
 alias pbc='php bin/console'
 alias pbcc='php bin/console cache:clear'
-alias fl='php bin/console doctrine:fixtures:load --no-interaction'
+alias fl='php bin/console doctrine:fixtures:load --group=app --no-interaction'
 ```
 
 ### ----------------------
