@@ -50,7 +50,7 @@ RUN git config --global --add safe.directory /var/www/html
 # Alias shell (sh + bash)
 RUN echo "alias pbc='php bin/console'" >> /root/.shrc \
     && echo "alias pbcc='php bin/console cache:clear'" >> /root/.shrc \
-    && echo "alias fl='php bin/console doctrine:fixtures:load --no-interaction'" >> /root/.shrc \
+    && echo "alias fl='php bin/console doctrine:fixtures:load --group=app --no-interaction'" >> /root/.shrc \
     && echo ". /root/.shrc" >> /root/.bashrc
 ENV ENV=/root/.shrc
 
