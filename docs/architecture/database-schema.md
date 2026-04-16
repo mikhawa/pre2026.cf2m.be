@@ -24,6 +24,8 @@ MariaDB 11.4 — encodage `utf8mb4` — collation `utf8mb4_unicode_ci`
 | external_link3              | varchar(255)      | Nullable — URL validée                                          |
 | created_at                  | datetime          | Défini via `#[ORM\PrePersist]`                                  |
 | updated_at                  | datetime          | Nullable — mis à jour via `setAvatarFile()` (VichUploader)      |
+| two_factor_code             | varchar(6)        | Nullable — code 2FA temporaire (6 chiffres)                     |
+| two_factor_code_expires_at  | datetime          | Nullable — expiration du code (TTL 15 min)                      |
 
 **Champ non mappé** : `avatarFile` (`File`) — géré par VichUploader, ne persiste pas en BDD.
 
@@ -183,6 +185,8 @@ erDiagram
         varchar biography
         datetime created_at
         datetime updated_at
+        varchar two_factor_code
+        datetime two_factor_code_expires_at
     }
     Formation {
         int id PK
