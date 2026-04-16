@@ -102,6 +102,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(length: 6, nullable: true)]
+    private ?string $twoFactorCode = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $twoFactorCodeExpiresAt = null;
+
     /** @var Collection<int, Comment> */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $comments;
@@ -447,6 +453,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getTwoFactorCode(): ?string
+    {
+        return $this->twoFactorCode;
+    }
+
+    public function setTwoFactorCode(?string $twoFactorCode): static
+    {
+        $this->twoFactorCode = $twoFactorCode;
+
+        return $this;
+    }
+
+    public function getTwoFactorCodeExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->twoFactorCodeExpiresAt;
+    }
+
+    public function setTwoFactorCodeExpiresAt(?\DateTimeImmutable $twoFactorCodeExpiresAt): static
+    {
+        $this->twoFactorCodeExpiresAt = $twoFactorCodeExpiresAt;
 
         return $this;
     }
