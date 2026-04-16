@@ -36,6 +36,7 @@ security:
                 target: app_home
 
     access_control:
+        - { path: ^/double-authentification, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_STAGIAIRE }
         - { path: ^/profil, roles: ROLE_USER }
 
