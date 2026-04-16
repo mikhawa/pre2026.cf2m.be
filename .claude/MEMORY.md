@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-100 (2026-04-04) — Création ROLE_PEDAGO et restrictions permissions
+101 (2026-04-16) — Double authentification par email (2FA)
 
 ## Dernier numéro .claude-tasks
-135 (2026-04-04)
+136 (2026-04-16)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
