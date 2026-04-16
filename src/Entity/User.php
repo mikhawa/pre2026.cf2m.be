@@ -457,6 +457,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getTwoFactorCode(): ?string
+    {
+        return $this->twoFactorCode;
+    }
+
+    public function setTwoFactorCode(?string $twoFactorCode): static
+    {
+        $this->twoFactorCode = $twoFactorCode;
+
+        return $this;
+    }
+
+    public function getTwoFactorCodeExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->twoFactorCodeExpiresAt;
+    }
+
+    public function setTwoFactorCodeExpiresAt(?\DateTimeImmutable $twoFactorCodeExpiresAt): static
+    {
+        $this->twoFactorCodeExpiresAt = $twoFactorCodeExpiresAt;
+
+        return $this;
+    }
+
     /** @return Collection<int, Formation> */
     public function getFormations(): Collection
     {
