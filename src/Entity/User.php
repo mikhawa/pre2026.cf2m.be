@@ -102,6 +102,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(length: 6, nullable: true)]
+    private ?string $twoFactorCode = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $twoFactorCodeExpiresAt = null;
+
     /** @var Collection<int, Comment> */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $comments;
