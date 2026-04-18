@@ -215,7 +215,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'createdAt'   => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
-            'status' => 'published',
+            'status' => 'recruiting',
             'publishedAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
