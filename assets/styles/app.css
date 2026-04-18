@@ -1464,6 +1464,16 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
 }
+.cf2m-work-author-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: inherit;
+    transition: opacity 0.15s;
+}
+.cf2m-work-author-link:hover {
+    opacity: 0.75;
+}
 
 /* Lien formation */
 .cf2m-work-formation-link {
@@ -1748,6 +1758,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-card a:not(.btn):hover { color: #0d1e35; }
 [data-theme="light"] .cf2m-works-link { color: var(--cf2m-cyan); }
 [data-theme="light"] .cf2m-work-author-name    { color: #1a2b3c; }
+[data-theme="light"] .cf2m-work-author-link   { color: #1a2b3c; }
 [data-theme="light"] .cf2m-work-formation-link { color: #0072a3; }
 [data-theme="light"] .cf2m-work-back-btn { color: var(--cf2m-cyan); border-color: rgba(0,180,216,0.4); }
 
