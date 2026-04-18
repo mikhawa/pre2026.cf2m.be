@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileEditType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,15 @@ class ProfileController extends AbstractController
 
         return $this->render('profil/index.html.twig', [
             'user' => $user,
+        ]);
+    }
+
+    #[Route('/utilisateurs', name: '_users')]
+    #[IsGranted('ROLE_FORMATEUR')]
+    public function users(UserRepository $userRepository): Response
+    {
+        return $this->render('profil/utilisateurs.html.twig', [
+            'users' => $userRepository->findAllOrderedByName(),
         ]);
     }
 

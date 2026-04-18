@@ -1475,6 +1475,19 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     opacity: 0.75;
 }
 
+/* Liste membres */
+.cf2m-user-card {
+    transition: opacity 0.15s, transform 0.15s;
+}
+.cf2m-user-card:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+.cf2m-user-card-name {
+    color: rgba(255, 255, 255, 0.9);
+}
+[data-theme="light"] .cf2m-user-card-name { color: #1a2b3c; }
+
 /* Lien formation */
 .cf2m-work-formation-link {
     display: flex;
