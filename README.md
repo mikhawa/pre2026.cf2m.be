@@ -1,7 +1,6 @@
 # pre2026.cf2m.be
 
-## TO DO
-Prochaine étape, seule les rôles `ROLE_SUPER_ADMIN` et `ROLE_PEDAGO` ne reçoivent les inscriptions par email, les autres rôles (ex. `ROLE_ADMIN`) n'en reçoivent pas pour éviter les doublons et limiter les notifications aux personnes directement concernées par la validation des inscriptions.
+
 
 ## Description du projet
 
