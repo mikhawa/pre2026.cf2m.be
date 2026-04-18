@@ -92,10 +92,13 @@
                         <ul class="cf2m-work-authors-list">
                             {% for user in work.users %}
                                 <li class="cf2m-work-author">
-                                    <span class="cf2m-work-author-avatar" aria-hidden="true">
-                                        {{ user.userName|first|upper }}
-                                    </span>
-                                    <span class="cf2m-work-author-name">{{ user.userName }}</span>
+                                    <a href="{{ path('app_public_profile', {id: user.id}) }}"
+                                       class="cf2m-work-author-link text-decoration-none">
+                                        <span class="cf2m-work-author-avatar" aria-hidden="true">
+                                            {{ user.userName|first|upper }}
+                                        </span>
+                                        <span class="cf2m-work-author-name">{{ user.userName }}</span>
+                                    </a>
                                 </li>
                             {% endfor %}
                         </ul>
