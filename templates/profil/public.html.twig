@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.userName }} — CF2m{% endblock %}
+
+{% block body_class %}page-profil-public{% endblock %}
+
+{% block body %}
+
+{# Mapping rôle principal → libellé + couleur badge #}
+{% set role_labels = {
+    'ROLE_SUPER_ADMIN': { label: 'Super Administrateur', color: 'danger' },
+    'ROLE_ADMIN':       { label: 'Administrateur',        color: 'warning' },
+    'ROLE_PEDAGO':      { label: 'Responsable pédagogique', color: 'info' },
+    'ROLE_FORMATEUR':   { label: 'Formateur',             color: 'primary' },
+    'ROLE_STAGIAIRE':   { label: 'Stagiaire',             color: 'secondary' },
+    'ROLE_USER':        { label: 'Utilisateur',           color: 'secondary' },
+} %}
+{% set role_priority = ['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_PEDAGO', 'ROLE_FORMATEUR', 'ROLE_STAGIAIRE', 'ROLE_USER'] %}
+{% set displayed_role = null %}
+{% for r in role_priority %}
+    {% if displayed_role is null and r in user.roles %}
+        {% set displayed_role = role_labels[r] %}
+    {% endif %}
+{% endfor %}
+
+<section class="py-5">
+    <div class="container">
+
+        <nav aria-label="Fil d'ariane" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ user.userName }}
+                </li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+
+                <div class="card cf2m-card">
+                    <div class="card-body p-4">
+
+                        {# Avatar + identité #}
+                        <div class="d-flex align-items-center gap-4 mb-4">
+                            <div class="cf2m-avatar-wrap flex-shrink-0">
+                                {% if user.avatarName %}
+                                    <img src="{{ asset('uploads/avatars/' ~ user.avatarName) }}"
+                                         alt="Avatar de {{ user.userName }}"
+                                         class="cf2m-avatar-img">
+                                {% else %}
+                                    <div class="cf2m-avatar-placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="1.2"
+                                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <circle cx="12" cy="8" r="4"/>
+                                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <h1 class="h3 mb-1">{{ user.userName }}</h1>
+                                {% if displayed_role %}
+                                    <span class="badge bg-{{ displayed_role.color }} mb-1">
+                                        {{ displayed_role.label }}
+                                    </span>
+                                {% endif %}
+                                {% if user.createdAt %}
+                                    <p class="cf2m-muted-label mb-0 mt-1">
+                                        Membre depuis le {{ user.createdAt|date('d/m/Y') }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Présentation #}
+                        {% if user.biography %}
+                            <div class="mb-4">
+                                <h2 class="h6 text-uppercase cf2m-muted-label mb-2">Présentation</h2>
+                                <p class="mb-0">{{ user.biography }}</p>
+                            </div>
+                        {% endif %}
+
+                        {# Liens externes #}
+                        {% set liens = [user.externalLink1, user.externalLink2, user.externalLink3]|filter(l => l is not null) %}
+                        {% if liens is not empty %}
+                            <div>
+                                <h2 class="h6 text-uppercase cf2m-muted-label mb-2">Liens</h2>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for lien in liens %}
+                                        <a href="{{ lien }}" target="_blank" rel="noopener noreferrer"
+                                           class="btn btn-outline-secondary btn-sm cf2m-nav-external">
+                                            {{ lien|replace({'https://': '', 'http://': ''})|split('/')[0] }}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                                 aria-hidden="true" class="cf2m-external-icon">
+                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                <polyline points="15 3 21 3 21 9"/>
+                                                <line x1="10" y1="14" x2="21" y2="3"/>
+                                            </svg>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
