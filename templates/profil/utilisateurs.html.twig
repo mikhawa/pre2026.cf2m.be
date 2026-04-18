@@ -12,7 +12,7 @@
     'ROLE_ADMIN':       { label: 'Administrateur',        color: 'warning' },
     'ROLE_PEDAGO':      { label: 'Responsable pédagogique', color: 'info' },
     'ROLE_FORMATEUR':   { label: 'Formateur',             color: 'primary' },
-    'ROLE_STAGIAIRE':   { label: 'Stagiaire',             color: 'secondary' },
+    'ROLE_STAGIAIRE':   { label: 'Stagiaire',             color: 'success' },
     'ROLE_USER':        { label: 'Utilisateur',           color: 'secondary' },
 } %}
 {% set role_priority = ['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_PEDAGO', 'ROLE_FORMATEUR', 'ROLE_STAGIAIRE', 'ROLE_USER'] %}
@@ -32,7 +32,8 @@
             </ol>
         </nav>
 
-        <h1 class="h3 mb-4">Membres <span class="text-muted fw-normal fs-5">({{ users|length }})</span></h1>
+        <h1 class="h3 mb-1">Membres <span class="text-muted fw-normal fs-5">({{ users|length }})</span></h1>
+        <p class="text-muted small mb-4">Cette page est réservée au personnel du CF2m.</p>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             {% for user in users %}
