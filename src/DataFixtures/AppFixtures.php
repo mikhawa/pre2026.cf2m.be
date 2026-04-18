@@ -94,6 +94,14 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123alex',
         ]);
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
+            'email'         => 'greg@cf2m.be',
+            'userName'      => 'TheGreg',
+            'roles'         => ['ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123greg',
+        ]);
         // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',

@@ -108,6 +108,11 @@ Email : alex@cf2m.be
 - Rôle : ROLE_FORMATEUR
 - Mot de passe : 123alex
 
+Email : greg@cf2m.be
+- userName : TheGreg
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123greg
+
 Email : magib@cf2m.be
 - userName : TheMagib
 - Rôle : ROLE_STAGIAIRE
