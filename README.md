@@ -1,5 +1,9 @@
 # pre2026.cf2m.be
 
+
+
+## Description du projet
+
 Site de création du site du **Centre de Formation CF2m**, développé en `Symfony 7.4 LTS` avec `PHP 8.5`, `MariaDB 11.4`, `Mailpit` et `Docker` pour l'**environnement de développement local**. Le projet utilise également `ImportMap` pour la gestion des dépendances `JavaScript côté client`. Des fichiers de documentation détaillent l'architecture, les conventions de code, et les processus de développement et de déploiement sont créés par **Michaël J. Pitz** ([Mikhawa](https://github.com/mikhawa)) pour assurer une maintenance facile et une évolutivité du projet avec l'**IA Claude** comme soutien.
 
 > Symfony 7.4 LTS | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap
@@ -79,6 +83,16 @@ Email : thejoe@cf2m.be
 - Rôle : ROLE_ADMIN
 - Mot de passe : 123joe
 
+Email : thelee@cf2m.be
+- userName : TheLee
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO
+- Mot de passe : 123lee
+
+Email : therick@cf2m.be
+- userName : TheRick
+- Rôle : ROLE_PEDAGO, ROLE_FORMATEUR
+- Mot de passe : 123rick
+
 Email : thenoemie@cf2m.be
 - userName : TheNoemie
 - Rôle : ROLE_PEDAGO
@@ -86,13 +100,18 @@ Email : thenoemie@cf2m.be
 
 Email : piet@cf2m.be
 - userName : ThePiet
-- Rôle : ROLE_FORMATEUR
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO, ROLE_FORMATEUR
 - Mot de passe : 123piet
 
 Email : alex@cf2m.be
 - userName : TheAlexandra
 - Rôle : ROLE_FORMATEUR
 - Mot de passe : 123alex
+
+Email : greg@cf2m.be
+- userName : TheGreg
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123greg
 
 Email : magib@cf2m.be
 - userName : TheMagib

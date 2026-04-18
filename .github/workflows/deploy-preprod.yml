@@ -63,6 +63,9 @@ jobs:
             echo "=== Migrations ==="
             php bin/console doctrine:migrations:migrate --no-interaction --env=dev
 
+            echo "=== Fixtures ==="
+            php bin/console doctrine:fixtures:load --group=app --no-interaction --env=dev
+
             echo "=== Cache ==="
             php bin/console cache:clear --env=dev
             php bin/console cache:warmup --env=dev

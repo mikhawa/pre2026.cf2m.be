@@ -54,8 +54,16 @@ Fichier `.env.local` sur le serveur (non versionné) :
 APP_ENV=prod
 APP_SECRET=<secret>
 DATABASE_URL=mysql://user:pass@127.0.0.1:3306/cf2m?serverVersion=mariadb-11.4
-MAILER_DSN=smtp://...
+MAILER_DSN=mailjet+api://...
 ```
+
+## Configuration emails en mode dev sur le VPS
+
+Quand `APP_ENV=dev` sur le serveur préprod (test, débogage), tous les emails sortants sont automatiquement redirigés vers `michaeljpitz@gmail.com` via `config/packages/dev/mailer.yaml`.
+
+Cela concerne **tous les déclencheurs** : codes 2FA, préinscriptions, contact, bienvenue, reset mot de passe.
+
+Pour repasser en mode production (vrais destinataires), mettre `APP_ENV=prod` dans `.env.local`.
 
 ## TODO (mise en production)
 - [X] Créer et configurer tous les secrets GitHub
