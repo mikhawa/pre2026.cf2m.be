@@ -1,7 +1,6 @@
 # pre2026.cf2m.be
 
-## TO DO
-Prochaine étape, seule les rôles `ROLE_SUPER_ADMIN` et `ROLE_PEDAGO` ne reçoivent les inscriptions par email, les autres rôles (ex. `ROLE_ADMIN`) n'en reçoivent pas pour éviter les doublons et limiter les notifications aux personnes directement concernées par la validation des inscriptions.
+
 
 ## Description du projet
 
@@ -84,6 +83,16 @@ Email : thejoe@cf2m.be
 - Rôle : ROLE_ADMIN
 - Mot de passe : 123joe
 
+Email : thelee@cf2m.be
+- userName : TheLee
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO
+- Mot de passe : 123lee
+
+Email : therick@cf2m.be
+- userName : TheRick
+- Rôle : ROLE_PEDAGO, ROLE_FORMATEUR
+- Mot de passe : 123rick
+
 Email : thenoemie@cf2m.be
 - userName : TheNoemie
 - Rôle : ROLE_PEDAGO
@@ -91,13 +100,18 @@ Email : thenoemie@cf2m.be
 
 Email : piet@cf2m.be
 - userName : ThePiet
-- Rôle : ROLE_FORMATEUR
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO, ROLE_FORMATEUR
 - Mot de passe : 123piet
 
 Email : alex@cf2m.be
 - userName : TheAlexandra
 - Rôle : ROLE_FORMATEUR
 - Mot de passe : 123alex
+
+Email : greg@cf2m.be
+- userName : TheGreg
+- Rôle : ROLE_FORMATEUR
+- Mot de passe : 123greg
 
 Email : magib@cf2m.be
 - userName : TheMagib

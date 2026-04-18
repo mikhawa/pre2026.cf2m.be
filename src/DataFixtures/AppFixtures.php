@@ -36,7 +36,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         // Initialiser Faker pour générer du contenu réaliste
         $faker = Faker::create('fr_FR');
 
-        // ── Super administrateur de test ────────────────────────────────────────
+        // ── Acteur Super administrateur de test ────────────────────────────────────────
         $usersManuel = [];
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'mikhawa@cf2m.be',
@@ -45,7 +45,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123mikhawa',
         ]);
-        // ── Administrateur de test ────────────────────────────────────────
+        // ── Acteur Administrateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'thejoe@cf2m.be',
             'userName'      => 'TheJoe',
@@ -53,7 +53,15 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123joe',
         ]);
-        // ── Administrateur Pédagogique de test ────────────────────────────────────────
+        // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'thelee@cf2m.be',
+            'userName'      => 'TheLee',
+            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO'],
+            'status'        => 1,
+            'plainPassword' => '123lee',
+        ]);
+        // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'thenoemie@cf2m.be',
             'userName'      => 'TheNoemie',
@@ -61,22 +69,40 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123noemie',
         ]);
-        // ── Formateurs de test ────────────────────────────────────────
-        $usersManuel[] = UserFactory::createOne([
+        // ── Acteur Administrateur Pédagogique et Formateur de test ──────────────
+        //──────────────────────────
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
+            'email'         => 'therick@cf2m.be',
+            'userName'      => 'TheRick',
+            'roles'         => ['ROLE_PEDAGO','ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123rick',
+        ]);
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
             'email'         => 'piet@cf2m.be',
             'userName'      => 'ThePiet',
-            'roles'         => ['ROLE_FORMATEUR'],
+            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO','ROLE_FORMATEUR'],
             'status'        => 1,
             'plainPassword' => '123piet',
         ]);
-        $usersManuel[] = UserFactory::createOne([
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
             'email'         => 'alex@cf2m.be',
             'userName'      => 'TheAlexandra',
             'roles'         => ['ROLE_FORMATEUR'],
             'status'        => 1,
             'plainPassword' => '123alex',
         ]);
-        // ── Stagiaire de test ────────────────────────────────────────
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
+            'email'         => 'greg@cf2m.be',
+            'userName'      => 'TheGreg',
+            'roles'         => ['ROLE_FORMATEUR'],
+            'status'        => 1,
+            'plainPassword' => '123greg',
+        ]);
+        // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',
             'userName'      => 'TheMagib',
@@ -84,7 +110,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123magib',
         ]);
-        // ── Stagiaire de test ────────────────────────────────────────
+        // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'nabil@cf2m.be',
             'userName'      => 'TheNab',
@@ -95,16 +121,17 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
 
 
         // ── Fakers Utilisateurs ────────────────────────────────────────────────
-        $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
-        $formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
+        //$admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
+        //$formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
         $stagiaires = UserFactory::createMany(30, fn () => ['roles' => ['ROLE_STAGIAIRE']]);
         $commentateurs  = UserFactory::createMany(10);
 
         // Regrouper les utilisateurs manuels, admins et formateurs pour les associer à des formations
-        $adminsAndFormateurs = [...$usersManuel, ...$admins, ...$formateurs];
+        # Ne plus ajouter les admins et formateurs fakers.
+        $adminsAndFormateurs = [...$usersManuel,/* ...$admins, ...$formateurs*/];
 
         // Regrouper tous les utilisateurs pour les associer à des commentaires, notations, etc.
-        $tousLesUsers = [...$usersManuel, ...$admins, ...$formateurs, ...$stagiaires, ...$commentateurs];
+        $tousLesUsers = [...$usersManuel,/*  ...$admins, ...$formateurs,*/ ...$stagiaires, ...$commentateurs];
 
         // ── Partenaires ─────────────────────────────────────────────────
         PartenaireFactory::createMany(6);
@@ -215,7 +242,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'createdAt'   => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
-            'status' => 'published',
+            'status' => 'recruiting',
             'publishedAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),

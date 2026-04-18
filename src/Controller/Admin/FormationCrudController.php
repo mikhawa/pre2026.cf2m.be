@@ -160,16 +160,8 @@ class FormationCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(false)
             ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
-                ->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('entity.roles', ':roleFormateur'),
-                        $qb->expr()->like('entity.roles', ':roleAdmin'),
-                        $qb->expr()->like('entity.roles', ':roleSuperAdmin'),
-                    )
-                )
+                ->andWhere('entity.roles LIKE :roleFormateur')
                 ->setParameter('roleFormateur', '%ROLE_FORMATEUR%')
-                ->setParameter('roleAdmin', '%ROLE_ADMIN%')
-                ->setParameter('roleSuperAdmin', '%ROLE_SUPER_ADMIN%')
             )
         ;
         yield ColorField::new('colorPrimary', 'Couleur primaire')
@@ -502,6 +494,9 @@ class FormationCrudController extends AbstractCrudController
         }
 
         // Admin/Super-admin : créer une révision APPROVED et sauvegarder normalement
+        /** @var \App\Entity\User $user */
+        $entityInstance->setUpdatedBy($user);
+        $entityInstance->setUpdatedAt(new \DateTimeImmutable());
         $this->revisionService->createRevision($entityInstance, $user, true);
         parent::updateEntity($entityManager, $entityInstance);
     }
