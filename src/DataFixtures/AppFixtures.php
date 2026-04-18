@@ -71,7 +71,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // ── Acteur Administrateur Pédagogique et Formateur de test ──────────────
         //──────────────────────────
-        $usersManuel[] = UserFactory::createOne([
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
             'email'         => 'therick@cf2m.be',
             'userName'      => 'TheRick',
             'roles'         => ['ROLE_PEDAGO','ROLE_FORMATEUR'],
@@ -79,7 +79,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'plainPassword' => '123rick',
         ]);
         // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
-        $usersManuel[] = UserFactory::createOne([
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
             'email'         => 'piet@cf2m.be',
             'userName'      => 'ThePiet',
             'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO','ROLE_FORMATEUR'],
@@ -87,7 +87,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'plainPassword' => '123piet',
         ]);
         // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
-        $usersManuel[] = UserFactory::createOne([
+        $formateurs[] = $usersManuel[] = UserFactory::createOne([
             'email'         => 'alex@cf2m.be',
             'userName'      => 'TheAlexandra',
             'roles'         => ['ROLE_FORMATEUR'],
@@ -113,16 +113,17 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
 
 
         // ── Fakers Utilisateurs ────────────────────────────────────────────────
-        $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
-        $formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
+        //$admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
+        //$formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
         $stagiaires = UserFactory::createMany(30, fn () => ['roles' => ['ROLE_STAGIAIRE']]);
         $commentateurs  = UserFactory::createMany(10);
 
         // Regrouper les utilisateurs manuels, admins et formateurs pour les associer à des formations
-        $adminsAndFormateurs = [...$usersManuel, ...$admins, ...$formateurs];
+        # Ne plus ajouter les admins et formateurs fakers.
+        $adminsAndFormateurs = [...$usersManuel,/* ...$admins, ...$formateurs*/];
 
         // Regrouper tous les utilisateurs pour les associer à des commentaires, notations, etc.
-        $tousLesUsers = [...$usersManuel, ...$admins, ...$formateurs, ...$stagiaires, ...$commentateurs];
+        $tousLesUsers = [...$usersManuel,/*  ...$admins, ...$formateurs,*/ ...$stagiaires, ...$commentateurs];
 
         // ── Partenaires ─────────────────────────────────────────────────
         PartenaireFactory::createMany(6);
