@@ -3,6 +3,7 @@ modèle: haiku
 justification: Modification simple d'une méthode privée de service — ajout d'un paramètre et appel de setter
 fichiers modifiés:
   - src/Service/RevisionService.php
+  - src/Controller/Admin/FormationCrudController.php
 ---
 
 ## Résumé
@@ -17,3 +18,4 @@ Lors de la validation (approbation) d'une révision de formation, `formation.upd
 - `approuverFormationHistory()` : passe `$reviewer` à `applyFormation()`
 - `restaurerFormationHistory()` : passe `$reviewer` à `applyFormation()`
 - `applyPreviousData()` : aucun User disponible → `updatedBy` inchangé (undo/redo sans validateur)
+- `FormationCrudController::updateEntity()` (chemin auto-approve) : `setUpdatedBy($user)` + `setUpdatedAt()` avant `parent::updateEntity()`

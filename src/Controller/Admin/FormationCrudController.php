@@ -502,6 +502,9 @@ class FormationCrudController extends AbstractCrudController
         }
 
         // Admin/Super-admin : créer une révision APPROVED et sauvegarder normalement
+        /** @var \App\Entity\User $user */
+        $entityInstance->setUpdatedBy($user);
+        $entityInstance->setUpdatedAt(new \DateTimeImmutable());
         $this->revisionService->createRevision($entityInstance, $user, true);
         parent::updateEntity($entityManager, $entityInstance);
     }
