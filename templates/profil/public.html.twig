@@ -40,6 +40,12 @@
         <div class="row justify-content-center">
             <div class="col-lg-7">
 
+                {% if is_granted('ROLE_FORMATEUR') %}
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="{{ path('app_profile_users') }}" class="btn btn-outline-secondary btn-sm">Membres</a>
+                    </div>
+                {% endif %}
+
                 <div class="card cf2m-card">
                     <div class="card-body p-4">
 
