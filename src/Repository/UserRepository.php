@@ -73,17 +73,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Retourne les destinataires des mails de contact :
-     * ROLE_ADMIN, ROLE_SUPER_ADMIN et ROLE_PEDAGO.
+     * ROLE_SUPER_ADMIN et ROLE_PEDAGO uniquement (pas ROLE_ADMIN pour éviter les doublons).
      *
      * @return User[]
      */
     public function findContactRecipients(): array
     {
         return $this->createQueryBuilder('u')
-            ->where('u.roles LIKE :admin')
-            ->orWhere('u.roles LIKE :superAdmin')
+            ->where('u.roles LIKE :superAdmin')
             ->orWhere('u.roles LIKE :pedago')
-            ->setParameter('admin', '%ROLE_ADMIN%')
             ->setParameter('superAdmin', '%ROLE_SUPER_ADMIN%')
             ->setParameter('pedago', '%ROLE_PEDAGO%')
             ->getQuery()
