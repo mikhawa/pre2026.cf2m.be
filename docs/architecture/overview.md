@@ -32,8 +32,9 @@ src/
 ├── Repository/       # Repositories custom
 ├── Service/          # Logique métier (voir .claude/CONTEXT.md pour le détail)
 ├── Form/             # FormTypes Symfony
-├── Security/         # Voters custom
-└── EventListener/    # Listeners/Subscribers Doctrine et Kernel
+├── Security/
+│   └── Voter/        # Voters custom (FormationVoter, WorksVoter, ContentManagerVoter)
+└── EventSubscriber/  # Subscribers Kernel et Sécurité (Turnstile, 2FA)
 
 templates/            # Twig
 assets/               # JS (Stimulus controllers) + CSS
@@ -43,9 +44,35 @@ docs/                 # Documentation technique
 
 ## Sécurité & Authentification
 - Symfony Security Component
-- Voters custom pour les permissions granulaires
-- Tokens pour confirmation email et reset password (voir `TokenService`)
-- Roles : `ROLE_SUPER_ADMIN`, `ROLE_ADMIN`, `ROLE_FORMATEUR`, `ROLE_USER`
+- Voters custom pour les permissions granulaires (`src/Security/Voter/`)
+- Tokens pour confirmation email et reset password
+- Double authentification (2FA) par email pour les rôles privilégiés (voir ci-dessous)
+
+### Hiérarchie des rôles
+| Rôle | Hérite de |
+|---|---|
+| `ROLE_SUPER_ADMIN` | `ROLE_ADMIN`, `ROLE_FORMATEUR`, `ROLE_STAGIAIRE`, `ROLE_USER` |
+| `ROLE_ADMIN` | `ROLE_FORMATEUR`, `ROLE_STAGIAIRE`, `ROLE_USER` |
+| `ROLE_PEDAGO` | `ROLE_FORMATEUR`, `ROLE_STAGIAIRE`, `ROLE_USER` |
+| `ROLE_FORMATEUR` | `ROLE_STAGIAIRE`, `ROLE_USER` |
+| `ROLE_STAGIAIRE` | `ROLE_USER` |
+
+### Double authentification (2FA)
+Les rôles `ROLE_SUPER_ADMIN`, `ROLE_ADMIN` et `ROLE_PEDAGO` sont soumis à une vérification par code email à chaque connexion.
+
+**Flux :**
+1. Connexion email/mot de passe réussie → `TwoFactorLoginSubscriber` (écoute `LoginSuccessEvent`)
+2. Code à 6 chiffres généré, persisté en base, envoyé par email (TTL 15 min)
+3. Redirection vers `/double-authentification` — l'accès au reste du site est bloqué par `TwoFactorKernelSubscriber` (écoute `kernel.request`)
+4. Saisie du code → validation (`hash_equals`) → session `2fa_verified = true` → accès accordé
+
+**Fichiers clés :**
+- `src/Service/TwoFactorEmailService.php` — génération, envoi, validation
+- `src/EventSubscriber/TwoFactorLoginSubscriber.php` — interception post-login
+- `src/EventSubscriber/TwoFactorKernelSubscriber.php` — garde sur chaque requête
+- `src/Controller/TwoFactorController.php` — routes `app_two_factor` + `app_two_factor_resend`
+- `templates/security/two_factor.html.twig`
+- `templates/emails/two_factor_code.html.twig`
 
 ## Frontend
 - Pas de bundler (Webpack/Vite) — ImportMap natif Symfony

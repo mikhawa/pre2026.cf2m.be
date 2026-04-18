@@ -155,7 +155,7 @@ class RevisionService
         $entityId = $revision->getEntityId();
 
         match ($type) {
-            'formation' => $this->applyFormation($entityId, $data),
+            'formation' => $this->applyFormation($entityId, $data, $reviewer),
             'page'      => $this->applyPage($entityId, $data),
             'works'     => $this->applyWorks($entityId, $data),
             default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
@@ -197,7 +197,7 @@ class RevisionService
         $entityId = $source->getEntityId();
 
         match ($type) {
-            'formation' => $this->applyFormation($entityId, $source->getData()),
+            'formation' => $this->applyFormation($entityId, $source->getData(), $reviewer),
             'page'      => $this->applyPage($entityId, $source->getData()),
             'works'     => $this->applyWorks($entityId, $source->getData()),
             default     => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $type)),
@@ -752,7 +752,7 @@ class RevisionService
      *
      * @param array<string, mixed> $data
      */
-    private function applyFormation(int $entityId, array $data): void
+    private function applyFormation(int $entityId, array $data, ?User $reviewer = null): void
     {
         $entity = $this->em->getRepository(Formation::class)->find($entityId);
         if (null === $entity) {
@@ -769,6 +769,9 @@ class RevisionService
         $entity->setColorPrimary($data['colorPrimary'] ?? null);
         $entity->setColorSecondary($data['colorSecondary'] ?? null);
         $entity->setUpdatedAt(new \DateTimeImmutable());
+        if ($reviewer !== null) {
+            $entity->setUpdatedBy($reviewer);
+        }
     }
 
     /**
@@ -1017,7 +1020,7 @@ class RevisionService
             throw new \RuntimeException('FormationHistory sans Formation liée.');
         }
 
-        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h), $reviewer);
 
         $h->setRevisionStatus(FormationHistory::STATUS_APPROVED);
         $h->setReviewedBy($reviewer);
@@ -1112,7 +1115,7 @@ class RevisionService
             throw new \RuntimeException('FormationHistory sans Formation liée.');
         }
 
-        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h));
+        $this->applyFormation($formation->getId(), $this->snapshotFromFormationHistory($h), $reviewer);
 
         foreach ($formation->getResponsables()->toArray() as $resp) {
             $formation->removeResponsable($resp);

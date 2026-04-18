@@ -184,6 +184,10 @@ class WorksCrudController extends AbstractCrudController
         yield AssociationField::new('users', 'Étudiants')
             ->hideOnIndex()
             ->setRequired(false)
+            ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
+                ->andWhere('entity.roles LIKE :stagiaire')
+                ->setParameter('stagiaire', '%ROLE_STAGIAIRE%')
+            )
         ;
         yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()

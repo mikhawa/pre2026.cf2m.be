@@ -1,6 +1,6 @@
 # Qui reçoit un mail et quand — CF2m
 
-**Dernière mise à jour** : 2026-04-04 (ajout ROLE_PEDAGO)
+**Dernière mise à jour** : 2026-04-18 (restriction emails inscription et contact à ROLE_SUPER_ADMIN + ROLE_PEDAGO)
 
 ---
 
@@ -8,7 +8,8 @@
 
 | Déclencheur | Expéditeur logique | Destinataire(s) | Template |
 |---|---|---|---|
-| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
+| **Double authentification (2FA)** | CF2m — Sécurité | L'utilisateur qui se connecte | `two_factor_code.html.twig` |
+| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_SUPER_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
 | Préinscription à une formation | CF2m — Centre de Formation | L'internaute qui s'est inscrit | `inscription_confirmation.html.twig` |
 | Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (fixe) + `ROLE_PEDAGO` (copies) | `contact.html.twig` |
 | Création d'un compte utilisateur par un admin | CF2m Administration | Le nouvel utilisateur | `user_bienvenue.html.twig` |
@@ -22,13 +23,30 @@
 
 ## Détail par déclencheur
 
+### 0. Double authentification (2FA)
+
+**Source** : `TwoFactorLoginSubscriber::onLoginSuccess()` — déclenché sur `LoginSuccessEvent`  
+**Condition** : connexion réussie d'un utilisateur ayant `ROLE_SUPER_ADMIN`, `ROLE_ADMIN` ou `ROLE_PEDAGO`
+
+- **Destinataire** : l'utilisateur qui vient de se connecter (son propre email)
+- **Expéditeur** : `MAIL_FORM` avec alias `CF2m — Sécurité`
+- **Sujet** : `[CF2m] Votre code de connexion : {code}`
+- **Contenu** : code à 6 chiffres, valable 15 minutes, affiché en grand dans l'email
+- **Template** : `templates/emails/two_factor_code.html.twig`
+- **Route de vérification** : `GET/POST /double-authentification` (`app_two_factor`)
+- **Renvoi du code** : `POST /double-authentification/renvoyer` (`app_two_factor_resend`)
+
+**Sécurité** : comparaison `hash_equals` (timing-safe), code à usage unique (effacé après validation ou expiration), session `2fa_verified` remise à zéro à la déconnexion.
+
+---
+
 ### 1. Préinscription à une formation en recrutement
 
 **Source** : `InscriptionController::create()` — route `POST /preinscription/{formationSlug}`  
 **Condition** : formation avec `status = 'recruiting'`, formulaire valide, Turnstile OK
 
-**Mail 1 — Notification aux admins et pédagos**
-- **Destinataires** : tous les utilisateurs ayant `ROLE_ADMIN`, `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findInscriptionRecipients()`)
+**Mail 1 — Notification aux super-admins et pédagos**
+- **Destinataires** : tous les utilisateurs ayant `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findInscriptionRecipients()`) — `ROLE_ADMIN` exclu pour éviter les doublons
 - **Reply-To** : email de l'internaute inscrit
 - **Sujet** : `[CF2m] Nouvelle préinscription — {titre formation}`
 - **Contenu** : nom, prénom, email, téléphone, âge, message (si renseigné), date de réception
@@ -48,8 +66,7 @@
 **Source** : `ContactController::index()` — route `POST /contact`  
 **Condition** : formulaire valide, Turnstile OK
 
-- **Destinataire principal** : adresse fixe `MAIL_ADMIN` (variable d'env)
-- **Copies** : tous les `ROLE_PEDAGO` (via `UserRepository::findContactRecipients()`) — sauf si leur email est identique à `MAIL_ADMIN`
+- **Destinataires** : tous les utilisateurs ayant `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findContactRecipients()`) — `ROLE_ADMIN` exclu pour éviter les doublons
 - **Reply-To** : email de l'expéditeur
 - **Sujet** : `[CF2m] {sujet saisi}`
 - **Template** : `templates/emails/contact.html.twig`
@@ -128,9 +145,17 @@
 | `MAILER_DSN` | Transport SMTP | `smtp://mailpit:1025` (Mailpit local) |
 | `MAIL_ADMIN` | Destinataire du formulaire de contact | À définir dans `.env.local` |
 | `MAIL_FROM` | Expéditeur de tous les mails applicatifs | À définir dans `.env.local` |
-| `MAIL_FORM` | Expéditeur des mails préinscription/contact | À définir dans `.env.local` |
+| `MAIL_FORM` | Expéditeur des mails préinscription/contact/2FA | À définir dans `.env.local` |
 
 En préprod/prod : `MAILER_DSN=mailjet+api://...` défini dans `.env.local` sur le VPS (jamais versionné).
+
+### Redirection des emails en mode dev
+
+En `APP_ENV=dev`, **tous les emails** (y compris les codes 2FA) sont redirigés vers `michaeljpitz@gmail.com` via `config/packages/dev/mailer.yaml` (envelope Symfony).
+
+- Dev local avec Mailpit : Mailpit intercepte tout de toute façon, l'envelope n'a pas d'effet visible
+- Préprod en `APP_ENV=dev` avec Mailjet : les emails partent réellement mais arrivent à `michaeljpitz@gmail.com`
+- Préprod/Prod en `APP_ENV=prod` : ce fichier n'est pas chargé, les emails partent aux vraies adresses
 
 ---
 
@@ -138,8 +163,9 @@ En préprod/prod : `MAILER_DSN=mailjet+api://...` défini dans `.env.local` sur 
 
 | Rôle / Profil | Reçoit |
 |---|---|
-| `ROLE_ADMIN` | Nouvelles préinscriptions · Révisions Formation/Page en attente |
-| `ROLE_PEDAGO` | Nouvelles préinscriptions · Messages de contact (copie) |
+| `ROLE_SUPER_ADMIN` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Messages de contact |
+| `ROLE_ADMIN` | **Code 2FA à chaque connexion** · Révisions Formation/Page en attente |
+| `ROLE_PEDAGO` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Messages de contact |
 | Responsables d'une formation (`formation_user`) | Révisions Works en attente sur leurs formations |
 | Auteur d'une révision (tout rôle) | Décision (approbation ou rejet) sur sa révision |
 | Nouvel utilisateur (tout rôle) | Mail de bienvenue avec identifiants |
