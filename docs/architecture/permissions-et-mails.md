@@ -1,6 +1,6 @@
 # Qui reçoit un mail et quand — CF2m
 
-**Dernière mise à jour** : 2026-04-16 (ajout double authentification 2FA)
+**Dernière mise à jour** : 2026-04-18 (restriction emails inscription et contact à ROLE_SUPER_ADMIN + ROLE_PEDAGO)
 
 ---
 
@@ -9,7 +9,7 @@
 | Déclencheur | Expéditeur logique | Destinataire(s) | Template |
 |---|---|---|---|
 | **Double authentification (2FA)** | CF2m — Sécurité | L'utilisateur qui se connecte | `two_factor_code.html.twig` |
-| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
+| Préinscription à une formation | CF2m — Préinscriptions | `ROLE_SUPER_ADMIN` + `ROLE_PEDAGO` | `inscription_admin.html.twig` |
 | Préinscription à une formation | CF2m — Centre de Formation | L'internaute qui s'est inscrit | `inscription_confirmation.html.twig` |
 | Formulaire de contact | CF2m — Contact | `MAIL_ADMIN` (fixe) + `ROLE_PEDAGO` (copies) | `contact.html.twig` |
 | Création d'un compte utilisateur par un admin | CF2m Administration | Le nouvel utilisateur | `user_bienvenue.html.twig` |
@@ -45,8 +45,8 @@
 **Source** : `InscriptionController::create()` — route `POST /preinscription/{formationSlug}`  
 **Condition** : formation avec `status = 'recruiting'`, formulaire valide, Turnstile OK
 
-**Mail 1 — Notification aux admins et pédagos**
-- **Destinataires** : tous les utilisateurs ayant `ROLE_ADMIN`, `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findInscriptionRecipients()`)
+**Mail 1 — Notification aux super-admins et pédagos**
+- **Destinataires** : tous les utilisateurs ayant `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findInscriptionRecipients()`) — `ROLE_ADMIN` exclu pour éviter les doublons
 - **Reply-To** : email de l'internaute inscrit
 - **Sujet** : `[CF2m] Nouvelle préinscription — {titre formation}`
 - **Contenu** : nom, prénom, email, téléphone, âge, message (si renseigné), date de réception
@@ -66,8 +66,7 @@
 **Source** : `ContactController::index()` — route `POST /contact`  
 **Condition** : formulaire valide, Turnstile OK
 
-- **Destinataire principal** : adresse fixe `MAIL_ADMIN` (variable d'env)
-- **Copies** : tous les `ROLE_PEDAGO` (via `UserRepository::findContactRecipients()`) — sauf si leur email est identique à `MAIL_ADMIN`
+- **Destinataires** : tous les utilisateurs ayant `ROLE_SUPER_ADMIN` ou `ROLE_PEDAGO` (via `UserRepository::findContactRecipients()`) — `ROLE_ADMIN` exclu pour éviter les doublons
 - **Reply-To** : email de l'expéditeur
 - **Sujet** : `[CF2m] {sujet saisi}`
 - **Template** : `templates/emails/contact.html.twig`
@@ -164,9 +163,9 @@ En `APP_ENV=dev`, **tous les emails** (y compris les codes 2FA) sont redirigés 
 
 | Rôle / Profil | Reçoit |
 |---|---|
-| `ROLE_SUPER_ADMIN` | **Code 2FA à chaque connexion** |
-| `ROLE_ADMIN` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Révisions Formation/Page en attente |
-| `ROLE_PEDAGO` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Messages de contact (copie) |
+| `ROLE_SUPER_ADMIN` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Messages de contact |
+| `ROLE_ADMIN` | **Code 2FA à chaque connexion** · Révisions Formation/Page en attente |
+| `ROLE_PEDAGO` | **Code 2FA à chaque connexion** · Nouvelles préinscriptions · Messages de contact |
 | Responsables d'une formation (`formation_user`) | Révisions Works en attente sur leurs formations |
 | Auteur d'une révision (tout rôle) | Décision (approbation ou rejet) sur sa révision |
 | Nouvel utilisateur (tout rôle) | Mail de bienvenue avec identifiants |
