@@ -83,6 +83,11 @@ Email : thejoe@cf2m.be
 - Rôle : ROLE_ADMIN
 - Mot de passe : 123joe
 
+Email : thelee@cf2m.be
+- userName : TheLee
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO
+- Mot de passe : 123lee
+
 Email : therick@cf2m.be
 - userName : TheRick
 - Rôle : ROLE_PEDAGO, ROLE_FORMATEUR
@@ -95,7 +100,7 @@ Email : thenoemie@cf2m.be
 
 Email : piet@cf2m.be
 - userName : ThePiet
-- Rôle : ROLE_FORMATEUR
+- Rôle : ROLE_ADMIN, ROLE_PEDAGO, ROLE_FORMATEUR
 - Mot de passe : 123piet
 
 Email : alex@cf2m.be

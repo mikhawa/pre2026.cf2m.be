@@ -36,7 +36,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         // Initialiser Faker pour générer du contenu réaliste
         $faker = Faker::create('fr_FR');
 
-        // ── Super administrateur de test ────────────────────────────────────────
+        // ── Acteur Super administrateur de test ────────────────────────────────────────
         $usersManuel = [];
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'mikhawa@cf2m.be',
@@ -45,7 +45,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123mikhawa',
         ]);
-        // ── Administrateur de test ────────────────────────────────────────
+        // ── Acteur Administrateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'thejoe@cf2m.be',
             'userName'      => 'TheJoe',
@@ -53,7 +53,15 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123joe',
         ]);
-        // ── Administrateur Pédagogique de test ────────────────────────────────────────
+        // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
+        $usersManuel[] = UserFactory::createOne([
+            'email'         => 'thelee@cf2m.be',
+            'userName'      => 'TheLee',
+            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO'],
+            'status'        => 1,
+            'plainPassword' => '123lee',
+        ]);
+        // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'thenoemie@cf2m.be',
             'userName'      => 'TheNoemie',
@@ -61,7 +69,8 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123noemie',
         ]);
-        // ── Administrateur Pédagogique et Formateur de test ────────────────────────────────────────
+        // ── Acteur Administrateur Pédagogique et Formateur de test ──────────────
+        //──────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'therick@cf2m.be',
             'userName'      => 'TheRick',
@@ -69,14 +78,15 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123rick',
         ]);
-        // ── Formateurs de test ────────────────────────────────────────
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'piet@cf2m.be',
             'userName'      => 'ThePiet',
-            'roles'         => ['ROLE_FORMATEUR'],
+            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO','ROLE_FORMATEUR'],
             'status'        => 1,
             'plainPassword' => '123piet',
         ]);
+        // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'alex@cf2m.be',
             'userName'      => 'TheAlexandra',
@@ -84,7 +94,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123alex',
         ]);
-        // ── Stagiaire de test ────────────────────────────────────────
+        // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'magib@cf2m.be',
             'userName'      => 'TheMagib',
@@ -92,7 +102,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'status'        => 1,
             'plainPassword' => '123magib',
         ]);
-        // ── Stagiaire de test ────────────────────────────────────────
+        // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
             'email'         => 'nabil@cf2m.be',
             'userName'      => 'TheNab',
