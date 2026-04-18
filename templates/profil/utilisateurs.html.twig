@@ -36,13 +36,6 @@
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             {% for user in users %}
-                {% set displayed_role = null %}
-                {% for r in role_priority %}
-                    {% if displayed_role is null and r in user.roles %}
-                        {% set displayed_role = role_labels[r] %}
-                    {% endif %}
-                {% endfor %}
-
                 <div class="col">
                     <a href="{{ path('app_public_profile', {id: user.id}) }}"
                        class="card cf2m-card cf2m-user-card text-decoration-none h-100">
@@ -67,9 +60,13 @@
 
                             <div class="min-w-0">
                                 <p class="mb-1 fw-semibold cf2m-user-card-name text-truncate">{{ user.userName }}</p>
-                                {% if displayed_role %}
-                                    <span class="badge bg-{{ displayed_role.color }}">{{ displayed_role.label }}</span>
-                                {% endif %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for r in role_priority %}
+                                        {% if r in user.roles %}
+                                            <span class="badge bg-{{ role_labels[r].color }}">{{ role_labels[r].label }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
 
                         </div>
