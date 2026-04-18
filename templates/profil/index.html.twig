@@ -42,6 +42,7 @@
                         <div class="d-flex align-items-center gap-2 flex-shrink-0 flex-wrap">
                             {% if is_granted('ROLE_FORMATEUR') %}
                                 <a href="/admin" class="btn btn-outline-secondary btn-sm">Administration</a>
+                                <a href="{{ path('app_profile_users') }}" class="btn btn-outline-secondary btn-sm">Membres</a>
                             {% endif %}
                             <a href="{{ path('app_profile_edit') }}"
                                class="btn btn-outline-secondary btn-sm">

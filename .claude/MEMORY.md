@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-102 (2026-04-18) — Restrictions mails et filtres formulaires admin
+103 (2026-04-18) — Profils publics, liste membres, liens auteurs Works, restrictions formulaires
 
 ## Dernier numéro .claude-tasks
-141 (2026-04-18)
+145 (2026-04-18)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :

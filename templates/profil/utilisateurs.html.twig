@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Membres — CF2m{% endblock %}
+
+{% block body_class %}page-utilisateurs{% endblock %}
+
+{% block body %}
+
+{# Mapping rôle prioritaire #}
+{% set role_labels = {
+    'ROLE_SUPER_ADMIN': { label: 'Super Administrateur', color: 'danger' },
+    'ROLE_ADMIN':       { label: 'Administrateur',        color: 'warning' },
+    'ROLE_PEDAGO':      { label: 'Responsable pédagogique', color: 'info' },
+    'ROLE_FORMATEUR':   { label: 'Formateur',             color: 'primary' },
+    'ROLE_STAGIAIRE':   { label: 'Stagiaire',             color: 'success' },
+    'ROLE_USER':        { label: 'Utilisateur',           color: 'secondary' },
+} %}
+{% set role_priority = ['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_PEDAGO', 'ROLE_FORMATEUR', 'ROLE_STAGIAIRE', 'ROLE_USER'] %}
+
+<section class="py-5">
+    <div class="container">
+
+        <nav aria-label="Fil d'ariane" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_profile') }}">Mon profil</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Membres</li>
+            </ol>
+        </nav>
+
+        <h1 class="h3 mb-1">Membres <span class="text-muted fw-normal fs-5">({{ users|length }})</span></h1>
+        <p class="text-muted small mb-4">Cette page est réservée au personnel du CF2m.</p>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+            {% for user in users %}
+                <div class="col">
+                    <a href="{{ path('app_public_profile', {id: user.id}) }}"
+                       class="card cf2m-card cf2m-user-card text-decoration-none h-100">
+                        <div class="card-body d-flex align-items-center gap-3">
+
+                            <div class="cf2m-avatar-wrap flex-shrink-0">
+                                {% if user.avatarName %}
+                                    <img src="{{ asset('uploads/avatars/' ~ user.avatarName) }}"
+                                         alt="Avatar de {{ user.userName }}"
+                                         class="cf2m-avatar-img">
+                                {% else %}
+                                    <div class="cf2m-avatar-placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="1.2"
+                                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <circle cx="12" cy="8" r="4"/>
+                                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="min-w-0">
+                                <p class="mb-1 fw-semibold cf2m-user-card-name text-truncate">{{ user.userName }}</p>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for r in role_priority %}
+                                        {% if r in user.roles %}
+                                            <span class="badge bg-{{ role_labels[r].color }}">{{ role_labels[r].label }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -106,4 +106,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Retourne tous les utilisateurs triés par nom d'utilisateur.
+     *
+     * @return User[]
+     */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.userName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
