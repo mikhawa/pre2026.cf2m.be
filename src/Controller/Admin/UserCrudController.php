@@ -67,24 +67,45 @@ class UserCrudController extends AbstractCrudController
             $entityInstance->setRoles($roles);
         }
 
-        $plainPassword = $this->generatePassword();
-        $entityInstance->setPassword(
-            $this->passwordHasher->hashPassword($entityInstance, $plainPassword)
-        );
+        if ($entityInstance->getStatus() === 0) {
+            // Mot de passe placeholder : sera remplacé à l'activation
+            $entityInstance->setPassword(bin2hex(random_bytes(32)));
+            $token = bin2hex(random_bytes(32));
+            $entityInstance->setActivationToken($token);
 
-        parent::persistEntity($entityManager, $entityInstance);
+            parent::persistEntity($entityManager, $entityInstance);
 
-        $email = (new TemplatedEmail())
-            ->from(new Address($this->mailFrom, 'CF2m Administration'))
-            ->to(new Address($entityInstance->getEmail()))
-            ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
-            ->htmlTemplate('emails/user_bienvenue.html.twig')
-            ->context([
-                'user'          => $entityInstance,
-                'plainPassword' => $plainPassword,
-            ]);
+            $this->mailer->send(
+                (new TemplatedEmail())
+                    ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                    ->to(new Address($entityInstance->getEmail()))
+                    ->subject('Activez votre compte CF2m')
+                    ->htmlTemplate('emails/user_activation_admin.html.twig')
+                    ->context([
+                        'user'  => $entityInstance,
+                        'token' => $token,
+                    ])
+            );
+        } else {
+            $plainPassword = $this->generatePassword();
+            $entityInstance->setPassword(
+                $this->passwordHasher->hashPassword($entityInstance, $plainPassword)
+            );
 
-        $this->mailer->send($email);
+            parent::persistEntity($entityManager, $entityInstance);
+
+            $this->mailer->send(
+                (new TemplatedEmail())
+                    ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                    ->to(new Address($entityInstance->getEmail()))
+                    ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
+                    ->htmlTemplate('emails/user_bienvenue.html.twig')
+                    ->context([
+                        'user'          => $entityInstance,
+                        'plainPassword' => $plainPassword,
+                    ])
+            );
+        }
     }
 
     /** Génère un mot de passe aléatoire de 12 caractères (lettres + chiffres + symboles). */
