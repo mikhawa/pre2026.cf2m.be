@@ -38,6 +38,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->findOneBy(['resetPasswordToken' => $token]);
     }
 
+    /** Trouve un utilisateur par son token d'activation de compte. */
+    public function findByActivationToken(string $token): ?User
+    {
+        return $this->findOneBy(['activationToken' => $token]);
+    }
+
     /**
      * Retourne tous les utilisateurs ayant le rôle ROLE_ADMIN ou ROLE_SUPER_ADMIN.
      *

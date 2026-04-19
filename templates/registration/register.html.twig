@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte — CF2m Centre de Formation{% endblock %}
+
+{% block body_class %}page-login{% endblock %}
+
+{% block body %}
+
+<section class="cf2m-login-section">
+
+    <div class="cf2m-login-blob cf2m-login-blob--tl" aria-hidden="true"></div>
+    <div class="cf2m-login-blob cf2m-login-blob--br" aria-hidden="true"></div>
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 70px;">
+        <div class="cf2m-login-card">
+
+            <div class="cf2m-login-header">
+                <img src="{{ asset('images/logo-cf2m.svg') }}"
+                     alt="Logo CF2m"
+                     width="108" height="108"
+                     class="cf2m-login-logo cf2m-login-logo--dark">
+                <img src="{{ asset('images/logo-cf2m-bleu.svg') }}"
+                     alt="Logo CF2m"
+                     width="108" height="108"
+                     class="cf2m-login-logo cf2m-login-logo--light">
+                <h1 class="cf2m-login-title">Créer un compte</h1>
+                <p class="cf2m-login-subtitle">Rejoignez la plateforme CF2m</p>
+            </div>
+
+            {% for message in app.flashes('error') %}
+                <div class="cf2m-login-error" role="alert">{{ message }}</div>
+            {% endfor %}
+
+            {{ form_start(form, {attr: {'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
+
+                <div class="cf2m-login-field">
+                    {{ form_label(form.userName, null, {label_attr: {class: 'cf2m-login-label'}}) }}
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        {{ form_widget(form.userName, {attr: {class: 'cf2m-login-input'}}) }}
+                    </div>
+                    {{ form_errors(form.userName) }}
+                </div>
+
+                <div class="cf2m-login-field">
+                    {{ form_label(form.email, null, {label_attr: {class: 'cf2m-login-label'}}) }}
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                        </svg>
+                        {{ form_widget(form.email, {attr: {class: 'cf2m-login-input'}}) }}
+                    </div>
+                    {{ form_errors(form.email) }}
+                </div>
+
+                <div class="cf2m-login-field">
+                    {{ form_label(form.plainPassword.first, null, {label_attr: {class: 'cf2m-login-label'}}) }}
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        {{ form_widget(form.plainPassword.first, {attr: {class: 'cf2m-login-input'}}) }}
+                    </div>
+                    {{ form_errors(form.plainPassword.first) }}
+                </div>
+
+                <div class="cf2m-login-field">
+                    {{ form_label(form.plainPassword.second, null, {label_attr: {class: 'cf2m-login-label'}}) }}
+                    <div class="cf2m-login-input-wrap">
+                        <svg class="cf2m-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        {{ form_widget(form.plainPassword.second, {attr: {class: 'cf2m-login-input'}}) }}
+                    </div>
+                    {{ form_errors(form.plainPassword.second) }}
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+
+                <button type="submit" class="cf2m-login-btn">
+                    Créer mon compte
+                </button>
+
+            {{ form_end(form) }}
+
+            <p class="cf2m-login-back">
+                <a href="{{ path('app_login') }}">← Déjà un compte ? Se connecter</a>
+            </p>
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
