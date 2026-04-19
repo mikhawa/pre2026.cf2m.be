@@ -38,6 +38,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->findOneBy(['resetPasswordToken' => $token]);
     }
 
+    /** Trouve un utilisateur par son token d'activation de compte. */
+    public function findByActivationToken(string $token): ?User
+    {
+        return $this->findOneBy(['activationToken' => $token]);
+    }
+
     /**
      * Retourne tous les utilisateurs ayant le rôle ROLE_ADMIN ou ROLE_SUPER_ADMIN.
      *
@@ -115,6 +121,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder('u')
+            ->orderBy('u.userName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Retourne uniquement les utilisateurs actifs (status=1) triés par nom d'utilisateur.
+     *
+     * @return User[]
+     */
+    public function findAllActiveOrderedByName(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.status = 1')
             ->orderBy('u.userName', 'ASC')
             ->getQuery()
             ->getResult();
