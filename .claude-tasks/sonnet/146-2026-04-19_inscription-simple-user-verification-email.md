@@ -27,6 +27,12 @@
 ## Fichiers créés (complément)
 - ~~`src/EventSubscriber/StatusActivationSubscriber.php`~~ — Supprimé (dead code, status=0 bloqué avant LoginSuccessEvent)
 
+## Fichiers créés (complément 2)
+- `templates/emails/user_activation_admin.html.twig` — Email activation pour comptes admin créés avec status=0 (lien + credentials temporaires)
+
+## Fichiers modifiés (complément 2)
+- `src/Controller/Admin/UserCrudController.php` — `persistEntity()` : si status=0 → génère activationToken + envoie `user_activation_admin.html.twig` ; si status=1 → envoie `user_bienvenue.html.twig` (flux habituel)
+
 ## Règle finale status
 - `status=0` → bloqué à la connexion (UserChecker vérifie status, pas le token)
 - `status=0` → absent de la liste des membres (`findAllActiveOrderedByName()`)

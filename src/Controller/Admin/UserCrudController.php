@@ -72,17 +72,35 @@ class UserCrudController extends AbstractCrudController
             $this->passwordHasher->hashPassword($entityInstance, $plainPassword)
         );
 
+        if ($entityInstance->getStatus() === 0) {
+            $token = bin2hex(random_bytes(32));
+            $entityInstance->setActivationToken($token);
+        }
+
         parent::persistEntity($entityManager, $entityInstance);
 
-        $email = (new TemplatedEmail())
-            ->from(new Address($this->mailFrom, 'CF2m Administration'))
-            ->to(new Address($entityInstance->getEmail()))
-            ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
-            ->htmlTemplate('emails/user_bienvenue.html.twig')
-            ->context([
-                'user'          => $entityInstance,
-                'plainPassword' => $plainPassword,
-            ]);
+        if ($entityInstance->getActivationToken() !== null) {
+            $email = (new TemplatedEmail())
+                ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                ->to(new Address($entityInstance->getEmail()))
+                ->subject('Activez votre compte CF2m')
+                ->htmlTemplate('emails/user_activation_admin.html.twig')
+                ->context([
+                    'user'          => $entityInstance,
+                    'plainPassword' => $plainPassword,
+                    'token'         => $entityInstance->getActivationToken(),
+                ]);
+        } else {
+            $email = (new TemplatedEmail())
+                ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                ->to(new Address($entityInstance->getEmail()))
+                ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
+                ->htmlTemplate('emails/user_bienvenue.html.twig')
+                ->context([
+                    'user'          => $entityInstance,
+                    'plainPassword' => $plainPassword,
+                ]);
+        }
 
         $this->mailer->send($email);
     }
