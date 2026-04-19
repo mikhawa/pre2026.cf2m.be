@@ -25,7 +25,12 @@
 - UserChecker bloque login si activationToken != null (rétro-compatible : comptes admin existants non affectés)
 
 ## Fichiers créés (complément)
-- `src/EventSubscriber/StatusActivationSubscriber.php` — Passe status à 1 à la première connexion
+- ~~`src/EventSubscriber/StatusActivationSubscriber.php`~~ — Supprimé (dead code, status=0 bloqué avant LoginSuccessEvent)
+
+## Règle finale status
+- `status=0` → bloqué à la connexion (UserChecker vérifie status, pas le token)
+- `status=0` → absent de la liste des membres (`findAllActiveOrderedByName()`)
+- Utilisateur admin-créé : status=0 jusqu'à activation manuelle via EasyAdmin ou future mécanique
 
 ## Résultat
 Routes enregistrées, cache OK

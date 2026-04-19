@@ -17,7 +17,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if ($user->getActivationToken() !== null) {
+        if ($user->getStatus() === 0) {
             throw new CustomUserMessageAccountStatusException(
                 'Votre compte n\'est pas encore activé. Vérifiez votre boite mail.'
             );
