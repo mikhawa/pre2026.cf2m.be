@@ -24,5 +24,8 @@
 - Vérification : status=1, activationToken=null, auto-login via Security::login()
 - UserChecker bloque login si activationToken != null (rétro-compatible : comptes admin existants non affectés)
 
+## Fichiers créés (complément)
+- `src/EventSubscriber/StatusActivationSubscriber.php` — Passe status à 1 à la première connexion
+
 ## Résultat
 Routes enregistrées, cache OK
