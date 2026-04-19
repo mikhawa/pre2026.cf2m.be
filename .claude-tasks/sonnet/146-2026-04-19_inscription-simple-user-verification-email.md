@@ -33,6 +33,13 @@
 ## Fichiers modifiés (complément 2)
 - `src/Controller/Admin/UserCrudController.php` — `persistEntity()` : si status=0 → génère activationToken + envoie `user_activation_admin.html.twig` ; si status=1 → envoie `user_bienvenue.html.twig` (flux habituel)
 
+## Uniformisation flux (révision finale)
+- **Formulaire** : userName + email uniquement (pas de mot de passe)
+- **Auto-inscription** : placeholder MDP à la création → activation lien → MDP généré + mail bienvenue → login manuel
+- **Admin status=0** : placeholder MDP → lien activation (sans credentials) → MDP généré + mail bienvenue → login manuel
+- **Admin status=1** : MDP généré immédiatement + mail bienvenue → login direct
+- Pas d'auto-login dans aucun cas
+
 ## Règle finale status
 - `status=0` → bloqué à la connexion (UserChecker vérifie status, pas le token)
 - `status=0` → absent de la liste des membres (`findAllActiveOrderedByName()`)

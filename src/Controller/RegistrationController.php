@@ -10,7 +10,6 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +22,7 @@ class RegistrationController extends AbstractController
 {
     public function __construct(
         private readonly MailerInterface $mailer,
+        private readonly UserPasswordHasherInterface $passwordHasher,
         #[Autowire(env: 'MAIL_FORM')]
         private readonly string $mailFrom,
     ) {
@@ -31,7 +31,6 @@ class RegistrationController extends AbstractController
     #[Route('/inscription', name: 'app_register')]
     public function register(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
     ): Response {
         if ($this->getUser()) {
@@ -43,8 +42,8 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form->get('plainPassword')->getData();
-            $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            // Mot de passe placeholder : sera remplacé à l'activation
+            $user->setPassword(bin2hex(random_bytes(32)));
 
             $token = bin2hex(random_bytes(32));
             $user->setActivationToken($token);
@@ -53,16 +52,16 @@ class RegistrationController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $email = (new TemplatedEmail())
-                ->from(new Address($this->mailFrom, 'CF2m Administration'))
-                ->to(new Address($user->getEmail()))
-                ->subject('Confirmez votre adresse e-mail — CF2m')
-                ->htmlTemplate('emails/registration_confirmation.html.twig')
-                ->context(['user' => $user, 'token' => $token]);
+            $this->mailer->send(
+                (new TemplatedEmail())
+                    ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                    ->to(new Address($user->getEmail()))
+                    ->subject('Confirmez votre adresse e-mail — CF2m')
+                    ->htmlTemplate('emails/registration_confirmation.html.twig')
+                    ->context(['user' => $user, 'token' => $token])
+            );
 
-            $this->mailer->send($email);
-
-            $this->addFlash('success', 'Votre compte a été créé. Vérifiez votre boite mail pour activer votre compte.');
+            $this->addFlash('success', 'Votre compte a été créé. Vérifiez votre boite mail pour l\'activer.');
 
             return $this->redirectToRoute('app_login');
         }
@@ -77,7 +76,6 @@ class RegistrationController extends AbstractController
         string $token,
         UserRepository $userRepository,
         EntityManagerInterface $em,
-        Security $security,
     ): Response {
         $user = $userRepository->findByActivationToken($token);
 
@@ -87,14 +85,34 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        $plainPassword = $this->generatePassword();
+        $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
         $user->setStatus(1);
         $user->setActivationToken(null);
         $em->flush();
 
-        $response = $security->login($user, 'form_login', 'main');
+        $this->mailer->send(
+            (new TemplatedEmail())
+                ->from(new Address($this->mailFrom, 'CF2m Administration'))
+                ->to(new Address($user->getEmail()))
+                ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
+                ->htmlTemplate('emails/user_bienvenue.html.twig')
+                ->context(['user' => $user, 'plainPassword' => $plainPassword])
+        );
 
-        $this->addFlash('success', 'Votre compte est activé. Bienvenue sur CF2m !');
+        $this->addFlash('success', 'Votre compte est activé ! Vos identifiants de connexion vous ont été envoyés par e-mail.');
 
-        return $response ?? $this->redirectToRoute('app_profile');
+        return $this->redirectToRoute('app_login');
+    }
+
+    private function generatePassword(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+        $password = '';
+        for ($i = 0; $i < 12; ++$i) {
+            $password .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+
+        return $password;
     }
 }
