@@ -8,7 +8,7 @@
         {# Anti-flash : applique le thème sauvegardé avant tout rendu #}
         <script>
             (function () {
-                var t = localStorage.getItem('cf2m-theme') || 'dark';
+                var t = localStorage.getItem('cf2m-theme') || 'light';
                 document.documentElement.dataset.theme = t;
             })();
         </script>
@@ -264,43 +264,81 @@
         </main>
 
         {# ── Pied de page ────────────────────────────────────────────── #}
-        <footer class="cf2m-footer py-4">
+        <footer class="cf2m-footer cf2m-footer-figma">
             <div class="container">
-                <div class="row align-items-center">
+                <div class="row g-4">
 
-                    {# Colonne gauche : logo + texte #}
-                    <div class="col-md-4 text-center text-md-start mb-3 mb-md-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                        <a href="{{ path('app_home') }}" aria-label="CF2m — Accueil">
-                            <img src="{{ asset('images/logo-cf2m-blanc.svg') }}"
-                                 alt="Logo CF2m"
-                                 width="50" height="50"
-                                 class="cf2m-logo-img">
-                        </a>
-                        <span class="text-muted">Centre de Formation 2M</span>
+                    {# Colonne marque #}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="cf2m-footer-brand">
+                            <a href="{{ path('app_home') }}" aria-label="CF2m — Accueil">
+                                <img src="{{ asset('images/logo-cf2m-blanc.svg') }}"
+                                     alt="Logo CF2m"
+                                     width="48" height="48"
+                                     class="cf2m-logo-img">
+                            </a>
+                            <span style="font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: #ffffff;">CF2m</span>
+                        </div>
+                        <p class="cf2m-footer-tagline">
+                            Centre de Formation 2M — Des formations professionnelles gratuites dans le numérique.
+                        </p>
                     </div>
 
-                    {# Colonne centre : Nos activités #}
-                    <div class="col-md-4 text-left mb-3 mb-md-0">
-                        {% if _nav_pages is not empty %}
-                            <p class="text-muted small fw-semibold mb-1 text-uppercase">Nos activités</p>
-                            <ul class="list-unstyled mb-0">
+                    {# Colonne formations #}
+                    <div class="col-md-6 col-lg-3 offset-lg-1 cf2m-footer-col">
+                        <p class="cf2m-footer-col-title">Formations</p>
+                        <ul>
+                            {% if _nav_formations is not empty %}
+                                {% for formation in _nav_formations %}
+                                    <li>
+                                        <a href="{{ path('app_formation_show', {slug: formation.slug}) }}">
+                                            {{ formation.title }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    {# Colonne activités #}
+                    <div class="col-md-6 col-lg-2 cf2m-footer-col">
+                        <p class="cf2m-footer-col-title">Nos activités</p>
+                        <ul>
+                            {% if _nav_pages is not empty %}
                                 {% for page in _nav_pages %}
                                     <li>
-                                        <a class="text-muted text-decoration-none cf2m-footer-link small"
-                                           href="{{ path('app_page_show', {slug: page.slug}) }}">
+                                        <a href="{{ path('app_page_show', {slug: page.slug}) }}">
                                             {{ page.title }}
                                         </a>
                                     </li>
                                 {% endfor %}
-                            </ul>
-                        {% endif %}
+                            {% endif %}
+                            <li><a href="{{ path('app_contact') }}">Nous contacter</a></li>
+                            <li><a href="https://cf2d.be/" target="_blank" rel="noopener noreferrer">CF2d</a></li>
+                        </ul>
                     </div>
 
-                    {# Colonne droite : copyright #}
-                    <div class="col-md-4 text-center text-md-end">
-                        <small class="text-muted">&copy; {{ 'now'|date('Y') }} CF2m — Tous droits réservés</small>
+                    {# Colonne informations #}
+                    <div class="col-md-6 col-lg-2 cf2m-footer-col">
+                        <p class="cf2m-footer-col-title">Informations</p>
+                        <ul>
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                <li><a href="{{ path('app_profile') }}">Mon profil</a></li>
+                                <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                            {% else %}
+                                <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                                <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                            {% endif %}
+                        </ul>
                     </div>
 
+                </div>
+
+                <div class="cf2m-footer-bottom">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                        <small>&copy; {{ 'now'|date('Y') }} CF2m — Centre de Formation 2M. Tous droits réservés.</small>
+                        <small>Belgique — Formations numériques gratuites</small>
+                    </div>
                 </div>
             </div>
         </footer>

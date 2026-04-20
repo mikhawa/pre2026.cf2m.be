@@ -51,22 +51,23 @@
                 </div>
             </div>
 
-            {# ── Colonne droite : portrait circulaire ── #}
-            <div class="col-lg-6 d-none d-lg-flex cf2m-hero-portrait-wrap">
-                <div class="cf2m-hero-portrait-outer">
-                    <img class="cf2m-hero-portrait-ring"
-                         src="{{ asset('images/cercle-contour-blanc.svg') }}"
-                         alt="" aria-hidden="true">
-                    <div class="cf2m-hero-portrait">
-                        {#
-                            Déposer une photo de formateur/trice à :
-                            public/images/hero-portrait.jpg
-                            (format portrait, cadrage visage + buste)
-                        #}
+            {# ── Colonne droite : collage photos ── #}
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="cf2m-hero-collage">
+                    <div class="cf2m-hero-collage-card cf2m-hero-collage-card--tl">
                         <img src="{{ asset('images/hero-portrait.jpg') }}"
-                             alt="Étudiante CF2m"
-                             width="340" height="340"
+                             alt="Étudiants CF2m en cours"
+                             style="object-position: 20% center;">
+                    </div>
+                    <div class="cf2m-hero-collage-card cf2m-hero-collage-card--main">
+                        <img src="{{ asset('images/hero-portrait.jpg') }}"
+                             alt="Formation numérique CF2m"
                              style="object-position: 80% center;">
+                    </div>
+                    <div class="cf2m-hero-collage-card cf2m-hero-collage-card--bl">
+                        <img src="{{ asset('images/hero-portrait.jpg') }}"
+                             alt="Atelier pratique CF2m"
+                             style="object-position: 50% 30%;">
                     </div>
                 </div>
             </div>
@@ -164,5 +165,111 @@
     </div>
 </section>
 {% endif %}
+
+{# ── Section Maîtrisez les outils ─────────────────────────────────── #}
+<section class="cf2m-tools-section">
+    <div class="container text-center">
+        <p class="cf2m-section-label">Compétences</p>
+        <h2 class="cf2m-tools-section-title">
+            Maîtrisez les outils <em>d'aujourd'hui</em>
+        </h2>
+        <p class="cf2m-tools-subtitle">
+            Nos formations vous préparent à utiliser les technologies les plus demandées par les entreprises belges.
+        </p>
+
+        <div class="cf2m-tools-grid">
+            {% set outils = [
+                {nom: 'HTML5',        icon: '🌐'},
+                {nom: 'CSS3',         icon: '🎨'},
+                {nom: 'JavaScript',   icon: '⚡'},
+                {nom: 'PHP',          icon: '🐘'},
+                {nom: 'MySQL',        icon: '🗄️'},
+                {nom: 'WordPress',    icon: '📝'},
+                {nom: 'Bootstrap',    icon: '📐'},
+                {nom: 'Figma',        icon: '✏️'},
+                {nom: 'Adobe Suite',  icon: '🖌️'},
+                {nom: 'Réseaux',      icon: '🔗'},
+                {nom: 'Linux',        icon: '🐧'},
+                {nom: 'Git',          icon: '🔀'},
+            ] %}
+            {% for outil in outils %}
+                <span class="cf2m-tool-badge">
+                    <span aria-hidden="true">{{ outil.icon }}</span>
+                    {{ outil.nom }}
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# ── Section Pourquoi choisir CF2M ────────────────────────────────── #}
+<section class="cf2m-why-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-5">
+                <p class="cf2m-why-label">Nos atouts</p>
+                <h2 class="cf2m-why-title">
+                    Pourquoi choisir<br><em>le CF2M ?</em>
+                </h2>
+
+                <div class="cf2m-why-stats">
+                    <div class="cf2m-why-stat-item">
+                        <div class="cf2m-why-stat-value">85%</div>
+                        <div class="cf2m-why-stat-label">Taux d'emploi</div>
+                    </div>
+                    <div class="cf2m-why-stat-item">
+                        <div class="cf2m-why-stat-value">100%</div>
+                        <div class="cf2m-why-stat-label">Gratuit</div>
+                    </div>
+                    <div class="cf2m-why-stat-item">
+                        <div class="cf2m-why-stat-value">80%</div>
+                        <div class="cf2m-why-stat-label">Pratique</div>
+                    </div>
+                    <div class="cf2m-why-stat-item">
+                        <div class="cf2m-why-stat-value">1600h</div>
+                        <div class="cf2m-why-stat-label">De formation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="cf2m-testimonial">
+                    <img src="{{ asset('images/hero-portrait.jpg') }}"
+                         alt="Témoignage étudiant CF2m"
+                         class="cf2m-testimonial-img">
+                    <div>
+                        <p class="cf2m-testimonial-quote">
+                            « J'avais arrêté l'école à 16 ans. Je pensais que le numérique,
+                            ce n'était pas pour moi. Grâce au CF2M, j'ai trouvé ma voie et
+                            aujourd'hui je travaille avec passion. »
+                        </p>
+                        <p class="cf2m-testimonial-author">
+                            Louis, 20 ans — Développeur Front-End
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{# ── Section Entreprises & Recruteurs ─────────────────────────────── #}
+<section class="cf2m-cta-section">
+    <div class="container">
+        <h2 class="cf2m-cta-title">
+            Entreprises &amp; <em>Recruteurs</em>
+        </h2>
+        <p class="cf2m-cta-text">
+            Vous cherchez des talents formés aux métiers du numérique ?
+            Nos diplômés sont opérationnels dès leur sortie de formation.
+            Contactez-nous pour accéder à notre vivier de candidats.
+        </p>
+        <a href="{{ path('app_contact') }}" class="cf2m-cta-btn">
+            Nous contacter
+        </a>
+    </div>
+</section>
 
 {% endblock %}
