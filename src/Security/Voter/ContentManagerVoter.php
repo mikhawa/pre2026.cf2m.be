@@ -31,7 +31,7 @@ class ContentManagerVoter extends Voter
         return $attribute === self::CONTENT_MANAGER;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         return $this->security->isGranted('ROLE_ADMIN')
             || $this->security->isGranted('ROLE_PEDAGO');
