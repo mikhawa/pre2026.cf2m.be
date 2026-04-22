@@ -51,6 +51,7 @@ RUN git config --global --add safe.directory /var/www/html
 RUN echo "alias pbc='php bin/console'" >> /root/.shrc \
     && echo "alias pbcc='php bin/console cache:clear'" >> /root/.shrc \
     && echo "alias fl='php bin/console doctrine:fixtures:load --group=app --no-interaction'" >> /root/.shrc \
+    && echo "alias asset='php bin/console cache:clear --env=dev && php bin/console importmap:install && php bin/console asset-map:compile --env=dev'" >> /root/.shrc \
     && echo ". /root/.shrc" >> /root/.bashrc
 ENV ENV=/root/.shrc
 
