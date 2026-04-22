@@ -118,6 +118,17 @@
 'https://github.com/vous': 'https://github.com/vous'
 'https://votre-site.be': 'https://votre-site.be'
 
+# ── Formulaire d''inscription (frontend) ──────────────────────────────────
+'Votre prénom': 'Votre prénom'
+'Adresse e-mail': 'Adresse e-mail'
+'votre@email.com': 'votre@email.com'
+'Téléphone': 'Téléphone'
+'+32 4xx xx xx xx': '+32 4xx xx xx xx'
+'Âge': 'Âge'
+'Votre âge': 'Votre âge'
+'Message (optionnel)': 'Message (optionnel)'
+'Informations complémentaires…': 'Informations complémentaires…'
+
 # ── Formulaire de contact (frontend) ──────────────────────────────────────
 'Votre nom': 'Votre nom'
 'Jean Dupont': 'Jean Dupont'
