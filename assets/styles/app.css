@@ -151,6 +151,13 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 }
 
 /* ── Navbar ──────────────────────────────────────────────────────────── */
+/* Le sticky est sur header (flex item direct de body) : sticky sur un enfant ne fonctionne pas */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
 .cf2m-navbar {
     background: rgba(6, 14, 26, 0.80);
     backdrop-filter: blur(20px) saturate(1.5);
@@ -212,26 +219,7 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     }
 }
 
-/* Sur les pages à fond plein (home, connexion…) : flotte par-dessus le contenu */
-.page-home .cf2m-navbar,
-.page-login .cf2m-navbar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    z-index: 1030;
-    width: 100%;
-}
-
-/* Sur pages intérieures : sticky, même glassmorphisme que la home */
-body:not(.page-home):not(.page-login) .cf2m-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-    background: rgba(6, 14, 26, 0.80);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-}
+/* Navbar sticky sur toutes les pages — défini dans la règle de base .cf2m-navbar */
 
 /* Logo : centré verticalement dans la navbar */
 .cf2m-navbar .navbar-brand {
@@ -473,8 +461,7 @@ body:not(.page-home):not(.page-login) .cf2m-navbar {
     background-color: transparent;
     background-image: none;
     color: var(--cf2m-white);
-    /* Padding-top inclut la hauteur de la navbar (≈70px) car elle est en position:absolute */
-    padding: calc(70px + 4rem) 0 5rem;
+    padding: 4rem 0 5rem;
     min-height: 100vh;
     display: flex;
     align-items: center;
