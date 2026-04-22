@@ -199,7 +199,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#25365f',
+            'colorPrimary' => '#f54160',
             'colorSecondary' => '#00589a',
         ]);
         // TR
@@ -215,7 +215,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#25365f',
+            'colorPrimary' => '#6d74f4',
             'colorSecondary' => '#00589a',
         ]);
         // DD
@@ -231,7 +231,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#25365f',
+            'colorPrimary' => '#0ca675',
             'colorSecondary' => '#00589a',
         ]);
         // Web Dev
@@ -247,7 +247,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#25365f',
+            'colorPrimary' => '#027fc2',
             'colorSecondary' => '#00589a',
         ]);
         // Chèques TIC
@@ -263,7 +263,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $faker->dateTimeBetween('-11 months', '-3 months')
             ),
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
-            'colorPrimary' => '#25365f',
+            'colorPrimary' => '#8d5ff6',
             'colorSecondary' => '#00589a',
         ]);
 
