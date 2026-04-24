@@ -11,10 +11,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PartenaireCrudController extends AbstractCrudController
 {
@@ -58,8 +61,16 @@ class PartenaireCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(false)
         ;
-        yield TextField::new('logo', 'Logo (nom fichier)')
+        yield Field::new('logoFile', 'Logo')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])
+            ->setHelp('Formats acceptés : JPEG, PNG, GIF. Max 2 Mo. Redimensionné automatiquement à 400×300 px max.')
             ->hideOnIndex()
+            ->setRequired(false)
+        ;
+        yield ImageField::new('logo', 'Logo')
+            ->setBasePath('/uploads/partenaire-logos/')
+            ->hideOnForm()
             ->setRequired(false)
         ;
     }

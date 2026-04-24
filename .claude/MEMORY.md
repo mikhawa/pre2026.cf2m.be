@@ -71,7 +71,7 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 103 (2026-04-18) — Profils publics, liste membres, liens auteurs Works, restrictions formulaires
 
 ## Dernier numéro .claude-tasks
-145 (2026-04-18)
+150 (2026-04-24)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
