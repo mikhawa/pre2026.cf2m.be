@@ -7,9 +7,13 @@ namespace App\Entity;
 use App\Repository\PartenaireRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PartenaireRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[Vich\Uploadable]
 class Partenaire
 {
     #[ORM\Id]
@@ -24,6 +28,15 @@ class Partenaire
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Vich\UploadableField(mapping: 'partenaire_logo', fileNameProperty: 'logo')]
+    #[Assert\Image(
+        maxSize: '2M',
+        maxSizeMessage: 'Le logo ne doit pas dépasser 2 Mo.',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],
+        mimeTypesMessage: 'Format accepté : JPEG, PNG, GIF, WebP, SVG.'
+    )]
+    private ?File $logoFile = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
 
@@ -33,6 +46,9 @@ class Partenaire
 
     #[ORM\Column(options: ['default' => false, 'unsigned' => true])]
     private bool $isActive = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __toString(): string
     {
@@ -64,6 +80,22 @@ class Partenaire
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLogoFile(): ?File
+    {
+        return $this->logoFile;
+    }
+
+    public function setLogoFile(?File $logoFile = null): static
+    {
+        $this->logoFile = $logoFile;
+
+        if ($logoFile !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
@@ -100,6 +132,18 @@ class Partenaire
     public function setActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
