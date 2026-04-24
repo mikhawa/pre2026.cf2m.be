@@ -8,6 +8,7 @@ use App\Entity\Partenaire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 /**
  * Redimensionne le logo d'un partenaire après upload (max 400×300 px, ratio conservé).
@@ -17,6 +18,8 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
     private const MAX_WIDTH = 400;
     private const MAX_HEIGHT = 300;
 
+    public function __construct(private readonly StorageInterface $storage) {}
+
     public static function getSubscribedEvents(): array
     {
         return [Events::POST_UPLOAD => 'onPostUpload'];
@@ -24,21 +27,15 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
 
     public function onPostUpload(Event $event): void
     {
-        if (!$event->getObject() instanceof Partenaire) {
+        $partenaire = $event->getObject();
+
+        if (!$partenaire instanceof Partenaire) {
             return;
         }
 
-        $mapping = $event->getMapping();
-        $destination = $mapping->getUploadDestination();
-        $filename = $event->getObject()->getLogo();
+        $filepath = $this->storage->resolvePath($partenaire, 'logoFile');
 
-        if ($filename === null) {
-            return;
-        }
-
-        $filepath = rtrim($destination, '/') . '/' . $filename;
-
-        if (!file_exists($filepath)) {
+        if ($filepath === null || !file_exists($filepath)) {
             return;
         }
 
@@ -71,7 +68,6 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
 
         $dest = imagecreatetruecolor($destWidth, $destHeight);
 
-        // Préserve la transparence pour PNG et GIF
         if ($type === IMAGETYPE_PNG || $type === IMAGETYPE_GIF) {
             imagealphablending($dest, false);
             imagesavealpha($dest, true);

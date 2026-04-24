@@ -29,9 +29,11 @@ class Partenaire
     private ?string $description = null;
 
     #[Vich\UploadableField(mapping: 'partenaire_logo', fileNameProperty: 'logo')]
-    #[Assert\Image(
+    #[Assert\File(
         maxSize: '2M',
-        maxSizeMessage: 'Le logo ne doit pas dépasser 2 Mo.'
+        maxSizeMessage: 'Le logo ne doit pas dépasser 2 Mo.',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+        mimeTypesMessage: 'Formats acceptés : JPEG, PNG, GIF.'
     )]
     private ?File $logoFile = null;
 

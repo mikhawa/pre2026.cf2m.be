@@ -64,7 +64,7 @@ class PartenaireCrudController extends AbstractCrudController
         yield Field::new('logoFile', 'Logo')
             ->setFormType(VichImageType::class)
             ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])
-            ->setHelp('Formats acceptés : JPEG, PNG, GIF, WebP. Max 2 Mo. Redimensionné automatiquement à 400×300 px max.')
+            ->setHelp('Formats acceptés : JPEG, PNG, GIF. Max 2 Mo. Redimensionné automatiquement à 400×300 px max.')
             ->hideOnIndex()
             ->setRequired(false)
         ;
