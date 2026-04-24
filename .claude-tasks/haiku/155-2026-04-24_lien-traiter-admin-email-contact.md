@@ -11,5 +11,9 @@ Après la section MESSAGE, le mail de notification de contact contient désormai
 L'URL est absolue, générée via AdminUrlGenerator + Request::getUriForPath().
 
 ## Fichiers modifiés
-- `src/Controller/ContactController.php` — injection AdminUrlGenerator, génération URL absolue après flush, passage dans le contexte email
-- `templates/emails/contact.html.twig` — ajout section TRAITER avec bouton lien admin
+- `src/Controller/ContactController.php` — génération URL absolue via route EasyAdmin `admin_contact_message_detail`, passage dans le contexte email
+- `templates/emails/contact.html.twig` — ajout section TRAITER avec bouton lien admin + `target="_blank" rel="noopener noreferrer"`
+
+## Notes techniques
+- Utilisation de la route EasyAdmin générée automatiquement `admin_contact_message_detail` (paramètre `entityId`) pour éviter tout conflit de chemin.
+- `target="_blank"` indispensable pour les webmails (Gmail, etc.) qui rendent les emails dans un iframe sandboxé — sans lui, le navigateur produit `about:blank#blocked`.

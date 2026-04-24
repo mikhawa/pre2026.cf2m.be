@@ -10,7 +10,6 @@ use App\Repository\InscriptionRepository;
 use App\Repository\PageHistoryRepository;
 use App\Repository\WorksHistoryRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -44,19 +43,6 @@ class DashboardController extends AbstractDashboardController
      * dans les templates Twig (ex. profil/index.html.twig).
      * Redirige vers la page EasyAdmin dédiée (RevisionsPendantesController).
      */
-    #[Route('/admin/contact-message/{id}', name: 'admin_contact_message', requirements: ['id' => '\d+'])]
-    #[IsGranted('CONTENT_MANAGER')]
-    public function contactMessageRedirect(int $id): Response
-    {
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setController(ContactMessageCrudController::class)
-                ->setAction(Action::DETAIL)
-                ->setEntityId($id)
-                ->generateUrl()
-        );
-    }
-
     #[Route('/admin/revisions-en-attente', name: 'admin_revisions_en_attente')]
     #[IsGranted('ROLE_ADMIN')]
     public function revisionsPendantesRedirect(): Response

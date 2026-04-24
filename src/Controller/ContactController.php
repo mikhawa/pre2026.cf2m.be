@@ -59,8 +59,8 @@ class ContactController extends AbstractController
             $em->flush();
 
             $adminUrl = $this->generateUrl(
-                'admin_contact_message',
-                ['id' => $message->getId()],
+                'admin_contact_message_detail',
+                ['entityId' => $message->getId()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
