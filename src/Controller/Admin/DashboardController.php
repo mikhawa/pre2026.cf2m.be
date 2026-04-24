@@ -61,6 +61,7 @@ class DashboardController extends AbstractDashboardController
     {
         return parent::configureUserMenu($user)
             ->addMenuItems([
+                MenuItem::linkToRoute('Site public', 'fa fa-globe', 'app_home'),
                 MenuItem::linkToRoute('Mon profil', 'fa fa-user', 'app_profile'),
             ])
         ;
