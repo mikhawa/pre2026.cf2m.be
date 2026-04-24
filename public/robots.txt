@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /profil/modifier
+Disallow: /reinitialiser-mot-de-passe/
+Disallow: /connexion
+Disallow: /inscription

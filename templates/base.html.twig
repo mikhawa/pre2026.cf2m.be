@@ -4,6 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}CF2m — Centre de Formation{% endblock %}</title>
+        {% block meta_description %}<meta name="description" content="CF2m — Centre de Formation 2M. Découvrez nos formations professionnelles certifiantes en informatique, multimédia et digital en Belgique.">{% endblock %}
+        <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" media="print" onload="this.media='all'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"></noscript>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><rect width=%22128%22 height=%22128%22 rx=%2216%22 fill=%22%231a2e4a%22/><text y=%221em%22 x=%2264%22 text-anchor=%22middle%22 font-size=%2256%22 font-family=%22sans-serif%22 fill=%22%23e85d04%22 font-weight=%22bold%22>CF</text></svg>">
         {# Anti-flash : applique le thème sauvegardé avant tout rendu #}
         <script>
