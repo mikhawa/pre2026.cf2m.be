@@ -118,7 +118,8 @@
                                          alt=""
                                          aria-hidden="true"
                                          class="cf2m-formation-icon flex-shrink-0"
-                                         width="32" height="32">
+                                         width="32" height="32"
+                                         loading="lazy">
                                 {% endif %}
                             </div>
                             <div class="card-body">
@@ -159,7 +160,8 @@
                     {% if partenaire.logo %}
                         <img src="{{ asset('uploads/partenaire-logos/' ~ partenaire.logo) }}"
                              alt="{{ partenaire.nom }}"
-                             class="cf2m-partner-logo">
+                             class="cf2m-partner-logo"
+                             loading="lazy">
                     {% else %}
                         {{ partenaire.nom }}
                     {% endif %}
