@@ -66,7 +66,11 @@ class UserCrudController extends AbstractCrudController
             $entityInstance->setRoles($roles);
         }
 
-        if ($entityInstance->getStatus() === 0) {
+        if ($entityInstance->getStatus() === 2) {
+            // Banni à la création : mot de passe inutilisable, aucun mail envoyé
+            $entityInstance->setPassword(bin2hex(random_bytes(32)));
+            parent::persistEntity($entityManager, $entityInstance);
+        } elseif ($entityInstance->getStatus() === 0) {
             // Mot de passe placeholder : sera remplacé à l'activation
             $entityInstance->setPassword(bin2hex(random_bytes(32)));
             $token = bin2hex(random_bytes(32));
