@@ -31,9 +31,7 @@ class Partenaire
     #[Vich\UploadableField(mapping: 'partenaire_logo', fileNameProperty: 'logo')]
     #[Assert\Image(
         maxSize: '2M',
-        maxSizeMessage: 'Le logo ne doit pas dépasser 2 Mo.',
-        mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],
-        mimeTypesMessage: 'Format accepté : JPEG, PNG, GIF, WebP, SVG.'
+        maxSizeMessage: 'Le logo ne doit pas dépasser 2 Mo.'
     )]
     private ?File $logoFile = null;
 
