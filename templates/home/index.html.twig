@@ -148,16 +148,25 @@
         <p class="cf2m-section-label text-center">Ils nous font confiance</p>
         <h2 class="cf2m-section-title text-center">Nos partenaires</h2>
 
-        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4 mt-4">
             {% for partenaire in partenaires %}
+                {% set contenu %}
+                    {% if partenaire.logo %}
+                        <img src="{{ asset('uploads/partenaire-logos/' ~ partenaire.logo) }}"
+                             alt="{{ partenaire.nom }}"
+                             class="cf2m-partner-logo">
+                    {% else %}
+                        {{ partenaire.nom }}
+                    {% endif %}
+                {% endset %}
                 {% if partenaire.url %}
                     <a href="{{ partenaire.url }}" target="_blank" rel="noopener noreferrer"
                        class="cf2m-partner-item"
                        title="{{ partenaire.description ?? partenaire.nom }}">
-                        {{ partenaire.nom }}
+                        {{ contenu }}
                     </a>
                 {% else %}
-                    <span class="cf2m-partner-item">{{ partenaire.nom }}</span>
+                    <span class="cf2m-partner-item">{{ contenu }}</span>
                 {% endif %}
             {% endfor %}
         </div>
