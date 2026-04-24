@@ -42,8 +42,17 @@ class TwoFactorLoginSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $session = $event->getRequest()->getSession();
+
         // Marquer la session comme 2FA non encore validé
-        $event->getRequest()->getSession()->set('2fa_verified', false);
+        $session->set('2fa_verified', false);
+
+        // Symfony sauvegarde l'URL protégée tentée avant le login dans cette clé.
+        // On la recopie pour notre propre redirection post-2FA.
+        $targetPath = $session->get('_security.main.target_path');
+        if ($targetPath !== null) {
+            $session->set('2fa_target_path', $targetPath);
+        }
 
         // Générer et envoyer le code par email
         $this->twoFactorEmailService->generateAndSendCode($user);
