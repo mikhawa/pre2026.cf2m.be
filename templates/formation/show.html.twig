@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ formation.title }} — CF2m Centre de Formation{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ (formation.descriptionCourte ?? (formation.description|striptags|slice(0, 155) ~ '…'))|e('html_attr') }}">{% endblock %}
 
 {% block body_class %}page-formation-show{% endblock %}
 
