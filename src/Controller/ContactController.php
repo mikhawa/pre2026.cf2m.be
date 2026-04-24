@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ContactController extends AbstractController
 {
@@ -57,6 +58,14 @@ class ContactController extends AbstractController
             $em->persist($message);
             $em->flush();
 
+            $adminUrl = $this->generateUrl(
+                'admin_contact_message',
+                ['id' => $message->getId()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            $context = ['message' => $message, 'adminUrl' => $adminUrl];
+
             // Mail vers l'adresse administrative fixe (MAIL_ADMIN)
             $email = (new TemplatedEmail())
                 ->from(new Address($this->mailForm, 'CF2m — Contact'))
@@ -64,7 +73,7 @@ class ContactController extends AbstractController
                 ->replyTo(new Address($message->getEmail(), $message->getNom()))
                 ->subject('[CF2m] ' . $message->getSujet())
                 ->htmlTemplate('emails/contact.html.twig')
-                ->context(['message' => $message])
+                ->context($context)
             ;
             $mailer->send($email);
 
@@ -79,7 +88,7 @@ class ContactController extends AbstractController
                     ->replyTo(new Address($message->getEmail(), $message->getNom()))
                     ->subject('[CF2m] ' . $message->getSujet())
                     ->htmlTemplate('emails/contact.html.twig')
-                    ->context(['message' => $message])
+                    ->context($context)
                 ;
                 $mailer->send($copy);
             }
