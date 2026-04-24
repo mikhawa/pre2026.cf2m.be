@@ -31,6 +31,8 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
 - Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --group=app --no-interaction), `asset` (php bin/console cache:clear --env=dev; php bin/console importmap:install; php bin/console asset-map:compile --env=dev) 
+- Pour **améliorer la qualité du dossier** `.git`, utilise la commande `git gc` régulièrement pour compresser les objets et nettoyer les références obsolètes, ce qui peut réduire la taille du dépôt et améliorer les performances des opérations **Git**.
+- Pour les **raccourcis personnalisés**, voir le fichier [RACCOURCIS.md](RACCOURCIS.md) pour la liste complète et les instructions d'installation.
 
 
 
