@@ -61,13 +61,17 @@
                     <div class="cf2m-hero-portrait">
                         {#
                             Déposer une photo de formateur/trice à :
-                            public/images/hero-portrait.jpg
+                            public/images/hero-portrait.jpg + hero-portrait.webp
                             (format portrait, cadrage visage + buste)
                         #}
-                        <img src="{{ asset('images/hero-portrait.jpg') }}"
-                             alt="Étudiante CF2m"
-                             width="340" height="340"
-                             style="object-position: 80% center;">
+                        <picture>
+                            <source srcset="{{ asset('images/hero-portrait.webp') }}" type="image/webp">
+                            <img src="{{ asset('images/hero-portrait.jpg') }}"
+                                 alt="Étudiante CF2m"
+                                 width="340" height="340"
+                                 style="object-position: 80% center;"
+                                 fetchpriority="high">
+                        </picture>
                     </div>
                 </div>
             </div>
@@ -77,7 +81,7 @@
 </section>
 
 {# ── Section Formations ────────────────────────────────────────────── #}
-<section id="formations" class="py-5" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), linear-gradient(to bottom, #827e7e 0%, rgba(130,126,126,0.5) 50%, rgba(130,126,126,0.5) 100%), url('{{ asset('images/formations-bg.jpg') }}'); background-size: cover; background-position: center; border-top: 5px solid #38476b;">
+<section id="formations" class="py-5" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), linear-gradient(to bottom, #827e7e 0%, rgba(130,126,126,0.5) 50%, rgba(130,126,126,0.5) 100%), url('{{ asset('images/formations-bg.webp') }}'); background-size: cover; background-position: center; border-top: 5px solid #38476b;">
     <div class="container">
         <p class="cf2m-section-label text-center">Catalogue</p>
         <h2 class="cf2m-section-title text-center">Nos formations</h2>
