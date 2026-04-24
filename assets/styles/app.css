@@ -831,6 +831,18 @@ header {
     border-color: var(--cf2m-cyan);
     transform: translateY(-2px);
 }
+.cf2m-partner-logo {
+    display: block;
+    max-height: 60px;
+    max-width: 160px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.9;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.cf2m-partner-item:hover .cf2m-partner-logo {
+    opacity: 1;
+}
 
 /* ── Page Connexion ──────────────────────────────────────────────────── */
 .cf2m-login-section {
