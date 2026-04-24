@@ -14,7 +14,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -214,8 +213,17 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_USER'        => 'secondary',
             ])
         ;
-        yield IntegerField::new('status', 'Statut')
-            ->hideOnIndex()
+        yield ChoiceField::new('status', 'Statut')
+            ->setChoices([
+                'Non activé' => 0,
+                'Activé'     => 1,
+                'Banni'      => 2,
+            ])
+            ->renderAsBadges([
+                0 => 'secondary',
+                1 => 'success',
+                2 => 'danger',
+            ])
         ;
         yield DateTimeField::new('createdAt', 'Créé le')
             ->hideOnForm()
@@ -247,6 +255,11 @@ class UserCrudController extends AbstractCrudController
                 'Administrateur' => 'ROLE_ADMIN',
                 'Formateur'      => 'ROLE_FORMATEUR',
                 'Stagiaire'      => 'ROLE_STAGIAIRE',
+            ]))
+            ->add(ChoiceFilter::new('status', 'Statut')->setChoices([
+                'Non activé' => 0,
+                'Activé'     => 1,
+                'Banni'      => 2,
             ]))
         ;
     }
