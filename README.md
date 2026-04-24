@@ -52,6 +52,8 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 
 - 2026-04-01 CI/CD avec GitHub Actions pour automatiser les tests, les builds et les déploiements sur les serveurs de préproduction et de production, en utilisant des workflows définis dans `.github/workflows/` :
 
+- 2026-04-24 : référencement de la page d'accueil en réflexion à la stratégie SEO définie avec Claude, en utilisant des balises meta, des titres optimisés, et une structure de contenu adaptée pour améliorer la visibilité sur les moteurs de recherche : https://pagespeed.web.dev/analysis/https-production-cf2m-be/nhyblij2wn?form_factor=mobile
+
 
 
 # Passage en préproduction
