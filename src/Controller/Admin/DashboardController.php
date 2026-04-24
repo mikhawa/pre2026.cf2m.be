@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\ContactMessageRepository;
 use App\Repository\FormationHistoryRepository;
 use App\Repository\InscriptionRepository;
 use App\Repository\PageHistoryRepository;
@@ -27,6 +28,7 @@ class DashboardController extends AbstractDashboardController
         private readonly PageHistoryRepository $pageHistoryRepo,
         private readonly WorksHistoryRepository $worksHistoryRepo,
         private readonly InscriptionRepository $inscriptionRepository,
+        private readonly ContactMessageRepository $contactMessageRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
@@ -115,8 +117,13 @@ class DashboardController extends AbstractDashboardController
             ->setBadge($totalPending > 0 ? $totalPending : null, 'danger')
         ;
 
+        $unreadMessages = $this->contactMessageRepository->countUnread();
+
         yield MenuItem::section('Communication');
-        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')->setPermission('CONTENT_MANAGER');
+        yield MenuItem::linkTo(ContactMessageCrudController::class, 'Messages de contact', 'fa fa-envelope')
+            ->setPermission('CONTENT_MANAGER')
+            ->setBadge($unreadMessages > 0 ? $unreadMessages : null, 'danger')
+        ;
         yield MenuItem::linkTo(PartenaireCrudController::class, 'Partenaires', 'fa fa-handshake')->setPermission('ROLE_ADMIN');
     }
 }

@@ -62,7 +62,12 @@ class TwoFactorController extends AbstractController
                     if ($this->twoFactorEmailService->validateCode($user, $code)) {
                         $request->getSession()->set('2fa_verified', true);
 
-                        return $this->redirectToRoute('app_profile');
+                        $targetPath = $request->getSession()->get('2fa_target_path');
+                        $request->getSession()->remove('2fa_target_path');
+
+                        return $targetPath !== null
+                            ? $this->redirect($targetPath)
+                            : $this->redirectToRoute('app_profile');
                     }
 
                     $error = 'Code incorrect. Veuillez vérifier votre email et réessayer.';

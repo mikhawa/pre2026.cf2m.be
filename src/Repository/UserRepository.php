@@ -126,17 +126,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    /**
-     * Retourne uniquement les utilisateurs actifs (status=1) triés par nom d'utilisateur.
-     *
-     * @return User[]
-     */
-    public function findAllActiveOrderedByName(): array
-    {
-        return $this->createQueryBuilder('u')
-            ->where('u.status = 1')
-            ->orderBy('u.userName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
 }

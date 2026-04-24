@@ -93,6 +93,11 @@ class TwoFactorKernelSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // Mémoriser l'URL demandée pour redirection post-2FA (GET uniquement)
+        if ($request->isMethod('GET')) {
+            $request->getSession()->set('2fa_target_path', $request->getRequestUri());
+        }
+
         // Rediriger vers la page de double authentification
         $event->setResponse(
             new RedirectResponse($this->urlGenerator->generate('app_two_factor'))

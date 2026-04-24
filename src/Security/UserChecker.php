@@ -23,6 +23,12 @@ class UserChecker implements UserCheckerInterface
                 'Votre compte n\'est pas encore activé. Vérifiez votre boite mail.'
             );
         }
+
+        if ($user->getStatus() === 2) {
+            throw new CustomUserMessageAccountStatusException(
+                'Votre compte a été suspendu. Contactez l\'administration pour plus d\'informations.'
+            );
+        }
     }
 
     public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void

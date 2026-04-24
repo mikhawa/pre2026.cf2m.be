@@ -17,4 +17,13 @@ class ContactMessageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ContactMessage::class);
     }
+
+    public function countUnread(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.isRead = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
