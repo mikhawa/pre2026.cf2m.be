@@ -44,7 +44,7 @@ class ProfileController extends AbstractController
     public function users(UserRepository $userRepository): Response
     {
         return $this->render('profil/utilisateurs.html.twig', [
-            'users' => $userRepository->findAllActiveOrderedByName(),
+            'users' => $userRepository->findAllOrderedByName(),
         ]);
     }
 
