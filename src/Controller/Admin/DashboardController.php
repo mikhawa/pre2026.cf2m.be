@@ -13,6 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
+use Symfony\Component\Security\Core\User\UserInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,6 +55,16 @@ class DashboardController extends AbstractDashboardController
                 ->setAction('revisionsPendantes')
                 ->generateUrl()
         );
+    }
+
+    public function configureUserMenu(UserInterface $user): UserMenu
+    {
+        return parent::configureUserMenu($user)
+            ->addMenuItems([
+                MenuItem::linkToRoute('Site public', 'fa fa-globe', 'app_home'),
+                MenuItem::linkToRoute('Mon profil', 'fa fa-user', 'app_profile'),
+            ])
+        ;
     }
 
     public function configureAssets(): Assets

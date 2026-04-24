@@ -1,6 +1,3 @@
-/* ── Google Fonts ─────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
-
 /* ── Variables CF2m ──────────────────────────────────────────────────── */
 :root {
     --cf2m-dark:       #08111e;   /* fond hero / navbar */
@@ -82,13 +79,21 @@ body {
     background-color: #05111f;
     background-image:
         linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
-        url('/images/hero-bg.jpg');
+        url('/images/hero-bg-mobile.webp');
     background-size: cover;
     background-position: center center;
-    background-attachment: fixed;
+    background-attachment: scroll;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+@media (min-width: 992px) {
+    body {
+        background-image:
+            linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
+            url('/images/hero-bg.webp');
+        background-attachment: fixed;
+    }
 }
 
 main {
@@ -1839,10 +1844,18 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-hero {
     background-image:
         linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
-        url('/images/hero-bg.jpg');
+        url('/images/hero-bg-mobile.webp');
     background-size: cover;
     background-position: center center;
-    background-attachment: fixed;
+    background-attachment: scroll;
+}
+@media (min-width: 992px) {
+    [data-theme="light"] .cf2m-hero {
+        background-image:
+            linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
+            url('/images/hero-bg.webp');
+        background-attachment: fixed;
+    }
 }
 
 /* Overlay photo : allégé car le verre est maintenant blanc et opaque */
