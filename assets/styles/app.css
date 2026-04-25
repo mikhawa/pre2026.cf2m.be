@@ -708,6 +708,17 @@ header {
 
 /* ── Titres de sections (accueil) ────────────────────────────────────── */
 
+/* Section formations accueil (dark) : fond CSS pur */
+.page-home #formations {
+    background-color: #060d1a;
+    background-image:
+        radial-gradient(ellipse 90% 35% at 50%   0%, rgba(0,   0,   0, 0.60) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 55% at 12%  65%, rgba(0, 180, 216, 0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 88%  30%, rgba(10,  40, 100, 0.38) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 30% at 50% 115%, rgba(0,   0,   0, 0.70) 0%, transparent 60%);
+    border-top: 5px solid #38476b;
+}
+
 /* Section formations sur fond sombre : titre et label en blanc */
 .page-home #formations .cf2m-section-label,
 .page-home #formations .cf2m-section-title {
@@ -1643,10 +1654,10 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 
 /* Section formations accueil */
 [data-theme="light"] #formations {
-    background-image: none !important;
-    background-color: #c4dff0 !important;
-    border-top: 2px solid rgba(0, 100, 160, 0.20) !important;
-    box-shadow: inset 0 4px 24px rgba(0, 80, 140, 0.08) !important;
+    background-image: none;
+    background-color: #c4dff0;
+    border-top: 2px solid rgba(0, 100, 160, 0.20);
+    box-shadow: inset 0 4px 24px rgba(0, 80, 140, 0.08);
 }
 [data-theme="light"] .page-home #formations .cf2m-section-label,
 [data-theme="light"] .page-home #formations .cf2m-section-title { color: var(--cf2m-navy); }
