@@ -78,10 +78,10 @@ body {
     color: rgba(255, 255, 255, 0.87);
     background-color: #05111f;
     background-image:
-        linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
-        url('/images/hero-bg-mobile.webp');
-    background-size: cover;
-    background-position: center center;
+        radial-gradient(ellipse 80% 60% at 75%  5%,  rgba(0, 180, 216, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 60% at  5% 40%,  rgba(10,  55, 130, 0.40) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 45% at 88% 85%,  rgba(0,  90, 165, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 85% 35% at 50% 115%, rgba(3,  12,  35, 0.95) 0%, transparent 70%);
     background-attachment: scroll;
     display: flex;
     flex-direction: column;
@@ -89,9 +89,6 @@ body {
 }
 @media (min-width: 992px) {
     body {
-        background-image:
-            linear-gradient(rgba(5, 17, 31, 0.82), rgba(5, 17, 31, 0.82)),
-            url('/images/hero-bg.webp');
         background-attachment: fixed;
     }
 }
@@ -474,30 +471,30 @@ header {
     overflow: hidden;
 }
 
-/* Overlay sombre par-dessus la photo — léger pour laisser la photo visible */
+/* Vignette gauche — renforce la profondeur du fond dégradé */
 .cf2m-hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
-        110deg,
-        rgba(5, 12, 28, 0.38) 0%,
-        rgba(5, 12, 28, 0.22) 45%,
-        rgba(5, 12, 28, 0.08) 100%
+        105deg,
+        rgba(5, 12, 28, 0.48) 0%,
+        rgba(5, 12, 28, 0.18) 50%,
+        transparent 100%
     );
     pointer-events: none;
     z-index: 0;
 }
 
-/* Lueur cyan en haut à droite */
+/* Lueur cyan principale en haut à droite */
 .cf2m-hero::after {
     content: '';
     position: absolute;
-    top: -80px;
-    right: -60px;
-    width: 480px;
-    height: 480px;
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.14) 0%, transparent 65%);
+    top: -100px;
+    right: -80px;
+    width: 620px;
+    height: 620px;
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.20) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
 }
@@ -1840,25 +1837,22 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
    LIGHT MODE — Hero glassmorphisme & contrastes accueil
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Hero : la photo est sur le body en dark mode (fixed), on la reporte sur la section en light */
+/* Hero light : fond CSS pur, blobs bleutés */
 [data-theme="light"] .cf2m-hero {
+    background-color: #c4dff0;
     background-image:
-        linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
-        url('/images/hero-bg-mobile.webp');
-    background-size: cover;
-    background-position: center center;
+        radial-gradient(ellipse 70% 55% at 80% 10%,  rgba(0, 180, 216, 0.38) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 65% at  5% 55%,  rgba(0,  80, 180, 0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 40% at 50% 108%, rgba(0,  40, 120, 0.20) 0%, transparent 65%);
     background-attachment: scroll;
 }
 @media (min-width: 992px) {
     [data-theme="light"] .cf2m-hero {
-        background-image:
-            linear-gradient(rgba(196, 223, 240, 0.08), rgba(196, 223, 240, 0.08)),
-            url('/images/hero-bg.webp');
         background-attachment: fixed;
     }
 }
 
-/* Overlay photo : allégé car le verre est maintenant blanc et opaque */
+/* Vignette gauche — profondeur sur fond dégradé clair */
 [data-theme="light"] .cf2m-hero::before {
     background: linear-gradient(
         110deg,
