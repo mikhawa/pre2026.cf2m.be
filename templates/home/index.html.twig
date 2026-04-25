@@ -59,19 +59,16 @@
                          src="{{ asset('images/cercle-contour-blanc.svg') }}"
                          alt="" aria-hidden="true">
                     <div class="cf2m-hero-portrait">
-                        {#
-                            Déposer une photo de formateur/trice à :
-                            public/images/hero-portrait.jpg + hero-portrait.webp
-                            (format portrait, cadrage visage + buste)
-                        #}
-                        <picture>
-                            <source srcset="{{ asset('images/hero-portrait.webp') }}" type="image/webp">
-                            <img src="{{ asset('images/hero-portrait.jpg') }}"
-                                 alt="Étudiante CF2m"
-                                 width="340" height="340"
-                                 style="object-position: 80% center;"
-                                 fetchpriority="high">
-                        </picture>
+                        <img class="cf2m-hero-slide cf2m-hero-slide--portrait"
+                             src="{{ asset('images/hero-portrait.jpg') }}"
+                             alt="Étudiante CF2m"
+                             width="340" height="340"
+                             fetchpriority="high">
+                        <img class="cf2m-hero-slide cf2m-hero-slide--groupe"
+                             src="{{ asset('images/hero-groupe.jpg') }}"
+                             alt="Stagiaires CF2m"
+                             width="800" height="600"
+                             loading="lazy">
                     </div>
                 </div>
             </div>

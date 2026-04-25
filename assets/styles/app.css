@@ -578,13 +578,31 @@ header {
     z-index: 1;
 }
 
-.cf2m-hero-portrait img {
-    width: 160%;
-    height: 160%;
+.cf2m-hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: center center;
-    margin-left: calc(-30% + 40px);
-    margin-top: calc(-30% - 50px);
+    display: block;
+}
+
+.cf2m-hero-slide--portrait {
+    object-position: 80% center;
+    z-index: 0;
+}
+
+.cf2m-hero-slide--groupe {
+    object-position: center 40%;
+    z-index: 1;
+    opacity: 0;
+    animation: cf2m-hero-groupe 11s infinite;
+}
+
+@keyframes cf2m-hero-groupe {
+    0%,  45% { opacity: 0; }
+    50%, 91% { opacity: 1; }
+    96%, 100% { opacity: 0; }
 }
 
 /* Placeholder si pas d'image portrait */
