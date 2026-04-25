@@ -176,7 +176,8 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield EmailField::new('email', 'E-mail');
+        yield EmailField::new('email', 'E-mail')->onlyOnForms();
+        yield TextField::new('email', 'E-mail')->hideOnForm();
         yield TextField::new('userName', 'Nom d\'utilisateur');
 
         // En affichage (index) : tous les rôles sont visibles pour que les badges s'affichent correctement

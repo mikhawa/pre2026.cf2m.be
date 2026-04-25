@@ -49,7 +49,8 @@ class ContactMessageCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('nom', 'Nom');
-        yield EmailField::new('email', 'E-mail');
+        yield EmailField::new('email', 'E-mail')->onlyOnForms();
+        yield TextField::new('email', 'E-mail')->hideOnForm();
         yield TextField::new('sujet', 'Sujet');
         yield DateTimeField::new('createdAt', 'Reçu le')
             ->hideOnForm()
