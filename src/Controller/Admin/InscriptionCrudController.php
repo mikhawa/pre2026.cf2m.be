@@ -53,7 +53,8 @@ class InscriptionCrudController extends AbstractCrudController
     {
         yield TextField::new('nom', 'Nom');
         yield TextField::new('prenom', 'Prénom');
-        yield EmailField::new('email', 'E-mail');
+        yield EmailField::new('email', 'E-mail')->onlyOnForms();
+        yield TextField::new('email', 'E-mail')->hideOnForm();
         yield TextField::new('telephone', 'Téléphone')
             ->hideOnIndex()
         ;
