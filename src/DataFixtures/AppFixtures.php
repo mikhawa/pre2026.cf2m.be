@@ -134,7 +134,11 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $tousLesUsers = [...$usersManuel,/*  ...$admins, ...$formateurs,*/ ...$stagiaires, ...$commentateurs];
 
         // ── Partenaires ─────────────────────────────────────────────────
-        PartenaireFactory::createMany(6);
+        PartenaireFactory::createOne(['nom' => 'ACTIRIS Formation',          'url' => 'https://www.actiris.brussels/fr/citoyens/',         'active' => true]);
+        PartenaireFactory::createOne(['nom' => 'Bruxelles Formation',        'url' => 'https://www.bruxellesformation.brussels/',          'active' => true]);
+        PartenaireFactory::createOne(['nom' => 'Fédération Wallonie Bruxelles', 'url' => 'https://www.federation-wallonie-bruxelles.be/', 'active' => true]);
+        PartenaireFactory::createOne(['nom' => 'Fond Social Européen',       'url' => 'https://fse.be/',                                  'active' => true]);
+        PartenaireFactory::createMany(2);
         PartenaireFactory::createMany(2, fn () => ['active' => false]);
 
         // ── Pages CMS ───────────────────────────────────────────────────

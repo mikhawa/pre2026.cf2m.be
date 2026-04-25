@@ -6,6 +6,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Formation;
 use App\Entity\Page;
+use App\Entity\Partenaire;
 use App\Entity\User;
 use App\Service\RevisionService;
 use Doctrine\Bundle\FixturesBundle\Attribute\AsFixture;
@@ -186,6 +187,26 @@ class ProdFixtures extends Fixture
             colorPrimary:   '#25365f',
             colorSecondary: '#00589a',
         );
+
+        $manager->flush();
+
+        // ── Partenaires ──────────────────────────────────────────────────────────
+
+        $partenaires = [
+            ['nom' => 'ACTIRIS Formation',             'url' => 'https://www.actiris.brussels/fr/citoyens/'],
+            ['nom' => 'Bruxelles Formation',           'url' => 'https://www.bruxellesformation.brussels/'],
+            ['nom' => 'Fédération Wallonie Bruxelles', 'url' => 'https://www.federation-wallonie-bruxelles.be/'],
+            ['nom' => 'Fond Social Européen',          'url' => 'https://fse.be/'],
+        ];
+
+        foreach ($partenaires as $data) {
+            $partenaire = new Partenaire();
+            $partenaire
+                ->setNom($data['nom'])
+                ->setUrl($data['url'])
+                ->setActive(true);
+            $manager->persist($partenaire);
+        }
 
         $manager->flush();
     }
