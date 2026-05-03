@@ -54,13 +54,12 @@ function updateCells(entityId, data) {
 }
 
 function updateBadge(count) {
-    const link = document.querySelector('a.menu-item-contents[href*="InscriptionCrudController"]');
+    // EasyAdmin 4 génère des routes nommées : /admin/inscription (pas ?crudControllerFqcn=...)
+    const link = document.querySelector('#main-menu a.menu-item-contents[href*="/admin/inscription"]');
     if (!link) return;
 
-    const label = link.querySelector('.menu-item-label');
-    if (!label) return;
-
-    let badge = label.querySelector('.menu-item-badge');
+    // Le badge est enfant direct du <a>, pas du <span.menu-item-label>
+    let badge = link.querySelector('.menu-item-badge');
 
     if (count > 0) {
         if (badge) {
@@ -69,7 +68,7 @@ function updateBadge(count) {
             badge = document.createElement('span');
             badge.className = 'menu-item-badge rounded-pill badge bg-danger';
             badge.textContent = count;
-            label.appendChild(badge);
+            link.appendChild(badge);
         }
     } else {
         badge?.remove();
