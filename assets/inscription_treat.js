@@ -1,35 +1,30 @@
 /**
  * Mise à jour en temps réel du statut traitement des inscriptions.
- * Intercepte le PATCH d'EasyAdmin après sa résolution (pas de race condition)
- * puis rafraîchit les colonnes "Traitée le" / "Traitée par" et le badge du menu.
+ * Utilise l'event delegation sur le toggle "treat" de la liste EasyAdmin.
+ * Attend 600ms que le PATCH EA soit terminé, puis rafraîchit la ligne et le badge.
  */
 
-const _originalFetch = window.fetch.bind(window);
+// Event delegation sur document : survit aux navigations Turbo
+document.addEventListener('change', function (event) {
+    const checkbox = event.target;
 
-window.fetch = function (url, options) {
-    const promise = _originalFetch(url, options);
+    if (checkbox.type !== 'checkbox') return;
 
-    if (
-        typeof url === 'string' &&
-        options?.method === 'PATCH' &&
-        url.includes('InscriptionCrudController')
-    ) {
-        // On attend que le PATCH EA soit résolu avant d'appeler notre endpoint
-        promise
-            .then(response => {
-                if (!response.ok) return;
-                const params = new URLSearchParams(url.split('?')[1] ?? '');
-                const entityId = params.get('entityId');
-                if (entityId) refreshRow(entityId);
-            })
-            .catch(() => {});
-    }
+    const treatCell = checkbox.closest('td[data-column="treat"]');
+    if (!treatCell) return;
 
-    return promise;
-};
+    const row = checkbox.closest('tr[data-id]');
+    if (!row) return;
+
+    const entityId = row.dataset.id;
+    if (!entityId) return;
+
+    // Attend que le PATCH EasyAdmin soit terminé avant de lire les données
+    setTimeout(() => refreshRow(entityId), 600);
+});
 
 function refreshRow(entityId) {
-    _originalFetch(`/admin/inscription/${entityId}/traitement-info`, {
+    fetch(`/admin/inscription/${entityId}/traitement-info`, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
     })
         .then(r => r.json())
