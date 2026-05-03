@@ -1,7 +1,7 @@
 # pre2026.cf2m.be
 
 # TO DO
-suite de http://localhost:8085/admin/inscription
+suite pour les autres sections de  http://localhost:8085/admin/inscription
 
 ## Description du projet
 
