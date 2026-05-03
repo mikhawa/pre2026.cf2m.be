@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-105 (2026-04-24) — SEO meta descriptions, robots.txt, optimisation PageSpeed (WebP, Google Fonts non-bloquant)
+107 (2026-05-03) — Mise à jour temps réel traitement inscriptions (AJAX + badge menu)
 
 ## Dernier numéro .claude-tasks
-160 (2026-04-24)
+166 (2026-05-03)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -175,3 +175,11 @@ Ne jamais modifier un fichier qui n'a pas été explicitement demandé. Toujours
   - `isRead` → clé `'read'` (setter `setRead()`)
 - Defaults callable (`fn():array`) pour générer slug depuis le titre
 - Hachage MDP dans `afterInstantiate` via injection de `UserPasswordHasherInterface`
+
+## EasyAdmin 4 — conventions JS/DOM importantes
+- **Routes nommées** : les liens du menu utilisent `/admin/{entite}` (ex: `/admin/inscription`), PAS `?crudControllerFqcn=...`. Sélecteur correct : `#main-menu a.menu-item-contents[href*="/admin/inscription"]`
+- **Structure badge menu** : `<span class="menu-item-badge">` est enfant direct du `<a class="menu-item-contents">`, PAS du `<span class="menu-item-label">`
+- **Cellules tableau** : `<td data-column="fieldProperty">` et `<tr data-id="entityId">` — data attributes natifs EasyAdmin 4, utilisables pour cibler les cellules en JS
+- **CSS admin via AssetMapper** : utiliser `import './styles/admin.css'` dans `admin.js`, PAS `addHtmlContentToHead(...)` dans `configureAssets()` (chemin non-fingerprinted → 404 avec assets compilés)
+- **Event delegation toggle** : écouter `change` sur `document`, vérifier `checkbox.closest('td[data-column="treat"]')` — survit aux navigations Turbo sans réinitialisation
+- **Assets compilés dev** : supprimer `public/assets/` + `cache:clear` après chaque modif JS/CSS pour forcer la recompilation
