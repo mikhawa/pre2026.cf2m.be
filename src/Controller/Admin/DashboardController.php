@@ -71,7 +71,6 @@ class DashboardController extends AbstractDashboardController
     {
         return Assets::new()
             ->addAssetMapperEntry('admin')
-            ->addHtmlContentToHead('<link rel="stylesheet" href="/assets/styles/admin.css">')
         ;
     }
 

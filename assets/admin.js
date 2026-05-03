@@ -2,6 +2,8 @@
  * Point d'entrée admin : initialise SunEditor sur les textareas
  * ayant la classe 'ea-suneditor-field', sur chaque chargement de page.
  */
+import './inscription_treat.js';
+import './styles/admin.css';
 import suneditor from 'suneditor';
 import plugins from 'suneditor/src/plugins';
 import 'suneditor/dist/css/suneditor.min.css';
