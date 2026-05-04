@@ -57,6 +57,7 @@
 'Administrateur': 'Administrateur'
 'Super Admin': 'Super Admin'
 'Formateur': 'Formateur'
+'Stagiaire': 'Stagiaire'
 'Biographie': 'Biographie'
 'Lien externe 1': 'Lien externe 1'
 'Lien externe 2': 'Lien externe 2'
@@ -93,6 +94,7 @@
 
 # ── Partenaire ────────────────────────────────────────────────────────────
 'Actif': 'Actif'
+'Activé': 'Activé'
 'Site web': 'Site web'
 'Logo (nom fichier)': 'Logo (nom fichier)'
 
