@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\CommentRepository;
 use App\Repository\ContactMessageRepository;
 use App\Repository\FormationHistoryRepository;
 use App\Repository\InscriptionRepository;
@@ -31,6 +32,7 @@ class DashboardController extends AbstractDashboardController
         private readonly WorksHistoryRepository $worksHistoryRepo,
         private readonly InscriptionRepository $inscriptionRepository,
         private readonly ContactMessageRepository $contactMessageRepository,
+        private readonly CommentRepository $commentRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
@@ -120,8 +122,13 @@ class DashboardController extends AbstractDashboardController
             ->setBadge($untreatedCount > 0 ? $untreatedCount : null, 'danger')
         ;
 
+        $unapprovedCount = $this->commentRepository->countUnapproved();
+
         yield MenuItem::section('Interactions');
-        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')->setPermission('ROLE_STAGIAIRE');
+        yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments')
+            ->setPermission('ROLE_STAGIAIRE')
+            ->setBadge($unapprovedCount > 0 ? $unapprovedCount : null, 'danger')
+        ;
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToUrl('Révisions en attente', 'fa fa-clock', $revisionsPendantesUrl)
             ->setPermission('ROLE_ADMIN')

@@ -3,6 +3,8 @@
  * ayant la classe 'ea-suneditor-field', sur chaque chargement de page.
  */
 import './inscription_treat.js';
+import './contact_read.js';
+import './comment_approve.js';
 import './styles/admin.css';
 import suneditor from 'suneditor';
 import plugins from 'suneditor/src/plugins';
