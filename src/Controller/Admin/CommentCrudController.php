@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Comment;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -75,10 +77,36 @@ class CommentCrudController extends AbstractCrudController
         yield BooleanField::new('approved', 'Approuvé')
             ->renderAsSwitch(true)
         ;
+        yield AssociationField::new('approvedBy', 'Approuvé par')
+            ->hideOnForm()
+            ->setRequired(false)
+        ;
+        yield DateTimeField::new('approvedAt', 'Approuvé le')
+            ->hideOnForm()
+            ->setFormat('dd/MM/yyyy HH:mm')
+        ;
         yield DateTimeField::new('createdAt', 'Créé le')
             ->hideOnForm()
             ->setFormat('dd/MM/yyyy HH:mm')
         ;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        if ($entityInstance instanceof Comment) {
+            /** @var User|null $currentUser */
+            $currentUser = $this->getUser();
+
+            if ($entityInstance->isApproved()) {
+                $entityInstance->setApprovedBy($currentUser);
+                $entityInstance->setApprovedAt(new \DateTimeImmutable());
+            } else {
+                $entityInstance->setApprovedBy(null);
+                $entityInstance->setApprovedAt(null);
+            }
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     public function configureFilters(Filters $filters): Filters
