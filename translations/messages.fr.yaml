@@ -4,6 +4,8 @@
 # ── Dashboard ─────────────────────────────────────────────────────────────
 'Tableau de bord': 'Tableau de bord'
 '← Site public': '← Site public'
+'Site public': 'Site public'
+'Mon profil': 'Mon profil'
 'Contenu': 'Contenu'
 'Utilisateurs': 'Utilisateurs'
 'Interactions': 'Interactions'
@@ -55,6 +57,7 @@
 'Administrateur': 'Administrateur'
 'Super Admin': 'Super Admin'
 'Formateur': 'Formateur'
+'Stagiaire': 'Stagiaire'
 'Biographie': 'Biographie'
 'Lien externe 1': 'Lien externe 1'
 'Lien externe 2': 'Lien externe 2'
@@ -85,12 +88,15 @@
 
 # ── Commentaire ───────────────────────────────────────────────────────────
 'Approuvé': 'Approuvé'
+'Approuvé par': 'Approuvé par'
+'Approuvé le': 'Approuvé le'
 
 # ── Rating ────────────────────────────────────────────────────────────────
 'Note (1-5)': 'Note (1-5)'
 
 # ── Partenaire ────────────────────────────────────────────────────────────
 'Actif': 'Actif'
+'Activé': 'Activé'
 'Site web': 'Site web'
 'Logo (nom fichier)': 'Logo (nom fichier)'
 
