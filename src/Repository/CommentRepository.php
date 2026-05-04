@@ -17,4 +17,13 @@ class CommentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Comment::class);
     }
+
+    public function countUnapproved(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.isApproved = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

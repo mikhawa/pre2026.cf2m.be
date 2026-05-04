@@ -38,6 +38,13 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Works $works = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $approvedBy = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $approvedAt = null;
+
     /** @var Collection<int, Rating> */
     #[ORM\ManyToMany(targetEntity: Rating::class, mappedBy: 'comments')]
     private Collection $ratings;
@@ -137,6 +144,30 @@ class Comment
         if ($this->ratings->removeElement($rating)) {
             $rating->removeComment($this);
         }
+
+        return $this;
+    }
+
+    public function getApprovedBy(): ?User
+    {
+        return $this->approvedBy;
+    }
+
+    public function setApprovedBy(?User $approvedBy): static
+    {
+        $this->approvedBy = $approvedBy;
+
+        return $this;
+    }
+
+    public function getApprovedAt(): ?\DateTimeImmutable
+    {
+        return $this->approvedAt;
+    }
+
+    public function setApprovedAt(?\DateTimeImmutable $approvedAt): static
+    {
+        $this->approvedAt = $approvedAt;
 
         return $this;
     }
