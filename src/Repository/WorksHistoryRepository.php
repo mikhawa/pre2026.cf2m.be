@@ -97,6 +97,17 @@ class WorksHistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findLatest(Works $works): ?WorksHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.works = :works')
+            ->setParameter('works', $works)
+            ->orderBy('h.version', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function countPending(): int
     {
         return (int) $this->createQueryBuilder('h')

@@ -244,8 +244,12 @@ class WorksCrudController extends AbstractCrudController
         }
 
         $historique = [];
+        $currentFound = false;
         foreach ($entries as $i => $entry) {
-            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+            $isCurrent = !$currentFound && ($snapshots[$i] === $liveSnapshot);
+            if ($isCurrent) {
+                $currentFound = true;
+            }
 
             $diff = $this->revisionService->buildTypedHistoryDiffHtml(
                 $snapshots[$i],
@@ -434,6 +438,10 @@ class WorksCrudController extends AbstractCrudController
                 $revision = $this->revisionService->createRevision($entityInstance, $user, false);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
+                if ($revision === null) {
+                    $this->addFlash('info', 'Aucune modification détectée, le works n\'a pas été mis à jour.');
+                    return;
+                }
                 $this->revisionService->notifyFormateurs($revision, $entityInstance);
                 $this->addFlash('warning', 'Votre modification a été soumise pour validation par un formateur.');
             }
