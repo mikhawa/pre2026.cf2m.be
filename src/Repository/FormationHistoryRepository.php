@@ -111,6 +111,17 @@ class FormationHistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findLatest(Formation $formation): ?FormationHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.formation = :formation')
+            ->setParameter('formation', $formation)
+            ->orderBy('h.version', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * Compte les révisions en attente (toutes formations confondues).
      */

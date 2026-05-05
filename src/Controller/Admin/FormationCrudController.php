@@ -288,8 +288,12 @@ class FormationCrudController extends AbstractCrudController
         }
 
         $historique = [];
+        $currentFound = false;
         foreach ($entries as $i => $entry) {
-            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+            $isCurrent = !$currentFound && ($snapshots[$i] === $liveSnapshot);
+            if ($isCurrent) {
+                $currentFound = true;
+            }
 
             $diff = $this->revisionService->buildTypedHistoryDiffHtml(
                 $snapshots[$i],
@@ -486,6 +490,10 @@ class FormationCrudController extends AbstractCrudController
                 $revision = $this->revisionService->createRevision($entityInstance, $user, false);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
+                if ($revision === null) {
+                    $this->addFlash('info', 'Aucune modification détectée, la formation n\'a pas été mise à jour.');
+                    return;
+                }
                 $this->revisionService->notifyAdmins($revision);
                 $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
             }
