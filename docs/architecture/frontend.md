@@ -60,18 +60,19 @@ D'après la maquette :
 ### Navbar
 - Logo CF2m (haut gauche)
 - Liens : Nos Formations · Nous contacter · Nos activités
-- Fond semi-transparent sur hero, opaque en scroll
+- **Position sticky universelle** : `position: sticky; top: 0; z-index: 1030` sur toutes les pages sans exception (home, login, register, pages internes)
+- Les compensations de hauteur (`padding-top: 70px`) ont été supprimées des templates auth et de `.cf2m-hero`
 - Bootstrap : `navbar navbar-expand-lg`
 
 ### Section Hero
-- Image de fond plein écran avec overlay sombre
+- Image de fond plein écran avec overlay sombre (fichiers WebP optimisés — voir `docs/architecture/seo-performances.md`)
 - Titre : "FORMATIONS PROFESSIONNELLES des métiers du numérique"
 - Chiffres clés mis en avant avec couleur accent :
   - **100%** gratuit
   - **80%** de pratique
   - **1600 h** de cours
 - Bouton CTA : "NOS FORMATIONS" (Bootstrap `btn btn-primary`)
-- Image ronde d'une personne (côté droit)
+- **Colonne droite** : photo de groupe (`.jpg` + `.webp`, 900×675 px, format 4:3) dans un cadre arrondi (`border-radius: 16px`) — remplace l'ancien portrait circulaire
 
 ### Footer
 - À définir
@@ -108,11 +109,16 @@ Packages à déclarer dans `importmap.php` :
 - `@hotwired/turbo`
 - `suneditor` (back-office uniquement)
 
+## SEO et performances
+
+Voir `docs/architecture/seo-performances.md` pour :
+- Meta descriptions par page (blocs Twig surchargeables)
+- `robots.txt`
+- Conversion WebP des images (`hero-bg`, `formations-bg`, `hero-portrait`)
+- Chargement non bloquant des Google Fonts
+- Lazy loading des images hors-écran
+
 ## TODO
 - [ ] Confirmer les codes hex exacts avec la charte graphique
-- [ ] Créer `base.html.twig` avec les blocs Bootstrap
-- [ ] Créer le composant `_navbar.html.twig` (transparente + scroll)
-- [ ] Créer la section hero avec les chiffres clés
-- [ ] Définir et créer le footer
-- [ ] Déclarer tous les packages dans `importmap.php`
-- [ ] Créer `assets/styles/app.css` avec les variables CSS CF2m
+- [ ] Héberger Google Fonts en local (`@font-face` + `.woff2`) pour supprimer la dépendance réseau
+- [ ] Optimiser `logo-cf2m-blanc.svg` (136 KB → < 10 KB via SVGO)
