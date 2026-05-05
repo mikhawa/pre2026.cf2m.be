@@ -1,6 +1,6 @@
 # Qui reçoit un mail et quand — CF2m
 
-**Dernière mise à jour** : 2026-04-18 (restriction emails inscription et contact à ROLE_SUPER_ADMIN + ROLE_PEDAGO)
+**Dernière mise à jour** : 2026-04-24 (mémorisation URL cible 2FA, lien TRAITER dans mails contact, blocage connexion bannis)
 
 ---
 
@@ -38,6 +38,10 @@
 
 **Sécurité** : comparaison `hash_equals` (timing-safe), code à usage unique (effacé après validation ou expiration), session `2fa_verified` remise à zéro à la déconnexion.
 
+**Mémorisation de l'URL cible** : avant la redirection vers la page 2FA, l'URL initialement demandée (requêtes GET uniquement) est sauvegardée en session sous la clé `2fa_target_path`. Après validation du code, l'utilisateur est redirigé vers cette URL plutôt que vers son profil par défaut.
+- `TwoFactorKernelSubscriber` : sauvegarde de `getRequestUri()` en session
+- `TwoFactorController` : lecture + suppression de `2fa_target_path` après validation
+
 ---
 
 ### 1. Préinscription à une formation en recrutement
@@ -70,6 +74,7 @@
 - **Reply-To** : email de l'expéditeur
 - **Sujet** : `[CF2m] {sujet saisi}`
 - **Template** : `templates/emails/contact.html.twig`
+- **Bouton "TRAITER"** : lien direct vers le détail du message dans EasyAdmin (URL absolue via `AdminUrlGenerator` + `Request::getUriForPath()`), `target="_blank" rel="noopener noreferrer"` pour compatibilité webmail
 
 ---
 
@@ -135,6 +140,23 @@
 - **Sujet approuvé** : `[CF2m] Votre révision a été approuvée — {titre}`
 - **Sujet rejeté** : `[CF2m] Votre révision a été rejetée — {titre}`
 - **Template** : `templates/emails/revision_decision.html.twig`
+
+---
+
+### Sécurité — Blocage de connexion des utilisateurs bannis
+
+**Source** : `UserChecker::checkPreAuth()`  
+**Condition** : `User::status === 2`
+
+Un utilisateur avec le statut "Banni" ne peut plus se connecter. Message affiché :
+
+> "Votre compte a été suspendu. Contactez l'administration pour plus d'informations."
+
+Le contenu associé (works, commentaires, etc.) reste intact. Le super admin peut supprimer du contenu manuellement depuis EasyAdmin si nécessaire.
+
+**Dépréciations Symfony Security (compatibilité Symfony 8)** :
+- `UserChecker::checkPostAuth()` → signature mise à jour : `?TokenInterface $token = null`
+- `voteOnAttribute()` dans `ContentManagerVoter`, `FormationVoter`, `WorksVoter` → ajout `?Vote $vote = null`
 
 ---
 

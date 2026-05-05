@@ -45,8 +45,13 @@ class RevisionService
      * sauf pour une création initiale ($isCreation = true) où previousData reste null.
      * Persiste la révision sans effectuer de flush.
      */
-    public function createRevision(object $entity, User $author, bool $autoApprove, bool $isCreation = false): Revision
+    public function createRevision(object $entity, User $author, bool $autoApprove, bool $isCreation = false): ?Revision
     {
+        // Ne pas créer d'entrée si le contenu est identique à la dernière version (sauf à la création)
+        if (!$isCreation && !$this->saveToTypedHistory($entity, $author, $autoApprove)) {
+            return null;
+        }
+
         $revision = new Revision();
         $revision->setCreatedBy($author);
 
@@ -86,8 +91,9 @@ class RevisionService
         // Phase 5 : Revision n'est plus persistée, elle sert de DTO transient pour les emails
         $revision->setCreatedAt(new \DateTimeImmutable());
 
-        // Écriture dans la table historique typée
-        $this->saveToTypedHistory($entity, $author, $autoApprove);
+        if ($isCreation) {
+            $this->saveToTypedHistory($entity, $author, $autoApprove);
+        }
 
         return $revision;
     }
@@ -1247,13 +1253,17 @@ class RevisionService
      * Appelé après chaque createRevision() pour maintenir la synchronisation
      * entre l'ancienne table `revision` et les nouvelles tables typées.
      */
-    private function saveToTypedHistory(object $entity, User $author, bool $autoApprove): void
+    private function saveToTypedHistory(object $entity, User $author, bool $autoApprove): bool
     {
         $revisionStatus = $autoApprove
             ? FormationHistory::STATUS_AUTO_APPROVED
             : FormationHistory::STATUS_PENDING;
 
         if ($entity instanceof Formation) {
+            $last = $this->formationHistoryRepo->findLatest($entity);
+            if ($last !== null && $this->snapshotFromFormationHistory($last) === $this->snapshotFormation($entity)) {
+                return false;
+            }
             $version = $this->formationHistoryRepo->getNextVersion($entity);
             $history = FormationHistory::fromFormation($entity, $author, $version);
             $history->setRevisionStatus($revisionStatus);
@@ -1263,10 +1273,14 @@ class RevisionService
             }
             $this->em->persist($history);
 
-            return;
+            return true;
         }
 
         if ($entity instanceof Page) {
+            $last = $this->pageHistoryRepo->findLatest($entity);
+            if ($last !== null && $this->snapshotFromPageHistory($last) === $this->snapshotPage($entity)) {
+                return false;
+            }
             $version = $this->pageHistoryRepo->getNextVersion($entity);
             $history = PageHistory::fromPage($entity, $author, $version);
             $history->setRevisionStatus($revisionStatus);
@@ -1276,10 +1290,14 @@ class RevisionService
             }
             $this->em->persist($history);
 
-            return;
+            return true;
         }
 
         if ($entity instanceof Works) {
+            $last = $this->worksHistoryRepo->findLatest($entity);
+            if ($last !== null && $this->snapshotFromWorksHistory($last) === $this->snapshotWorks($entity)) {
+                return false;
+            }
             $version = $this->worksHistoryRepo->getNextVersion($entity);
             $history = WorksHistory::fromWorks($entity, $author, $version);
             $history->setRevisionStatus($revisionStatus);
@@ -1288,7 +1306,11 @@ class RevisionService
                 $history->setReviewedAt(new \DateTimeImmutable());
             }
             $this->em->persist($history);
+
+            return true;
         }
+
+        return false;
     }
 
     /**

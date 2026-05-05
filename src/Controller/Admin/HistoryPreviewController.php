@@ -34,8 +34,8 @@ class HistoryPreviewController extends AbstractController
             throw $this->createNotFoundException('Version de formation introuvable.');
         }
 
-        // Un formateur non-admin ne peut voir que les formations dont il est responsable.
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        // Un formateur non-admin/pedago ne peut voir que les formations dont il est responsable.
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_PEDAGO')) {
             $formation = $history->getFormation();
             if ($formation === null || !$formation->getResponsables()->contains($this->getUser())) {
                 throw $this->createAccessDeniedException();
@@ -50,7 +50,7 @@ class HistoryPreviewController extends AbstractController
     #[Route('/page-history/{id}', name: 'page', requirements: ['id' => '\d+'])]
     public function previewPage(int $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $history = $this->pageHistoryRepo->find($id);
         if ($history === null) {

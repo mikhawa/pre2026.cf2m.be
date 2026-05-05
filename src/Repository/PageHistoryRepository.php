@@ -97,6 +97,17 @@ class PageHistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findLatest(Page $page): ?PageHistory
+    {
+        return $this->createQueryBuilder('h')
+            ->where('h.page = :page')
+            ->setParameter('page', $page)
+            ->orderBy('h.version', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function countPending(): int
     {
         return (int) $this->createQueryBuilder('h')

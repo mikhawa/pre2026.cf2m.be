@@ -44,9 +44,20 @@ Responsabilités :
 ## CrudControllers par entité
 
 ### UserCrudController
-- Champs affichés : email, roles, is_verified, created_at
+- Champs affichés : email, roles, is_verified, created_at, **status**
 - Champ `password` exclu des formulaires (géré via `UserService`)
 - Modification du rôle réservée à `ROLE_SUPER_ADMIN` (voter ou override de permission)
+- Champ `status` affiché en `ChoiceField` avec badges colorés :
+
+| Valeur | Libellé | Badge |
+|--------|---------|-------|
+| 0 | Non activé | gris |
+| 1 | Activé | vert |
+| 2 | Banni | rouge |
+
+- Filtre par statut disponible en liste
+- Un utilisateur banni (status = 2) ne peut plus se connecter (`UserChecker::checkPreAuth()`)
+- Le contenu d'un banni reste intact — suppression manuelle depuis EasyAdmin si nécessaire
 
 ### FormationCrudController
 - Champs : title, slug (auto-généré), description, status, published_at, user (formateur)
@@ -83,7 +94,11 @@ Responsabilités :
 - Champs : nom, email, sujet, message, created_at, is_read
 - Action rapide : marquer comme lu
 - Lecture seule
-- Envoi d'email de notification à l'équipe admin (à définir) à la réception d'un message (via `ContactMessageService`)
+- Envoi d'email de notification à l'équipe admin à la réception d'un message (via `ContactMessageService`)
+- **Badge rouge** dans le menu latéral affichant le nombre de messages non lus (`isRead = false`)
+  - Méthode : `ContactMessageRepository::countUnread()`
+  - Injection du repository dans `DashboardController`, badge conditionnel sur l'item "Messages de contact"
+- L'email de notification inclut un bouton **"TRAITER"** pointant directement vers le détail du message dans EasyAdmin (URL absolue via `AdminUrlGenerator`)
 
 ### PageCrudController
 - Champs : title, slug, content, status, published_at, user
@@ -92,7 +107,12 @@ Responsabilités :
 ### PartenaireCrudController
 - Champs : nom, description, logo, url, is_active
 - Champ `description` : `TextareaField` + SunEditor
-- Champ `logo` : upload et redimensionnement via VichUploader
+- Champ `logo` : upload via `VichImageType` (formulaire) + `ImageField` (liste/détail)
+  - Mapping VichUploader : `partenaire_logo` → `/uploads/partenaire-logos/`
+  - Entité : `#[Vich\Uploadable]`, champ `logoFile` (non mappé Doctrine), `logo` (nom fichier), `updatedAt`
+  - Redimensionnement automatique : `PartenaireLogoResizeSubscriber` écoute `vich_uploader.post_upload`, redimensionne via GD à 400×300 px max (ratio conservé, transparence PNG/GIF préservée)
+  - Validation : max 2 Mo, formats JPEG/PNG/GIF/WebP/SVG
+  - Fallback affichage accueil : si pas de logo → nom en texte ; dark mode → `filter: invert(1)` avec teinte cyan au survol
 
 ## Personnalisations globales
 
@@ -167,6 +187,69 @@ vich_uploader:
 Redimensionnement des images :
 - Toujours effectué côté serveur après upload (via `ImageResizeService` utilisant GD ou Intervention Image)
 - Tailles cibles à définir par mapping (ex: logos partenaires → 300×150px max)
+
+## Configuration Doctrine Migrations
+
+Fichier : `config/packages/doctrine_migrations.yaml`
+
+Ajout de `transactional: false` pour éviter le conflit entre le wrapping transactionnel de Doctrine et les commits DDL implicites de MariaDB (notices en production lors de `ALTER TABLE` / `CREATE TABLE`).
+
+---
+
+## Mise à jour en temps réel — AJAX (inscriptions)
+
+Implémenté le 2026-05-03 (branche `fix/07-update-details-admin`).
+
+### Problème résolu
+
+Dans la liste `/admin/inscription`, après basculement du toggle **"Traitée"**, trois éléments ne se mettaient pas à jour sans rechargement de page :
+- colonne **"Traitée le"** de la ligne
+- colonne **"Traitée par"** de la ligne
+- **badge rouge** (compteur) sur l'entrée "Inscriptions" du menu latéral
+
+### Endpoint AJAX — `InscriptionAjaxController`
+
+Fichier : `src/Controller/Admin/InscriptionAjaxController.php`
+
+```
+GET /admin/inscription/{id}/traitement-info
+```
+
+Accès restreint à `ROLE_ADMIN`. Retourne :
+
+```json
+{
+  "treatAt": "03/05/2026 14:30",
+  "treatAtIso": "2026-05-03T14:30:00+02:00",
+  "treatBy": "mikhawa",
+  "untreatedCount": 3
+}
+```
+
+### Module JS — `assets/inscription_treat.js`
+
+Importé dans `assets/admin.js`. Fonctionne par **event delegation** sur `document` (survit aux navigations Turbo) :
+
+- Écoute `change` sur tout `<input type="checkbox">` dans un `td[data-column="treat"]`
+- Récupère l'ID depuis `<tr data-id="...">` (data attribute natif EasyAdmin 4)
+- Attend **600 ms** pour laisser le PATCH EasyAdmin terminer côté serveur
+- Appelle l'endpoint AJAX puis met à jour `td[data-column="treatAt"]` et `td[data-column="treatBy"]`
+- Met à jour le badge via `#main-menu a.menu-item-contents[href*="/admin/inscription"] .menu-item-badge`
+
+### Points techniques EasyAdmin 4
+
+- **Liens du menu** : utilisent `/admin/inscription` (et non `?crudControllerFqcn=...`). Le sélecteur `href*="InscriptionCrudController"` ne fonctionne pas.
+- **Structure du badge** : `<span class="menu-item-badge">` est enfant direct du `<a class="menu-item-contents">`, pas du `<span class="menu-item-label">`.
+
+### Configuration des assets admin
+
+`addHtmlContentToHead('<link rel="stylesheet" href="/assets/styles/admin.css">')` dans `DashboardController::configureAssets()` injectait un chemin non fingerprinted, introuvable avec les assets compilés.
+
+**Solution retenue** :
+- Supprimé `addHtmlContentToHead(...)` dans `DashboardController`
+- Ajouté `import './styles/admin.css'` dans `assets/admin.js` → AssetMapper génère le `<link>` avec le hash correct
+
+> **Note dev** : après toute modification JS/CSS, supprimer `public/assets/` et vider le cache (`php bin/console cache:clear`) pour forcer la recompilation.
 
 ## TODO
 - [ ] Implémenter `DashboardController` avec le menu complet
