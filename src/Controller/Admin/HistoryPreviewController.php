@@ -50,7 +50,7 @@ class HistoryPreviewController extends AbstractController
     #[Route('/page-history/{id}', name: 'page', requirements: ['id' => '\d+'])]
     public function previewPage(int $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $history = $this->pageHistoryRepo->find($id);
         if ($history === null) {

@@ -165,8 +165,12 @@ class PageCrudController extends AbstractCrudController
         }
 
         $historique = [];
+        $currentFound = false;
         foreach ($entries as $i => $entry) {
-            $isCurrent = ($snapshots[$i] === $liveSnapshot);
+            $isCurrent = !$currentFound && ($snapshots[$i] === $liveSnapshot);
+            if ($isCurrent) {
+                $currentFound = true;
+            }
 
             $diff = $this->revisionService->buildTypedHistoryDiffHtml(
                 $snapshots[$i],
@@ -326,20 +330,24 @@ class PageCrudController extends AbstractCrudController
     {
         /** @var Page $entityInstance */
         $user = $this->getUser();
-        $isAdmin = $this->isGranted('ROLE_ADMIN');
+        $isAutoApproved = $this->isGranted('CONTENT_MANAGER');
 
-        if (!$isAdmin) {
+        if (!$isAutoApproved) {
             // Formateur : créer une révision PENDING et annuler la modification live
             $revision = $this->revisionService->createRevision($entityInstance, $user, false);
             $entityManager->refresh($entityInstance);
             $entityManager->flush();
+            if ($revision === null) {
+                $this->addFlash('info', 'Aucune modification détectée, la page n\'a pas été mise à jour.');
+                return;
+            }
             $this->revisionService->notifyAdmins($revision);
             $this->addFlash('warning', 'Votre modification a été soumise pour validation par un administrateur.');
 
             return;
         }
 
-        // Admin/Super-admin : créer une révision APPROVED et sauvegarder normalement
+        // Admin/Pedago : créer une révision APPROVED et sauvegarder normalement
         $this->revisionService->createRevision($entityInstance, $user, true);
         parent::updateEntity($entityManager, $entityInstance);
     }
