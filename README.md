@@ -1,7 +1,9 @@
 # pre2026.cf2m.be
 
 # TO DO
-suite pour les autres sections de  http://localhost:8085/admin/inscription
+impossible de recadrer la photo de ptofil sur Android .
+Améliorer les groupes et permissions. 
+trouver ub design qui colle
 
 ## Description du projet
 
