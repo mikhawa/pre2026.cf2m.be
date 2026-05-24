@@ -25,9 +25,9 @@ final class SunEditorField implements FieldInterface
             ->setTemplateName('crud/field/text_editor')
             ->setFormType(TextareaType::class)
             ->setFormTypeOption('attr', [
-                'class'                         => 'ea-suneditor-field',
-                'data-suneditor-upload-url'     => '/admin/media/upload',
-                'data-suneditor-height'         => '450',
+                'class' => 'ea-suneditor-field',
+                'data-suneditor-upload-url' => '/admin/media/upload',
+                'data-suneditor-height' => '450',
             ])
             ->addCssClass('field-suneditor')
             ->setDefaultColumns('col-md-11 col-xxl-9')

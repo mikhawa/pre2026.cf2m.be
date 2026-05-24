@@ -18,7 +18,8 @@ class TurnstileLoginSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly TurnstileVerifier $turnstileVerifier,
         private readonly RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -32,21 +33,19 @@ class TurnstileLoginSubscriber implements EventSubscriberInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request === null || !$request->isMethod('POST')) {
+        if (null === $request || !$request->isMethod('POST')) {
             return;
         }
 
         // Uniquement sur la route de connexion
-        if ($request->attributes->get('_route') !== 'app_login') {
+        if ('app_login' !== $request->attributes->get('_route')) {
             return;
         }
 
         $token = (string) $request->request->get('cf-turnstile-response', '');
 
         if (!$this->turnstileVerifier->verify($token, $request->getClientIp())) {
-            throw new CustomUserMessageAuthenticationException(
-                'La vérification anti-robot a échoué. Veuillez réessayer.'
-            );
+            throw new CustomUserMessageAuthenticationException('La vérification anti-robot a échoué. Veuillez réessayer.');
         }
     }
 }

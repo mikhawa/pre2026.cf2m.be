@@ -20,10 +20,10 @@ class FormationVoterTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturnCallback(
             fn (string $role) => match ($role) {
-                'ROLE_ADMIN'     => $isAdmin,
-                'ROLE_PEDAGO'    => $isPedago,
+                'ROLE_ADMIN' => $isAdmin,
+                'ROLE_PEDAGO' => $isPedago,
                 'ROLE_FORMATEUR' => $isFormateur,
-                default          => false,
+                default => false,
             }
         );
 
@@ -42,7 +42,7 @@ class FormationVoterTest extends TestCase
 
     public function testSupportsFormationAttributes(): void
     {
-        $voter     = $this->buildVoter(false, false, false);
+        $voter = $this->buildVoter(false, false, false);
         $formation = new Formation();
 
         foreach ([
@@ -159,7 +159,7 @@ class FormationVoterTest extends TestCase
     public function testGrantedForFormateurResponsable(string $attribute): void
     {
         $voter = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: true);
-        $user  = new User();
+        $user = new User();
         $formation = new Formation();
         $formation->addResponsable($user);
 
@@ -172,7 +172,7 @@ class FormationVoterTest extends TestCase
     #[DataProvider('contextualAttributes')]
     public function testDeniedForFormateurNonResponsable(string $attribute): void
     {
-        $voter     = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: true);
+        $voter = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: true);
         $formation = new Formation();
 
         self::assertSame(
@@ -184,7 +184,7 @@ class FormationVoterTest extends TestCase
     #[DataProvider('contextualAttributes')]
     public function testDeniedForStagiaire(string $attribute): void
     {
-        $voter     = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: false);
+        $voter = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: false);
         $formation = new Formation();
 
         self::assertSame(
@@ -211,9 +211,9 @@ class FormationVoterTest extends TestCase
     {
         return [
             'EDIT_AUTOAPPROVE' => [FormationVoter::EDIT_AUTOAPPROVE],
-            'APPROVE'          => [FormationVoter::APPROVE],
-            'REJECT'           => [FormationVoter::REJECT],
-            'RESTORE'          => [FormationVoter::RESTORE],
+            'APPROVE' => [FormationVoter::APPROVE],
+            'REJECT' => [FormationVoter::REJECT],
+            'RESTORE' => [FormationVoter::RESTORE],
         ];
     }
 }

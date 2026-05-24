@@ -40,9 +40,9 @@ class MigrateRevisionsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io     = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
-        $force  = (bool) $input->getOption('force');
+        $force = (bool) $input->getOption('force');
 
         $io->title('Migration des révisions JSON → tables d\'historique typées');
 
@@ -83,19 +83,19 @@ class MigrateRevisionsCommand extends Command
         $total = count($rows);
         $io->info(sprintf('%d révisions à migrer.', $total));
 
-        $counts   = ['formation' => 0, 'page' => 0, 'works' => 0, 'skipped' => 0];
+        $counts = ['formation' => 0, 'page' => 0, 'works' => 0, 'skipped' => 0];
         $versions = []; // clé : 'formation_1' → version courante
 
         $io->progressStart($total);
 
         foreach ($rows as $row) {
-            $type     = (string) $row['entity_type'];
+            $type = (string) $row['entity_type'];
             $entityId = (int) $row['entity_id'];
             /** @var array<string, mixed> $data */
-            $data     = json_decode((string) $row['data'], true) ?? [];
+            $data = json_decode((string) $row['data'], true) ?? [];
 
             // Incrémenter la version pour cette entité
-            $key = $type . '_' . $entityId;
+            $key = $type.'_'.$entityId;
             $versions[$key] = ($versions[$key] ?? 0) + 1;
             $version = $versions[$key];
 
@@ -107,7 +107,7 @@ class MigrateRevisionsCommand extends Command
                     $row['created_by_id'],
                     $row['id']
                 ));
-                $counts['skipped']++;
+                ++$counts['skipped'];
                 $io->progressAdvance();
                 continue;
             }
@@ -117,7 +117,7 @@ class MigrateRevisionsCommand extends Command
                 $reviewedBy = $this->em->getRepository(User::class)->find((int) $row['reviewed_by_id']);
             }
 
-            $createdAt  = new \DateTimeImmutable((string) $row['created_at']);
+            $createdAt = new \DateTimeImmutable((string) $row['created_at']);
             $reviewedAt = !empty($row['reviewed_at']) ? new \DateTimeImmutable((string) $row['reviewed_at']) : null;
             $reviewNote = !empty($row['review_note']) ? (string) $row['review_note'] : null;
             $revisionStatus = (int) $row['status']; // 0/1/2 → identique dans le trait
@@ -140,13 +140,13 @@ class MigrateRevisionsCommand extends Command
                 };
 
                 if (isset($counts[$type])) {
-                    $counts[$type]++;
+                    ++$counts[$type];
                 }
             } catch (\Throwable $e) {
                 $io->warning(sprintf('Révision #%d ignorée : %s', $row['id'], $e->getMessage()));
-                $counts['skipped']++;
+                ++$counts['skipped'];
                 // Décaler la version pour ne pas créer de trou
-                $versions[$key]--;
+                --$versions[$key];
             }
 
             $io->progressAdvance();
@@ -204,13 +204,13 @@ class MigrateRevisionsCommand extends Command
         $history->setCreatedAt($createdAt);
         $history->setRevisionStatus($revisionStatus);
 
-        if ($reviewedBy !== null) {
+        if (null !== $reviewedBy) {
             $history->setReviewedBy($reviewedBy);
         }
-        if ($reviewedAt !== null) {
+        if (null !== $reviewedAt) {
             $history->setReviewedAt($reviewedAt);
         }
-        if ($reviewNote !== null) {
+        if (null !== $reviewNote) {
             $history->setReviewNote($reviewNote);
         }
 
@@ -258,13 +258,13 @@ class MigrateRevisionsCommand extends Command
         $history->setCreatedAt($createdAt);
         $history->setRevisionStatus($revisionStatus);
 
-        if ($reviewedBy !== null) {
+        if (null !== $reviewedBy) {
             $history->setReviewedBy($reviewedBy);
         }
-        if ($reviewedAt !== null) {
+        if (null !== $reviewedAt) {
             $history->setReviewedAt($reviewedAt);
         }
-        if ($reviewNote !== null) {
+        if (null !== $reviewNote) {
             $history->setReviewNote($reviewNote);
         }
 
@@ -326,13 +326,13 @@ class MigrateRevisionsCommand extends Command
         $history->setCreatedAt($createdAt);
         $history->setRevisionStatus($revisionStatus);
 
-        if ($reviewedBy !== null) {
+        if (null !== $reviewedBy) {
             $history->setReviewedBy($reviewedBy);
         }
-        if ($reviewedAt !== null) {
+        if (null !== $reviewedAt) {
             $history->setReviewedAt($reviewedAt);
         }
-        if ($reviewNote !== null) {
+        if (null !== $reviewNote) {
             $history->setReviewNote($reviewNote);
         }
 

@@ -88,7 +88,7 @@ class InscriptionCrudController extends AbstractCrudController
     {
         /** @var Inscription $entityInstance */
         if ($entityInstance->isTreat()) {
-            if ($entityInstance->getTreatBy() === null) {
+            if (null === $entityInstance->getTreatBy()) {
                 $entityInstance->setTreatBy($this->getUser());
                 $entityInstance->setTreatAt(new \DateTimeImmutable());
             }

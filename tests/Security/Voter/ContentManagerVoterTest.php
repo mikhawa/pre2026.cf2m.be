@@ -17,9 +17,9 @@ class ContentManagerVoterTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturnCallback(
             fn (string $role) => match ($role) {
-                'ROLE_ADMIN'  => $isAdmin,
+                'ROLE_ADMIN' => $isAdmin,
                 'ROLE_PEDAGO' => $isPedago,
-                default       => false,
+                default => false,
             }
         );
 

@@ -37,7 +37,7 @@ class ProdFixtures extends Fixture
     {
         // ── Super administrateur ─────────────────────────────────────────────────
 
-        $email    = (string) (getenv('PROD_ADMIN_EMAIL')    ?: throw new \RuntimeException('PROD_ADMIN_EMAIL non défini dans .env.local'));
+        $email = (string) (getenv('PROD_ADMIN_EMAIL') ?: throw new \RuntimeException('PROD_ADMIN_EMAIL non défini dans .env.local'));
         $username = (string) (getenv('PROD_ADMIN_USERNAME') ?: throw new \RuntimeException('PROD_ADMIN_USERNAME non défini dans .env.local'));
         $password = (string) (getenv('PROD_ADMIN_PASSWORD') ?: throw new \RuntimeException('PROD_ADMIN_PASSWORD non défini dans .env.local'));
 
@@ -58,9 +58,9 @@ class ProdFixtures extends Fixture
 
         $pages[] = $this->createPage(
             manager: $manager,
-            author:  $admin,
-            title:   'À propos de notre centre',
-            slug:    'about',
+            author: $admin,
+            title: 'À propos de notre centre',
+            slug: 'about',
             content: <<<HTML
                 <!-- TODO : remplacer par le vrai contenu HTML de la page "À propos" -->
                 <h2>Le Centre de Formation CF2m</h2>
@@ -70,9 +70,9 @@ class ProdFixtures extends Fixture
 
         $pages[] = $this->createPage(
             manager: $manager,
-            author:  $admin,
-            title:   'RGPD et confidentialité',
-            slug:    'rgpd',
+            author: $admin,
+            title: 'RGPD et confidentialité',
+            slug: 'rgpd',
             content: <<<HTML
                 <!-- TODO : remplacer par le vrai texte légal RGPD -->
                 <h2>Protection des données personnelles</h2>
@@ -82,9 +82,9 @@ class ProdFixtures extends Fixture
 
         $pages[] = $this->createPage(
             manager: $manager,
-            author:  $admin,
-            title:   'Nos valeurs et notre mission',
-            slug:    'nos-valeurs-et-notre-mission',
+            author: $admin,
+            title: 'Nos valeurs et notre mission',
+            slug: 'nos-valeurs-et-notre-mission',
             content: <<<HTML
                 <!-- TODO : remplacer par le vrai contenu HTML de la page "Valeurs" -->
                 <h2>Notre mission</h2>
@@ -106,85 +106,85 @@ class ProdFixtures extends Fixture
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Aventure digitale',
-            slug:    'aventure-digitale',
+            author: $admin,
+            title: 'Aventure digitale',
+            slug: 'aventure-digitale',
             descriptionCourte: 'TODO : description courte Aventure digitale (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Aventure digitale" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Animateur multimédia',
-            slug:    'animateur-multimedia',
+            author: $admin,
+            title: 'Animateur multimédia',
+            slug: 'animateur-multimedia',
             descriptionCourte: 'TODO : description courte Animateur multimédia (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Animateur multimédia" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Technicien PC & réseaux',
-            slug:    'technicien-reseaux',
+            author: $admin,
+            title: 'Technicien PC & réseaux',
+            slug: 'technicien-reseaux',
             descriptionCourte: 'TODO : description courte Technicien PC & réseaux (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Technicien PC & réseaux" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Digital Designer',
-            slug:    'digital-designer',
+            author: $admin,
+            title: 'Digital Designer',
+            slug: 'digital-designer',
             descriptionCourte: 'TODO : description courte Digital Designer (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Digital Designer" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Web Developer Full Stack',
-            slug:    'developpeur-web',
+            author: $admin,
+            title: 'Web Developer Full Stack',
+            slug: 'developpeur-web',
             descriptionCourte: 'TODO : description courte Web Developer Full Stack (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Web Developer Full Stack" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 
         $formations[] = $this->createFormation(
             manager: $manager,
-            author:  $admin,
-            title:   'Chèques TIC',
-            slug:    'cheques-tic',
+            author: $admin,
+            title: 'Chèques TIC',
+            slug: 'cheques-tic',
             descriptionCourte: 'TODO : description courte Chèques TIC (max 800 caractères)',
             description: <<<HTML
                 <!-- TODO : remplacer par la vraie description HTML de la formation "Chèques TIC" -->
                 <p>Contenu à remplir.</p>
                 HTML,
-            colorPrimary:   '#25365f',
+            colorPrimary: '#25365f',
             colorSecondary: '#00589a',
         );
 

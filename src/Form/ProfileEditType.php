@@ -18,40 +18,40 @@ class ProfileEditType extends AbstractType
     {
         $builder
             ->add('avatarFile', VichImageType::class, [
-                'label'              => 'Photo de profil',
-                'required'           => false,
-                'allow_delete'       => true,
-                'delete_label'       => 'Supprimer la photo actuelle',
-                'download_uri'       => false,
-                'image_uri'          => false,
-                'asset_helper'       => false,
-                'attr'               => ['accept' => 'image/jpeg,image/png,image/webp'],
+                'label' => 'Photo de profil',
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer la photo actuelle',
+                'download_uri' => false,
+                'image_uri' => false,
+                'asset_helper' => false,
+                'attr' => ['accept' => 'image/jpeg,image/png,image/webp'],
             ])
             ->add('biography', TextareaType::class, [
-                'label'    => 'Présentation',
+                'label' => 'Présentation',
                 'required' => false,
-                'attr'     => [
-                    'rows'        => 5,
+                'attr' => [
+                    'rows' => 5,
                     'placeholder' => 'Quelques mots sur vous…',
-                    'maxlength'   => 600,
+                    'maxlength' => 600,
                 ],
             ])
             ->add('externalLink1', UrlType::class, [
-                'label'    => 'Lien 1',
+                'label' => 'Lien 1',
                 'required' => false,
-                'attr'     => ['placeholder' => 'https://linkedin.com/in/vous'],
+                'attr' => ['placeholder' => 'https://linkedin.com/in/vous'],
                 'default_protocol' => 'https',
             ])
             ->add('externalLink2', UrlType::class, [
-                'label'    => 'Lien 2',
+                'label' => 'Lien 2',
                 'required' => false,
-                'attr'     => ['placeholder' => 'https://github.com/vous'],
+                'attr' => ['placeholder' => 'https://github.com/vous'],
                 'default_protocol' => 'https',
             ])
             ->add('externalLink3', UrlType::class, [
-                'label'    => 'Lien 3',
+                'label' => 'Lien 3',
                 'required' => false,
-                'attr'     => ['placeholder' => 'https://votre-site.be'],
+                'attr' => ['placeholder' => 'https://votre-site.be'],
                 'default_protocol' => 'https',
             ])
         ;
