@@ -78,7 +78,7 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
 
 
-## Utilisateurs et rôles (fixtures de test)
+## Utilisateurs et rôles (fixtures de test en local et en préproduction)
 
 Email : mikhawa@cf2m.be
 - userName : Mikhawa
@@ -186,10 +186,11 @@ open http://localhost:8080
 
 ## 🌐 Environnements
 
-| Environnement | URL                     | Déploiement |
-|---------------|-------------------------|-------------|
-| Développement | http://localhost:8085  | Docker local |
-| Préprod | https://pre2026.cf2m.be/ | Push sur `main` (GitHub Actions) |
+| Environnement | URL                         | Déploiement                             |
+|---------------|-----------------------------|-----------------------------------------|
+| Développement | http://localhost:8085       | Docker local (`main`)                   |
+| Préprod       | https://pre2026.cf2m.be/    | Push sur `preprod/v01` (GitHub Actions) |
+| Production    | https://production.cf2m.be/ | Push sur `production` (GitHub Actions)  |
 
 ---
 
