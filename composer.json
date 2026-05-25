@@ -12,7 +12,7 @@
         "doctrine/doctrine-bundle": "^3.2.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6.6",
-        "easycorp/easyadmin-bundle": "^5.0.8",
+        "easycorp/easyadmin-bundle": "^5.0.9",
         "phpdocumentor/reflection-docblock": "^6.0.3",
         "phpstan/phpdoc-parser": "^2.3.2",
         "symfony/apache-pack": ">=1.0.1",
@@ -104,7 +104,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "friendsofphp/php-cs-fixer": "^3.95",
+        "friendsofphp/php-cs-fixer": "^3.95.2",
         "phpunit/phpunit": "^13.1.11",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
