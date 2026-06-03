@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\FormationHistory;
-use App\Entity\PageHistory;
-use App\Entity\WorksHistory;
 use App\Repository\FormationHistoryRepository;
 use App\Repository\PageHistoryRepository;
 use App\Repository\WorksHistoryRepository;
@@ -30,14 +27,14 @@ class HistoryPreviewController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         $history = $this->formationHistoryRepo->find($id);
-        if ($history === null) {
+        if (null === $history) {
             throw $this->createNotFoundException('Version de formation introuvable.');
         }
 
         // Un formateur non-admin/pedago ne peut voir que les formations dont il est responsable.
         if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_PEDAGO')) {
             $formation = $history->getFormation();
-            if ($formation === null || !$formation->getResponsables()->contains($this->getUser())) {
+            if (null === $formation || !$formation->getResponsables()->contains($this->getUser())) {
                 throw $this->createAccessDeniedException();
             }
         }
@@ -53,7 +50,7 @@ class HistoryPreviewController extends AbstractController
         $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $history = $this->pageHistoryRepo->find($id);
-        if ($history === null) {
+        if (null === $history) {
             throw $this->createNotFoundException('Version de page introuvable.');
         }
 
@@ -68,14 +65,14 @@ class HistoryPreviewController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         $history = $this->worksHistoryRepo->find($id);
-        if ($history === null) {
+        if (null === $history) {
             throw $this->createNotFoundException('Version de works introuvable.');
         }
 
         // Un formateur non-admin ne peut voir que les works liés à ses formations.
         if (!$this->isGranted('ROLE_ADMIN')) {
             $formation = $history->getFormation();
-            if ($formation === null || !$formation->getResponsables()->contains($this->getUser())) {
+            if (null === $formation || !$formation->getResponsables()->contains($this->getUser())) {
                 throw $this->createAccessDeniedException();
             }
         }

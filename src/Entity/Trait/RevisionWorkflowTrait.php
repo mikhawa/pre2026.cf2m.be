@@ -61,11 +61,11 @@ trait RevisionWorkflowTrait
     public function getRevisionStatusLabel(): string
     {
         return match ($this->revisionStatus) {
-            self::STATUS_PENDING       => 'En attente',
-            self::STATUS_APPROVED      => 'Approuvée',
-            self::STATUS_REJECTED      => 'Rejetée',
+            self::STATUS_PENDING => 'En attente',
+            self::STATUS_APPROVED => 'Approuvée',
+            self::STATUS_REJECTED => 'Rejetée',
             self::STATUS_AUTO_APPROVED => 'Auto-approuvée',
-            default                    => 'Inconnu',
+            default => 'Inconnu',
         };
     }
 

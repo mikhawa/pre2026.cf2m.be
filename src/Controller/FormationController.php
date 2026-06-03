@@ -20,20 +20,20 @@ class FormationController extends AbstractController
     {
         $formation = $formationRepo->findOneBySlug($slug);
 
-        if ($formation === null || !in_array($formation->getStatus(), ['published', 'recruiting'], true)) {
+        if (null === $formation || !in_array($formation->getStatus(), ['published', 'recruiting'], true)) {
             throw $this->createNotFoundException('Formation introuvable.');
         }
 
         $works = $worksRepo->findPublishedByFormation($formation->getId());
 
         $inscriptionForm = null;
-        if ($formation->getStatus() === 'recruiting') {
+        if ('recruiting' === $formation->getStatus()) {
             $inscriptionForm = $this->createForm(InscriptionType::class, new Inscription());
         }
 
         return $this->render('formation/show.html.twig', [
-            'formation'       => $formation,
-            'works'           => $works,
+            'formation' => $formation,
+            'works' => $works,
             'inscriptionForm' => $inscriptionForm,
         ]);
     }

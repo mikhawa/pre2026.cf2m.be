@@ -28,6 +28,7 @@ class ProfileController extends AbstractController
         private readonly string $mailFrom,
     ) {
     }
+
     #[Route('', name: '')]
     public function index(): Response
     {

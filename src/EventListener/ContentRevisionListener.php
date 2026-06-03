@@ -62,7 +62,7 @@ class ContentRevisionListener
 
     public function postFlush(PostFlushEventArgs $args): void
     {
-        if ($this->pendingEntities === []) {
+        if ([] === $this->pendingEntities) {
             return;
         }
 

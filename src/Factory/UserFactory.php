@@ -28,25 +28,26 @@ final class UserFactory extends PersistentObjectFactory
     {
         $userName = self::faker()->firstNameFemale().'-'.self::faker()->lastName();
         $email = str_replace(' ', '-', $userName).'@cf2m.be';
+
         return [
-            'email'                    => $email,
-            'userName'                 => $userName,
-            'roles'                    => [],
-            'status'                   => 1,
-            'biography'                => self::faker()->optional(0.7)->realText(200),
-            'externalLink1'            => self::faker()->optional(0.3)->url(),
-            'externalLink2'            => null,
-            'externalLink3'            => null,
-            'activationToken'          => null,
-            'resetPasswordToken'       => null,
+            'email' => $email,
+            'userName' => $userName,
+            'roles' => [],
+            'status' => 1,
+            'biography' => self::faker()->optional(0.7)->realText(200),
+            'externalLink1' => self::faker()->optional(0.3)->url(),
+            'externalLink2' => null,
+            'externalLink3' => null,
+            'activationToken' => null,
+            'resetPasswordToken' => null,
             'resetPasswordRequestedAt' => null,
-            'avatarName'               => null,
-            'updatedAt'                => null,
+            'avatarName' => null,
+            'updatedAt' => null,
         ];
     }
 
     /**
-     * État : administrateur
+     * État : administrateur.
      */
     public function admin(): static
     {
@@ -54,7 +55,7 @@ final class UserFactory extends PersistentObjectFactory
     }
 
     /**
-     * État : formateur
+     * État : formateur.
      */
     public function formateur(): static
     {
@@ -62,7 +63,7 @@ final class UserFactory extends PersistentObjectFactory
     }
 
     /**
-     * État : compte banni
+     * État : compte banni.
      */
     public function banni(): static
     {

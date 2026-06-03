@@ -33,7 +33,7 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 - Raccourcis de base **Git** : `gs` (status), `ga` (add), `gc` (commit), `gps` (push), `gpu` (pull)
 - Raccourcis **Docker** : `dup` (up & build), `ddo` (down),
 - Raccourcis **PHP** : `uphp` (shell PHP)
-- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --group=app --no-interaction), `asset` (php bin/console cache:clear --env=dev; php bin/console importmap:install; php bin/console asset-map:compile --env=dev) 
+- Raccourcis **Symfony** : `pbc` (console), `pbcc` (cache:clear), `pbc d:f:l` (doctrine:fixtures:load), `pbc d:m:m` (doctrine:migrations:migrate), `fl` (php bin/console doctrine:fixtures:load --group=app --no-interaction), `asset` (php bin/console cache:clear --env=dev; php bin/console importmap:install; php bin/console asset-map:compile --env=dev) , `phpfix` (./vendor/bin/php-cs-fixer fix)
 - Pour **améliorer la qualité du dossier** `.git`, utilise la commande `git gc` régulièrement pour compresser les objets et nettoyer les références obsolètes, ce qui peut réduire la taille du dépôt et améliorer les performances des opérations **Git**.
 - Pour les **raccourcis personnalisés**, voir le fichier [RACCOURCIS.md](RACCOURCIS.md) pour la liste complète et les instructions d'installation.
 
@@ -78,7 +78,7 @@ https://claude.ai/share/f3928226-c2cf-4ccf-84ea-f0c24aba6c3b
 - Création d'une `ProdFixtures` pour les données de base en production (ex. compte admin initial) qui sera chargé via `php bin/console doctrine:fixtures:load --group=prod`
 
 
-## Utilisateurs et rôles (fixtures de test)
+## Utilisateurs et rôles (fixtures de test en local et en préproduction)
 
 Email : mikhawa@cf2m.be
 - userName : Mikhawa
@@ -186,10 +186,11 @@ open http://localhost:8080
 
 ## 🌐 Environnements
 
-| Environnement | URL                     | Déploiement |
-|---------------|-------------------------|-------------|
-| Développement | http://localhost:8085  | Docker local |
-| Préprod | https://pre2026.cf2m.be/ | Push sur `main` (GitHub Actions) |
+| Environnement | URL                         | Déploiement                             |
+|---------------|-----------------------------|-----------------------------------------|
+| Développement | http://localhost:8085       | Docker local (`main`)                   |
+| Préprod       | https://pre2026.cf2m.be/    | Push sur `preprod/v01` (GitHub Actions) |
+| Production    | https://production.cf2m.be/ | Push sur `production` (GitHub Actions)  |
 
 ---
 

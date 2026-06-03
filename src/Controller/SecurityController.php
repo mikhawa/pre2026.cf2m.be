@@ -23,12 +23,12 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_profile');
         }
 
-        $error        = $authenticationUtils->getLastAuthenticationError();
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
-            'error'         => $error,
+            'error' => $error,
         ]);
     }
 
@@ -55,7 +55,7 @@ class SecurityController extends AbstractController
         $user = $userRepository->findByResetToken($token);
 
         // Token invalide ou inexistant
-        if ($user === null) {
+        if (null === $user) {
             $this->addFlash('error', 'Ce lien de réinitialisation est invalide ou a déjà été utilisé.');
 
             return $this->redirectToRoute('app_login');
@@ -63,7 +63,7 @@ class SecurityController extends AbstractController
 
         // Token expiré (plus d'1 heure)
         $requestedAt = $user->getResetPasswordRequestedAt();
-        if ($requestedAt === null || $requestedAt < new \DateTimeImmutable('-1 hour')) {
+        if (null === $requestedAt || $requestedAt < new \DateTimeImmutable('-1 hour')) {
             $user->setResetPasswordToken(null);
             $user->setResetPasswordRequestedAt(null);
             $em->flush();
@@ -76,10 +76,10 @@ class SecurityController extends AbstractController
         $errors = [];
 
         if ($request->isMethod('POST')) {
-            if (!$this->isCsrfTokenValid('reset_password_' . $token, (string) $request->request->get('_csrf_token'))) {
+            if (!$this->isCsrfTokenValid('reset_password_'.$token, (string) $request->request->get('_csrf_token'))) {
                 $errors[] = 'Jeton CSRF invalide. Veuillez réessayer.';
             } else {
-                $newPassword     = (string) $request->request->get('new_password', '');
+                $newPassword = (string) $request->request->get('new_password', '');
                 $confirmPassword = (string) $request->request->get('confirm_password', '');
 
                 if (strlen($newPassword) < 8) {
@@ -90,7 +90,7 @@ class SecurityController extends AbstractController
                     $errors[] = 'Les deux mots de passe ne correspondent pas.';
                 }
 
-                if ($errors === []) {
+                if ([] === $errors) {
                     $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
                     $user->setResetPasswordToken(null);
                     $user->setResetPasswordRequestedAt(null);
@@ -104,7 +104,7 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('security/reset_password.html.twig', [
-            'token'  => $token,
+            'token' => $token,
             'errors' => $errors,
         ]);
     }

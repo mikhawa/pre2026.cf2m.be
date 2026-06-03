@@ -147,10 +147,10 @@ class Revision
     public function getStatusLabel(): string
     {
         return match ($this->status) {
-            self::STATUS_PENDING  => 'En attente',
+            self::STATUS_PENDING => 'En attente',
             self::STATUS_APPROVED => 'Approuvée',
             self::STATUS_REJECTED => 'Rejetée',
-            default               => 'Inconnu',
+            default => 'Inconnu',
         };
     }
 

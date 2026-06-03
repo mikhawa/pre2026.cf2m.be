@@ -52,6 +52,8 @@ RUN echo "alias pbc='php bin/console'" >> /root/.shrc \
     && echo "alias pbcc='php bin/console cache:clear'" >> /root/.shrc \
     && echo "alias fl='php bin/console doctrine:fixtures:load --group=app --no-interaction'" >> /root/.shrc \
     && echo "alias asset='php bin/console cache:clear --env=dev && php bin/console importmap:install && php bin/console asset-map:compile --env=dev'" >> /root/.shrc \
+    && echo "alias phpfix='./vendor/bin/php-cs-fixer fix'" >> /root/.shrc \
+    && echo "alias lint='php bin/console lint:twig templates/ && php bin/console lint:yaml config/ && php bin/console lint:container'" >> /root/.shrc \
     && echo ". /root/.shrc" >> /root/.bashrc
 ENV ENV=/root/.shrc
 

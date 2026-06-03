@@ -40,11 +40,11 @@ class TwoFactorController extends AbstractController
         }
 
         // 2FA déjà validé pour cette session
-        if ($request->getSession()->get('2fa_verified') === true) {
+        if (true === $request->getSession()->get('2fa_verified')) {
             return $this->redirectToRoute('app_profile');
         }
 
-        $error   = null;
+        $error = null;
         $expired = false;
 
         if ($request->isMethod('POST')) {
@@ -53,7 +53,7 @@ class TwoFactorController extends AbstractController
             } else {
                 // Code expiré
                 $expiresAt = $user->getTwoFactorCodeExpiresAt();
-                if ($expiresAt !== null && $expiresAt < new \DateTimeImmutable()) {
+                if (null !== $expiresAt && $expiresAt < new \DateTimeImmutable()) {
                     $expired = true;
                     $this->twoFactorEmailService->clearCode($user);
                 } else {
@@ -65,7 +65,7 @@ class TwoFactorController extends AbstractController
                         $targetPath = $request->getSession()->get('2fa_target_path');
                         $request->getSession()->remove('2fa_target_path');
 
-                        return $targetPath !== null
+                        return null !== $targetPath
                             ? $this->redirect($targetPath)
                             : $this->redirectToRoute('app_profile');
                     }
@@ -76,16 +76,16 @@ class TwoFactorController extends AbstractController
         }
 
         // Obfusquer l'adresse email affichée (ex: mi***@cf2m.be)
-        $rawEmail    = (string) $user->getEmail();
-        $parts       = explode('@', $rawEmail, 2);
-        $local       = $parts[0];
-        $domain      = $parts[1] ?? '';
-        $obfuscated  = substr($local, 0, min(3, strlen($local))) . '***@' . $domain;
+        $rawEmail = (string) $user->getEmail();
+        $parts = explode('@', $rawEmail, 2);
+        $local = $parts[0];
+        $domain = $parts[1] ?? '';
+        $obfuscated = substr($local, 0, min(3, strlen($local))).'***@'.$domain;
 
         return $this->render('security/two_factor.html.twig', [
-            'error'      => $error,
-            'expired'    => $expired,
-            'email'      => $obfuscated,
+            'error' => $error,
+            'expired' => $expired,
+            'email' => $obfuscated,
         ]);
     }
 

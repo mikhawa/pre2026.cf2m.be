@@ -44,16 +44,16 @@ final class ContactMessageFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'nom'     => self::faker()->lastName() . ' ' . self::faker()->firstName(),
-            'email'   => self::faker()->safeEmail(),
-            'sujet'   => self::faker()->randomElement(self::SUJETS),
+            'nom' => self::faker()->lastName().' '.self::faker()->firstName(),
+            'email' => self::faker()->safeEmail(),
+            'sujet' => self::faker()->randomElement(self::SUJETS),
             'message' => self::faker()->realText(350),
-            'read'    => false,
+            'read' => false,
         ];
     }
 
     /**
-     * État : message lu
+     * État : message lu.
      */
     public function lu(): static
     {

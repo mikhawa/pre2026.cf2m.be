@@ -63,7 +63,7 @@ class PageHistory
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        if ($this->createdAt === null) {
+        if (null === $this->createdAt) {
             $this->createdAt = new \DateTimeImmutable();
         }
     }
@@ -74,15 +74,15 @@ class PageHistory
     public static function fromPage(Page $page, User $author, int $version): self
     {
         $history = new self();
-        $history->page        = $page;
-        $history->version     = $version;
-        $history->title       = $page->getTitle();
-        $history->slug        = $page->getSlug();
-        $history->content     = $page->getContent();
-        $history->status      = $page->getStatus();
+        $history->page = $page;
+        $history->version = $version;
+        $history->title = $page->getTitle();
+        $history->slug = $page->getSlug();
+        $history->content = $page->getContent();
+        $history->status = $page->getStatus();
         $history->publishedAt = $page->getPublishedAt();
-        $history->createdBy   = $author;
-        $history->createdAt   = new \DateTimeImmutable();
+        $history->createdBy = $author;
+        $history->createdAt = new \DateTimeImmutable();
 
         foreach ($page->getUsers() as $user) {
             $history->users->add($user);

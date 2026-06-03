@@ -50,27 +50,27 @@ final class FormationFactory extends PersistentObjectFactory
     {
         return function (): array {
             $title = self::faker()->randomElement(self::TITRES);
-            $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
-                . '-' . self::faker()->unique()->numberBetween(1, 99999);
+            $slug = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
+                .'-'.self::faker()->unique()->numberBetween(1, 99999);
 
             return [
-                'title'             => $title,
-                'slug'              => $slug,
-                'description'       => self::faker()->realText(600),
+                'title' => $title,
+                'slug' => $slug,
+                'description' => self::faker()->realText(600),
                 'descriptionCourte' => self::faker()->realText(200),
-                'createdAt'         => \DateTimeImmutable::createFromMutable(
+                'createdAt' => \DateTimeImmutable::createFromMutable(
                     self::faker()->dateTimeBetween('-3 years', '-1 year')
                 ),
-                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
+                'status' => self::faker()->randomElement(['draft', 'published', 'archived']),
                 'publishedAt' => null,
-                'createdBy'   => UserFactory::new(),
-                'updatedAt'   => null,
+                'createdBy' => UserFactory::new(),
+                'updatedAt' => null,
             ];
         };
     }
 
     /**
-     * État : formation publiée
+     * État : formation publiée.
      */
     public function publiee(): static
     {
@@ -79,8 +79,8 @@ final class FormationFactory extends PersistentObjectFactory
         );
 
         return $this->with([
-            'createdAt'   => $createdAt,
-            'status'      => 'published',
+            'createdAt' => $createdAt,
+            'status' => 'published',
             'publishedAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween('-11 months', '-3 months')
             ),
@@ -88,15 +88,15 @@ final class FormationFactory extends PersistentObjectFactory
     }
 
     /**
-     * État : formation en brouillon
+     * État : formation en brouillon.
      */
     public function brouillon(): static
     {
         return $this->with([
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween('-3 years', '-1 year')
             ),
-            'status'      => 'draft',
+            'status' => 'draft',
             'publishedAt' => null,
         ]);
     }

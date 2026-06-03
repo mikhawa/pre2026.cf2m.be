@@ -18,16 +18,12 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if ($user->getStatus() === 0) {
-            throw new CustomUserMessageAccountStatusException(
-                'Votre compte n\'est pas encore activé. Vérifiez votre boite mail.'
-            );
+        if (0 === $user->getStatus()) {
+            throw new CustomUserMessageAccountStatusException('Votre compte n\'est pas encore activé. Vérifiez votre boite mail.');
         }
 
-        if ($user->getStatus() === 2) {
-            throw new CustomUserMessageAccountStatusException(
-                'Votre compte a été suspendu. Contactez l\'administration pour plus d\'informations.'
-            );
+        if (2 === $user->getStatus()) {
+            throw new CustomUserMessageAccountStatusException('Votre compte a été suspendu. Contactez l\'administration pour plus d\'informations.');
         }
     }
 

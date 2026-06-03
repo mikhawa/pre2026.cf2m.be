@@ -9,14 +9,12 @@
 ```
 ROLE_SUPER_ADMIN
     └── ROLE_ADMIN
-            └── ROLE_FORMATEUR
-                    └── ROLE_STAGIAIRE
-                            └── ROLE_USER
-
+        │    └── ROLE_FORMATEUR
+        │            └── ROLE_STAGIAIRE
+        │                    └── ROLE_USER
+        │
         ROLE_PEDAGO (parallèle, indépendant de ROLE_ADMIN)
-            └── ROLE_FORMATEUR
-                    └── ROLE_STAGIAIRE
-                            └── ROLE_USER
+        
 ```
 
 > `ROLE_PEDAGO` hérite de `ROLE_FORMATEUR`, `ROLE_STAGIAIRE` et `ROLE_USER` mais **pas** de `ROLE_ADMIN`.

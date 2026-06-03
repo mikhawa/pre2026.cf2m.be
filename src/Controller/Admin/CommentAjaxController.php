@@ -15,7 +15,8 @@ class CommentAjaxController extends AbstractController
 {
     public function __construct(
         private readonly CommentRepository $commentRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('/admin/comment/{id}/approbation-info', name: 'admin_comment_approbation_info', methods: ['GET'])]
     public function approbationInfo(int $id): JsonResponse
@@ -30,9 +31,9 @@ class CommentAjaxController extends AbstractController
         $approvedAt = $comment->getApprovedAt();
 
         return $this->json([
-            'approvedBy'      => $approvedBy ? (string) $approvedBy : '',
-            'approvedAt'      => $approvedAt?->format('d/m/Y H:i') ?? '',
-            'approvedAtIso'   => $approvedAt?->format('c') ?? '',
+            'approvedBy' => $approvedBy ? (string) $approvedBy : '',
+            'approvedAt' => $approvedAt?->format('d/m/Y H:i') ?? '',
+            'approvedAtIso' => $approvedAt?->format('c') ?? '',
             'unapprovedCount' => $this->commentRepository->countUnapproved(),
         ]);
     }

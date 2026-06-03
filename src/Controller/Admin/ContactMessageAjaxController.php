@@ -15,7 +15,8 @@ class ContactMessageAjaxController extends AbstractController
 {
     public function __construct(
         private readonly ContactMessageRepository $contactMessageRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('/admin/contact-message/{id}/lecture-info', name: 'admin_contact_message_lecture_info', methods: ['GET'])]
     public function lectureInfo(int $id): JsonResponse
@@ -29,7 +30,7 @@ class ContactMessageAjaxController extends AbstractController
         $readBy = $message->getReadBy();
 
         return $this->json([
-            'readBy'      => $readBy ? (string) $readBy : '',
+            'readBy' => $readBy ? (string) $readBy : '',
             'unreadCount' => $this->contactMessageRepository->countUnread(),
         ]);
     }

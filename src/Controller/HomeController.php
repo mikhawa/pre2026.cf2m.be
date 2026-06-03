@@ -18,7 +18,7 @@ class HomeController extends AbstractController
         PartenaireRepository $partenaireRepo,
     ): Response {
         return $this->render('home/index.html.twig', [
-            'formations'  => $formationRepo->findAllPublished(),
+            'formations' => $formationRepo->findAllPublished(),
             'partenaires' => $partenaireRepo->findAllActive(),
         ]);
     }
