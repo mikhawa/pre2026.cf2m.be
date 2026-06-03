@@ -18,11 +18,11 @@ class RegistrationType extends AbstractType
         $builder
             ->add('userName', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
-                'attr'  => ['autocomplete' => 'nickname', 'placeholder' => 'Jean Dupont'],
+                'attr' => ['autocomplete' => 'nickname', 'placeholder' => 'Jean Dupont'],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse e-mail',
-                'attr'  => ['autocomplete' => 'email', 'placeholder' => 'votre@email.com'],
+                'attr' => ['autocomplete' => 'email', 'placeholder' => 'votre@email.com'],
             ]);
     }
 

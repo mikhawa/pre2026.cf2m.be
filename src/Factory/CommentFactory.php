@@ -26,15 +26,15 @@ final class CommentFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'content'  => self::faker()->realText(180),
+            'content' => self::faker()->realText(180),
             'approved' => false,
-            'user'     => UserFactory::new(),
-            'works'    => WorksFactory::new(),
+            'user' => UserFactory::new(),
+            'works' => WorksFactory::new(),
         ];
     }
 
     /**
-     * État : commentaire approuvé
+     * État : commentaire approuvé.
      */
     public function approuve(): static
     {

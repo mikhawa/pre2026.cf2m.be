@@ -57,7 +57,7 @@ class WorksVoter extends Voter
         }
 
         /** @var Works $works */
-        $works     = $subject;
+        $works = $subject;
         $formation = $works->getFormation();
 
         // Les admins et super-admins ont toujours accès
@@ -71,7 +71,7 @@ class WorksVoter extends Voter
         }
 
         // Un works sans formation parente ne peut pas être approuvé contextuellement
-        if ($formation === null) {
+        if (null === $formation) {
             return false;
         }
 

@@ -79,7 +79,7 @@ class RegistrationController extends AbstractController
     ): Response {
         $user = $userRepository->findByActivationToken($token);
 
-        if ($user === null) {
+        if (null === $user) {
             $this->addFlash('error', 'Ce lien de confirmation est invalide ou a déjà été utilisé.');
 
             return $this->redirectToRoute('app_login');

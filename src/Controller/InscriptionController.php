@@ -46,7 +46,7 @@ class InscriptionController extends AbstractController
     ): Response {
         $formation = $formationRepo->findOneBySlug($formationSlug);
 
-        if ($formation === null || $formation->getStatus() !== 'recruiting') {
+        if (null === $formation || 'recruiting' !== $formation->getStatus()) {
             throw $this->createNotFoundException('Formation introuvable ou non ouverte au recrutement.');
         }
 
@@ -63,11 +63,11 @@ class InscriptionController extends AbstractController
                 $works = $worksRepo->findPublishedByFormation($formation->getId());
 
                 return $this->render('formation/show.html.twig', [
-                    'formation'            => $formation,
-                    'works'                => $works,
-                    'inscriptionForm'      => $form,
+                    'formation' => $formation,
+                    'works' => $works,
+                    'inscriptionForm' => $form,
                     'showInscriptionModal' => true,
-                    'turnstileError'       => 'La vérification anti-robot a échoué. Veuillez réessayer.',
+                    'turnstileError' => 'La vérification anti-robot a échoué. Veuillez réessayer.',
                 ]);
             }
 
@@ -77,20 +77,20 @@ class InscriptionController extends AbstractController
             // Notification aux administrateurs et pédagos
             $admins = $userRepo->findInscriptionRecipients();
             $adminListUrl = $this->generateUrl('admin', [
-                'crudAction'          => 'index',
-                'crudControllerFqcn'  => InscriptionCrudController::class,
+                'crudAction' => 'index',
+                'crudControllerFqcn' => InscriptionCrudController::class,
             ], UrlGeneratorInterface::ABSOLUTE_URL);
 
             foreach ($admins as $admin) {
                 $emailAdmin = (new TemplatedEmail())
                     ->from(new Address($this->mailForm, 'CF2m — Préinscriptions'))
                     ->to(new Address($admin->getEmail(), (string) $admin))
-                    ->replyTo(new Address($inscription->getEmail(), $inscription->getPrenom() . ' ' . $inscription->getNom()))
-                    ->subject('[CF2m] Nouvelle préinscription — ' . $formation->getTitle())
+                    ->replyTo(new Address($inscription->getEmail(), $inscription->getPrenom().' '.$inscription->getNom()))
+                    ->subject('[CF2m] Nouvelle préinscription — '.$formation->getTitle())
                     ->htmlTemplate('emails/inscription_admin.html.twig')
                     ->context([
-                        'inscription'  => $inscription,
-                        'formation'    => $formation,
+                        'inscription' => $inscription,
+                        'formation' => $formation,
                         'adminListUrl' => $adminListUrl,
                     ])
                 ;
@@ -100,12 +100,12 @@ class InscriptionController extends AbstractController
             // Accusé de réception à la personne
             $emailAr = (new TemplatedEmail())
                 ->from(new Address($this->mailForm, 'CF2m — Centre de Formation'))
-                ->to(new Address($inscription->getEmail(), $inscription->getPrenom() . ' ' . $inscription->getNom()))
-                ->subject('[CF2m] Votre demande de préinscription — ' . $formation->getTitle())
+                ->to(new Address($inscription->getEmail(), $inscription->getPrenom().' '.$inscription->getNom()))
+                ->subject('[CF2m] Votre demande de préinscription — '.$formation->getTitle())
                 ->htmlTemplate('emails/inscription_confirmation.html.twig')
                 ->context([
                     'inscription' => $inscription,
-                    'formation'   => $formation,
+                    'formation' => $formation,
                 ])
             ;
             $mailer->send($emailAr);
@@ -119,9 +119,9 @@ class InscriptionController extends AbstractController
         $works = $worksRepo->findPublishedByFormation($formation->getId());
 
         return $this->render('formation/show.html.twig', [
-            'formation'            => $formation,
-            'works'                => $works,
-            'inscriptionForm'      => $form,
+            'formation' => $formation,
+            'works' => $works,
+            'inscriptionForm' => $form,
             'showInscriptionModal' => true,
         ]);
     }

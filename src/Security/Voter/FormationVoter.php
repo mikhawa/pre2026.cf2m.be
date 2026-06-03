@@ -54,7 +54,7 @@ class FormationVoter extends Voter
         }
 
         // FORMATION_CREATE ne requiert pas de sujet
-        if ($attribute === self::CREATE) {
+        if (self::CREATE === $attribute) {
             return true;
         }
 
@@ -77,7 +77,7 @@ class FormationVoter extends Voter
         }
 
         // FORMATION_CREATE est réservé aux admins/pédagos (déjà accordé ci-dessus)
-        if ($attribute === self::CREATE) {
+        if (self::CREATE === $attribute) {
             return false;
         }
 

@@ -44,16 +44,16 @@ final class PartenaireFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'nom'         => self::faker()->randomElement(self::NOMS),
+            'nom' => self::faker()->randomElement(self::NOMS),
             'description' => self::faker()->realText(180),
-            'logo'        => null,
-            'url'         => self::faker()->optional(0.8)->url(),
-            'active'      => true,
+            'logo' => null,
+            'url' => self::faker()->optional(0.8)->url(),
+            'active' => true,
         ];
     }
 
     /**
-     * État : partenaire inactif
+     * État : partenaire inactif.
      */
     public function inactif(): static
     {

@@ -93,7 +93,7 @@ class Partenaire
     {
         $this->logoFile = $logoFile;
 
-        if ($logoFile !== null) {
+        if (null !== $logoFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
 

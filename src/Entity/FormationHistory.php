@@ -75,7 +75,7 @@ class FormationHistory
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        if ($this->createdAt === null) {
+        if (null === $this->createdAt) {
             $this->createdAt = new \DateTimeImmutable();
         }
     }
@@ -86,19 +86,19 @@ class FormationHistory
     public static function fromFormation(Formation $formation, User $author, int $version): self
     {
         $history = new self();
-        $history->formation        = $formation;
-        $history->version          = $version;
-        $history->title            = $formation->getTitle();
-        $history->slug             = $formation->getSlug();
-        $history->description      = $formation->getDescription();
+        $history->formation = $formation;
+        $history->version = $version;
+        $history->title = $formation->getTitle();
+        $history->slug = $formation->getSlug();
+        $history->description = $formation->getDescription();
         $history->descriptionCourte = $formation->getDescriptionCourte();
-        $history->logo             = $formation->getLogo();
-        $history->status           = $formation->getStatus();
-        $history->colorPrimary     = $formation->getColorPrimary();
-        $history->colorSecondary   = $formation->getColorSecondary();
-        $history->publishedAt      = $formation->getPublishedAt();
-        $history->createdBy        = $author;
-        $history->createdAt        = new \DateTimeImmutable();
+        $history->logo = $formation->getLogo();
+        $history->status = $formation->getStatus();
+        $history->colorPrimary = $formation->getColorPrimary();
+        $history->colorSecondary = $formation->getColorSecondary();
+        $history->publishedAt = $formation->getPublishedAt();
+        $history->createdBy = $author;
+        $history->createdAt = new \DateTimeImmutable();
 
         foreach ($formation->getResponsables() as $user) {
             $history->responsables->add($user);

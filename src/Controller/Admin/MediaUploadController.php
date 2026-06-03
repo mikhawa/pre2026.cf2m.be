@@ -29,7 +29,7 @@ class MediaUploadController extends AbstractController
     /**
      * Point d'entrée d'upload pour SunEditor.
      * Retourne le format JSON attendu par SunEditor :
-     * { "result": [{ "url": "...", "name": "...", "size": 123 }] }
+     * { "result": [{ "url": "...", "name": "...", "size": 123 }] }.
      */
     #[Route('/upload', name: 'upload', methods: ['POST'])]
     public function upload(Request $request): JsonResponse
@@ -79,19 +79,19 @@ class MediaUploadController extends AbstractController
             }
 
             // Infos à conserver avant déplacement (getSize() invalide après move)
-            $originalName  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $originalFull  = $file->getClientOriginalName();
-            $fileSize      = $file->getSize();
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $originalFull = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
 
-            $safeName      = $this->slugger->slug($originalName)->lower();
-            $extension     = strtolower($file->guessExtension() ?? $file->getClientOriginalExtension());
-            $uniqueName    = $safeName . '-' . uniqid() . '.' . $extension;
+            $safeName = $this->slugger->slug($originalName)->lower();
+            $extension = strtolower($file->guessExtension() ?? $file->getClientOriginalExtension());
+            $uniqueName = $safeName.'-'.uniqid().'.'.$extension;
 
             // Déplacement vers le répertoire d'upload
             $file->move($this->uploadsEditorDir, $uniqueName);
 
             $results[] = [
-                'url'  => $this->uploadsEditorUrl . '/' . $uniqueName,
+                'url' => $this->uploadsEditorUrl.'/'.$uniqueName,
                 'name' => $originalFull,
                 'size' => $fileSize,
             ];

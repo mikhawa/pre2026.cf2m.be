@@ -19,27 +19,27 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label'    => 'Votre nom',
-                'attr'     => ['placeholder' => 'Jean Dupont', 'autocomplete' => 'name'],
+                'label' => 'Votre nom',
+                'attr' => ['placeholder' => 'Jean Dupont', 'autocomplete' => 'name'],
             ])
             ->add('email', EmailType::class, [
-                'label'    => 'Votre adresse e-mail',
-                'attr'     => ['placeholder' => 'jean@exemple.be', 'autocomplete' => 'email'],
+                'label' => 'Votre adresse e-mail',
+                'attr' => ['placeholder' => 'jean@exemple.be', 'autocomplete' => 'email'],
             ])
             ->add('sujet', TextType::class, [
-                'label'    => 'Sujet',
-                'attr'     => ['placeholder' => 'Renseignements sur une formation'],
+                'label' => 'Sujet',
+                'attr' => ['placeholder' => 'Renseignements sur une formation'],
             ])
             ->add('message', TextareaType::class, [
-                'label'    => 'Message',
-                'attr'     => ['rows' => 6, 'placeholder' => 'Votre message…'],
+                'label' => 'Message',
+                'attr' => ['rows' => 6, 'placeholder' => 'Votre message…'],
             ])
             // Champ piège anti-robots (honeypot) — doit rester vide
             ->add('url', TextType::class, [
-                'label'       => false,
-                'mapped'      => false,
-                'required'    => false,
-                'attr'        => ['tabindex' => '-1', 'autocomplete' => 'off'],
+                'label' => false,
+                'mapped' => false,
+                'required' => false,
+                'attr' => ['tabindex' => '-1', 'autocomplete' => 'off'],
                 'constraints' => [new Blank(message: 'Ne pas remplir ce champ.')],
             ])
         ;

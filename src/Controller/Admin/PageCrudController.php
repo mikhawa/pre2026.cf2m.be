@@ -6,12 +6,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Page;
 use App\Entity\PageHistory;
+use App\Field\SunEditorField;
 use App\Repository\PageHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -20,11 +20,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudController
 {
@@ -89,14 +89,14 @@ class PageCrudController extends AbstractCrudController
         yield TextField::new('slug', 'Slug');
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
-                'Brouillon'  => 'draft',
-                'Publiée'    => 'published',
-                'Archivée'   => 'archived',
+                'Brouillon' => 'draft',
+                'Publiée' => 'published',
+                'Archivée' => 'archived',
             ])
             ->renderAsBadges([
-                'draft'     => 'secondary',
+                'draft' => 'secondary',
                 'published' => 'success',
-                'archived'  => 'danger',
+                'archived' => 'danger',
             ])
         ;
         yield DateTimeField::new('publishedAt', 'Publiée le')
@@ -120,9 +120,9 @@ class PageCrudController extends AbstractCrudController
     {
         return $filters
             ->add(ChoiceFilter::new('status')->setChoices([
-                'Brouillon'  => 'draft',
-                'Publiée'    => 'published',
-                'Archivée'   => 'archived',
+                'Brouillon' => 'draft',
+                'Publiée' => 'published',
+                'Archivée' => 'archived',
             ]))
         ;
     }
@@ -139,7 +139,7 @@ class PageCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         /** @var Page $page */
-        $page   = $context->getEntity()->getInstance();
+        $page = $context->getEntity()->getInstance();
         $pageId = $page->getId();
 
         $entries = $pageHistoryRepo->findHistoryForPage($page);
@@ -178,26 +178,26 @@ class PageCrudController extends AbstractCrudController
             );
 
             $histEntry = [
-                'revision'  => $entry,
-                'diff'      => $diff,
+                'revision' => $entry,
+                'diff' => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            if ($entry->getRevisionStatus() === PageHistory::STATUS_PENDING) {
+            if (PageHistory::STATUS_PENDING === $entry->getRevisionStatus()) {
                 $histEntry['approuverUrl'] = $adminUrlGenerator
                     ->setController(self::class)
                     ->setAction('approuverHistoriquePage')
                     ->setEntityId($pageId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId()
-                    . '&returnUrl=' . urlencode($historiqueUrl);
+                    .'?historyId='.$entry->getId()
+                    .'&returnUrl='.urlencode($historiqueUrl);
                 $histEntry['rejeterUrl'] = $adminUrlGenerator
                     ->setController(self::class)
                     ->setAction('rejeterHistoriquePage')
                     ->setEntityId($pageId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId()
-                    . '&returnUrl=' . urlencode($historiqueUrl);
+                    .'?historyId='.$entry->getId()
+                    .'&returnUrl='.urlencode($historiqueUrl);
             }
 
             $restaurable = [PageHistory::STATUS_APPROVED, PageHistory::STATUS_AUTO_APPROVED];
@@ -207,16 +207,16 @@ class PageCrudController extends AbstractCrudController
                     ->setAction('restaurerHistoriquePage')
                     ->setEntityId($pageId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId();
+                    .'?historyId='.$entry->getId();
             }
 
             $historique[] = $histEntry;
         }
 
         return $this->render('admin/page/historique.html.twig', [
-            'page'       => $page,
+            'page' => $page,
             'historique' => $historique,
-            'editUrl'    => $editUrl,
+            'editUrl' => $editUrl,
         ]);
     }
 
@@ -231,9 +231,9 @@ class PageCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $pageHistoryRepo->find($historyId);
+        $history = $pageHistoryRepo->find($historyId);
 
-        if (!$history || $history->getRevisionStatus() !== PageHistory::STATUS_PENDING) {
+        if (!$history || PageHistory::STATUS_PENDING !== $history->getRevisionStatus()) {
             $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
             $returnUrl = $context->getRequest()->query->get('returnUrl');
 
@@ -263,9 +263,9 @@ class PageCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $pageHistoryRepo->find($historyId);
+        $history = $pageHistoryRepo->find($historyId);
 
-        if (!$history || $history->getRevisionStatus() !== PageHistory::STATUS_PENDING) {
+        if (!$history || PageHistory::STATUS_PENDING !== $history->getRevisionStatus()) {
             $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
             $returnUrl = $context->getRequest()->query->get('returnUrl');
 
@@ -296,8 +296,8 @@ class PageCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('CONTENT_MANAGER');
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $pageHistoryRepo->find($historyId);
-        $pageId    = $context->getEntity()->getInstance()?->getId();
+        $history = $pageHistoryRepo->find($historyId);
+        $pageId = $context->getEntity()->getInstance()?->getId();
 
         $returnUrl = $adminUrlGenerator
             ->setController(self::class)
@@ -324,7 +324,7 @@ class PageCrudController extends AbstractCrudController
     /**
      * Intercepte la mise à jour pour gérer les révisions.
      * - ROLE_FORMATEUR (sans ROLE_ADMIN) : révision PENDING, contenu live inchangé
-     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision APPROVED, contenu live mis à jour
+     * - ROLE_ADMIN / ROLE_SUPER_ADMIN : révision APPROVED, contenu live mis à jour.
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
@@ -337,8 +337,9 @@ class PageCrudController extends AbstractCrudController
             $revision = $this->revisionService->createRevision($entityInstance, $user, false);
             $entityManager->refresh($entityInstance);
             $entityManager->flush();
-            if ($revision === null) {
+            if (null === $revision) {
                 $this->addFlash('info', 'Aucune modification détectée, la page n\'a pas été mise à jour.');
+
                 return;
             }
             $this->revisionService->notifyAdmins($revision);

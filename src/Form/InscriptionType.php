@@ -20,29 +20,29 @@ class InscriptionType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label'    => 'Nom',
-                'attr'     => ['placeholder' => 'Votre nom'],
+                'label' => 'Nom',
+                'attr' => ['placeholder' => 'Votre nom'],
             ])
             ->add('prenom', TextType::class, [
-                'label'    => 'Prénom',
-                'attr'     => ['placeholder' => 'Votre prénom'],
+                'label' => 'Prénom',
+                'attr' => ['placeholder' => 'Votre prénom'],
             ])
             ->add('email', EmailType::class, [
-                'label'    => 'Adresse e-mail',
-                'attr'     => ['placeholder' => 'votre@email.com'],
+                'label' => 'Adresse e-mail',
+                'attr' => ['placeholder' => 'votre@email.com'],
             ])
             ->add('telephone', TelType::class, [
-                'label'    => 'Téléphone',
-                'attr'     => ['placeholder' => '+32 4xx xx xx xx'],
+                'label' => 'Téléphone',
+                'attr' => ['placeholder' => '+32 4xx xx xx xx'],
             ])
             ->add('age', IntegerType::class, [
-                'label'    => 'Âge',
-                'attr'     => ['placeholder' => 'Votre âge', 'min' => 16, 'max' => 99],
+                'label' => 'Âge',
+                'attr' => ['placeholder' => 'Votre âge', 'min' => 16, 'max' => 99],
             ])
             ->add('message', TextareaType::class, [
-                'label'    => 'Message (optionnel)',
+                'label' => 'Message (optionnel)',
                 'required' => false,
-                'attr'     => ['placeholder' => 'Informations complémentaires…', 'rows' => 3],
+                'attr' => ['placeholder' => 'Informations complémentaires…', 'rows' => 3],
             ])
         ;
     }
