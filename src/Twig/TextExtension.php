@@ -22,11 +22,11 @@ class TextExtension extends AbstractExtension
 
     /**
      * Décode les entités HTML puis supprime toutes les balises.
-     * Exemple : "&lt;h2&gt;Titre&lt;/h2&gt;" → "Titre"
+     * Exemple : "&lt;h2&gt;Titre&lt;/h2&gt;" → "Titre".
      */
     public function plainText(?string $html): string
     {
-        if ($html === null || $html === '') {
+        if (null === $html || '' === $html) {
             return '';
         }
 

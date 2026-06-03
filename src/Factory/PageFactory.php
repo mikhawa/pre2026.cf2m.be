@@ -45,32 +45,32 @@ final class PageFactory extends PersistentObjectFactory
     {
         return function (): array {
             $title = self::faker()->randomElement(self::TITRES);
-            $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
-                . '-' . self::faker()->unique()->numberBetween(1, 99999);
+            $slug = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
+                .'-'.self::faker()->unique()->numberBetween(1, 99999);
 
             return [
-                'title'       => $title,
-                'slug'        => $slug,
-                'content'     => '<p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(300) . '</p><p>' . self::faker()->realText(200) . '</p>',
-                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                'title' => $title,
+                'slug' => $slug,
+                'content' => '<p>'.self::faker()->realText(300).'</p><p>'.self::faker()->realText(300).'</p><p>'.self::faker()->realText(200).'</p>',
+                'createdAt' => \DateTimeImmutable::createFromMutable(
                     self::faker()->dateTimeBetween('-3 years', '-1 year')
                 ),
-                'status'      => self::faker()->randomElement(['draft', 'published']),
+                'status' => self::faker()->randomElement(['draft', 'published']),
                 'publishedAt' => null,
             ];
         };
     }
 
     /**
-     * État : page publiée
+     * État : page publiée.
      */
     public function publiee(): static
     {
         return $this->with([
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween('-3 years', '-1 year')
             ),
-            'status'      => 'published',
+            'status' => 'published',
             'publishedAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween('-3 months', 'now')
             ),

@@ -54,19 +54,19 @@ class TwoFactorEmailService
 
         $user->setTwoFactorCode($code);
         $user->setTwoFactorCodeExpiresAt(
-            new \DateTimeImmutable('+' . self::CODE_TTL_MINUTES . ' minutes')
+            new \DateTimeImmutable('+'.self::CODE_TTL_MINUTES.' minutes')
         );
         $this->em->flush();
 
         $email = (new TemplatedEmail())
             ->from(new Address($this->mailFrom, 'CF2m — Sécurité'))
             ->to((string) $user->getEmail())
-            ->subject('[CF2m] Votre code de connexion : ' . $code)
+            ->subject('[CF2m] Votre code de connexion : '.$code)
             ->htmlTemplate('emails/two_factor_code.html.twig')
             ->context([
-                'user'    => $user,
-                'code'    => $code,
-                'ttl'     => self::CODE_TTL_MINUTES,
+                'user' => $user,
+                'code' => $code,
+                'ttl' => self::CODE_TTL_MINUTES,
             ]);
 
         $this->mailer->send($email);
@@ -80,10 +80,10 @@ class TwoFactorEmailService
     public function validateCode(User $user, string $code): bool
     {
         $storedCode = $user->getTwoFactorCode();
-        $expiresAt  = $user->getTwoFactorCodeExpiresAt();
+        $expiresAt = $user->getTwoFactorCodeExpiresAt();
 
         // Pas de code en attente
-        if ($storedCode === null || $expiresAt === null) {
+        if (null === $storedCode || null === $expiresAt) {
             return false;
         }
 

@@ -54,23 +54,23 @@ class UserCrudController extends AbstractCrudController
             // ROLE_PEDAGO ne peut pas créer un utilisateur ROLE_ADMIN ou ROLE_SUPER_ADMIN
             $roles = array_values(array_filter(
                 $entityInstance->getRoles(),
-                static fn(string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
+                static fn (string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
             ));
             $entityInstance->setRoles($roles);
         } elseif (!$this->isGranted('ROLE_SUPER_ADMIN')) {
             // ROLE_ADMIN ne peut pas créer un utilisateur ROLE_SUPER_ADMIN
             $roles = array_values(array_filter(
                 $entityInstance->getRoles(),
-                static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
+                static fn (string $r) => 'ROLE_SUPER_ADMIN' !== $r
             ));
             $entityInstance->setRoles($roles);
         }
 
-        if ($entityInstance->getStatus() === 2) {
+        if (2 === $entityInstance->getStatus()) {
             // Banni à la création : mot de passe inutilisable, aucun mail envoyé
             $entityInstance->setPassword(bin2hex(random_bytes(32)));
             parent::persistEntity($entityManager, $entityInstance);
-        } elseif ($entityInstance->getStatus() === 0) {
+        } elseif (0 === $entityInstance->getStatus()) {
             // Mot de passe placeholder : sera remplacé à l'activation
             $entityInstance->setPassword(bin2hex(random_bytes(32)));
             $token = bin2hex(random_bytes(32));
@@ -85,7 +85,7 @@ class UserCrudController extends AbstractCrudController
                     ->subject('Activez votre compte CF2m')
                     ->htmlTemplate('emails/user_activation_admin.html.twig')
                     ->context([
-                        'user'  => $entityInstance,
+                        'user' => $entityInstance,
                         'token' => $token,
                     ])
             );
@@ -104,7 +104,7 @@ class UserCrudController extends AbstractCrudController
                     ->subject('Bienvenue sur CF2m — vos identifiants de connexion')
                     ->htmlTemplate('emails/user_bienvenue.html.twig')
                     ->context([
-                        'user'          => $entityInstance,
+                        'user' => $entityInstance,
                         'plainPassword' => $plainPassword,
                     ])
             );
@@ -158,14 +158,14 @@ class UserCrudController extends AbstractCrudController
                 // ROLE_PEDAGO ne peut pas assigner ROLE_ADMIN ni ROLE_SUPER_ADMIN
                 $roles = array_values(array_filter(
                     $entityInstance->getRoles(),
-                    static fn(string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
+                    static fn (string $r) => !in_array($r, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)
                 ));
                 $entityInstance->setRoles($roles);
             } elseif (!$this->isGranted('ROLE_SUPER_ADMIN')) {
                 // ROLE_ADMIN ne peut pas assigner ROLE_SUPER_ADMIN
                 $roles = array_values(array_filter(
                     $entityInstance->getRoles(),
-                    static fn(string $r) => $r !== 'ROLE_SUPER_ADMIN'
+                    static fn (string $r) => 'ROLE_SUPER_ADMIN' !== $r
                 ));
                 $entityInstance->setRoles($roles);
             }
@@ -185,23 +185,23 @@ class UserCrudController extends AbstractCrudController
         $isFormPage = in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT], true);
         $rolesChoices = (!$isFormPage || $this->isGranted('ROLE_SUPER_ADMIN'))
             ? [
-                'Utilisateur'    => 'ROLE_USER',
-                'Stagiaire'      => 'ROLE_STAGIAIRE',
-                'Formateur'      => 'ROLE_FORMATEUR',
-                'Pédago'         => 'ROLE_PEDAGO',
+                'Utilisateur' => 'ROLE_USER',
+                'Stagiaire' => 'ROLE_STAGIAIRE',
+                'Formateur' => 'ROLE_FORMATEUR',
+                'Pédago' => 'ROLE_PEDAGO',
                 'Administrateur' => 'ROLE_ADMIN',
-                'Super Admin'    => 'ROLE_SUPER_ADMIN',
+                'Super Admin' => 'ROLE_SUPER_ADMIN',
             ]
             : ($isFormPage && $this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')
                 ? [
-                    'Stagiaire'      => 'ROLE_STAGIAIRE',
-                    'Formateur'      => 'ROLE_FORMATEUR',
-                    'Pédago'         => 'ROLE_PEDAGO',
+                    'Stagiaire' => 'ROLE_STAGIAIRE',
+                    'Formateur' => 'ROLE_FORMATEUR',
+                    'Pédago' => 'ROLE_PEDAGO',
                 ]
                 : [
-                    'Stagiaire'      => 'ROLE_STAGIAIRE',
-                    'Formateur'      => 'ROLE_FORMATEUR',
-                    'Pédago'         => 'ROLE_PEDAGO',
+                    'Stagiaire' => 'ROLE_STAGIAIRE',
+                    'Formateur' => 'ROLE_FORMATEUR',
+                    'Pédago' => 'ROLE_PEDAGO',
                     'Administrateur' => 'ROLE_ADMIN',
                 ]
             );
@@ -211,18 +211,18 @@ class UserCrudController extends AbstractCrudController
             ->allowMultipleChoices()
             ->renderAsBadges([
                 'ROLE_SUPER_ADMIN' => 'danger',
-                'ROLE_ADMIN'       => 'warning',
-                'ROLE_PEDAGO'      => 'primary',
-                'ROLE_FORMATEUR'   => 'info',
-                'ROLE_STAGIAIRE'   => 'success',
-                'ROLE_USER'        => 'secondary',
+                'ROLE_ADMIN' => 'warning',
+                'ROLE_PEDAGO' => 'primary',
+                'ROLE_FORMATEUR' => 'info',
+                'ROLE_STAGIAIRE' => 'success',
+                'ROLE_USER' => 'secondary',
             ])
         ;
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
                 'Non activé' => 0,
-                'Activé'     => 1,
-                'Banni'      => 2,
+                'Activé' => 1,
+                'Banni' => 2,
             ])
             ->renderAsBadges([
                 0 => 'secondary',
@@ -256,15 +256,15 @@ class UserCrudController extends AbstractCrudController
     {
         return $filters
             ->add(ChoiceFilter::new('roles')->setChoices([
-                'Super Admin'    => 'ROLE_SUPER_ADMIN',
+                'Super Admin' => 'ROLE_SUPER_ADMIN',
                 'Administrateur' => 'ROLE_ADMIN',
-                'Formateur'      => 'ROLE_FORMATEUR',
-                'Stagiaire'      => 'ROLE_STAGIAIRE',
+                'Formateur' => 'ROLE_FORMATEUR',
+                'Stagiaire' => 'ROLE_STAGIAIRE',
             ]))
             ->add(ChoiceFilter::new('status', 'Statut')->setChoices([
                 'Non activé' => 0,
-                'Activé'     => 1,
-                'Banni'      => 2,
+                'Activé' => 1,
+                'Banni' => 2,
             ]))
         ;
     }

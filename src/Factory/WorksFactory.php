@@ -50,25 +50,25 @@ final class WorksFactory extends PersistentObjectFactory
     {
         return function (): array {
             $title = self::faker()->randomElement(self::TITRES);
-            $slug  = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
-                . '-' . self::faker()->unique()->numberBetween(1, 99999);
+            $slug = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title) ?? '', '-'))
+                .'-'.self::faker()->unique()->numberBetween(1, 99999);
 
             return [
-                'title'       => $title,
-                'slug'        => $slug,
+                'title' => $title,
+                'slug' => $slug,
                 'description' => self::faker()->realText(400),
-                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                'createdAt' => \DateTimeImmutable::createFromMutable(
                     self::faker()->dateTimeBetween('-2 months', 'now')
                 ),
-                'status'      => self::faker()->randomElement(['draft', 'published', 'archived']),
+                'status' => self::faker()->randomElement(['draft', 'published', 'archived']),
                 'publishedAt' => null,
-                'formation'   => FormationFactory::new(),
+                'formation' => FormationFactory::new(),
             ];
         };
     }
 
     /**
-     * État : travail publié (createdAt et publishedAt cohérents, publishedAt > createdAt)
+     * État : travail publié (createdAt et publishedAt cohérents, publishedAt > createdAt).
      */
     public function publie(): static
     {
@@ -77,8 +77,8 @@ final class WorksFactory extends PersistentObjectFactory
         );
 
         return $this->with([
-            'status'      => 'published',
-            'createdAt'   => $createdAt,
+            'status' => 'published',
+            'createdAt' => $createdAt,
             'publishedAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween(
                     \DateTime::createFromImmutable($createdAt),
@@ -89,7 +89,7 @@ final class WorksFactory extends PersistentObjectFactory
     }
 
     /**
-     * État : travail en brouillon
+     * État : travail en brouillon.
      */
     public function brouillon(): static
     {

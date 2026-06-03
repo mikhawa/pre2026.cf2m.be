@@ -45,10 +45,10 @@ class RevisionsPendantesController extends AbstractCrudController
 
         // ── Formations ─────────────────────────────────────────────────────
         foreach ($formationHistoryRepo->findAllPending() as $pending) {
-            $after       = $revisionService->snapshotFromFormationHistory($pending);
-            $prevEntry   = $formationHistoryRepo->findByVersion($pending->getFormation(), $pending->getVersion() - 1);
-            $before      = $prevEntry ? $revisionService->snapshotFromFormationHistory($prevEntry) : null;
-            $diff        = $revisionService->buildTypedHistoryDiffHtml($after, $before);
+            $after = $revisionService->snapshotFromFormationHistory($pending);
+            $prevEntry = $formationHistoryRepo->findByVersion($pending->getFormation(), $pending->getVersion() - 1);
+            $before = $prevEntry ? $revisionService->snapshotFromFormationHistory($prevEntry) : null;
+            $diff = $revisionService->buildTypedHistoryDiffHtml($after, $before);
             $formationId = $pending->getFormation()->getId();
 
             $historiqueUrl = $adminUrlGenerator
@@ -62,35 +62,35 @@ class RevisionsPendantesController extends AbstractCrudController
                 ->setAction('approuverHistoriqueFormation')
                 ->setEntityId($formationId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $rejeterUrl = $adminUrlGenerator
                 ->setController(FormationCrudController::class)
                 ->setAction('rejeterHistoriqueFormation')
                 ->setEntityId($formationId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $entries[] = [
-                'type'          => 'Formation',
-                'title'         => $pending->getTitle(),
-                'revision'      => $pending,
-                'diff'          => $diff,
+                'type' => 'Formation',
+                'title' => $pending->getTitle(),
+                'revision' => $pending,
+                'diff' => $diff,
                 'historiqueUrl' => $historiqueUrl,
-                'approuverUrl'  => $approuverUrl,
-                'rejeterUrl'    => $rejeterUrl,
+                'approuverUrl' => $approuverUrl,
+                'rejeterUrl' => $rejeterUrl,
             ];
         }
 
         // ── Pages ──────────────────────────────────────────────────────────
         foreach ($pageHistoryRepo->findAllPending() as $pending) {
-            $after     = $revisionService->snapshotFromPageHistory($pending);
+            $after = $revisionService->snapshotFromPageHistory($pending);
             $prevEntry = $pageHistoryRepo->findByVersion($pending->getPage(), $pending->getVersion() - 1);
-            $before    = $prevEntry ? $revisionService->snapshotFromPageHistory($prevEntry) : null;
-            $diff      = $revisionService->buildTypedHistoryDiffHtml($after, $before);
-            $pageId    = $pending->getPage()->getId();
+            $before = $prevEntry ? $revisionService->snapshotFromPageHistory($prevEntry) : null;
+            $diff = $revisionService->buildTypedHistoryDiffHtml($after, $before);
+            $pageId = $pending->getPage()->getId();
 
             $historiqueUrl = $adminUrlGenerator
                 ->setController(PageCrudController::class)
@@ -103,35 +103,35 @@ class RevisionsPendantesController extends AbstractCrudController
                 ->setAction('approuverHistoriquePage')
                 ->setEntityId($pageId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $rejeterUrl = $adminUrlGenerator
                 ->setController(PageCrudController::class)
                 ->setAction('rejeterHistoriquePage')
                 ->setEntityId($pageId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $entries[] = [
-                'type'          => 'Page',
-                'title'         => $pending->getTitle(),
-                'revision'      => $pending,
-                'diff'          => $diff,
+                'type' => 'Page',
+                'title' => $pending->getTitle(),
+                'revision' => $pending,
+                'diff' => $diff,
                 'historiqueUrl' => $historiqueUrl,
-                'approuverUrl'  => $approuverUrl,
-                'rejeterUrl'    => $rejeterUrl,
+                'approuverUrl' => $approuverUrl,
+                'rejeterUrl' => $rejeterUrl,
             ];
         }
 
         // ── Works ──────────────────────────────────────────────────────────
         foreach ($worksHistoryRepo->findAllPending() as $pending) {
-            $after     = $revisionService->snapshotFromWorksHistory($pending);
+            $after = $revisionService->snapshotFromWorksHistory($pending);
             $prevEntry = $worksHistoryRepo->findByVersion($pending->getWorks(), $pending->getVersion() - 1);
-            $before    = $prevEntry ? $revisionService->snapshotFromWorksHistory($prevEntry) : null;
-            $diff      = $revisionService->buildTypedHistoryDiffHtml($after, $before);
-            $worksId   = $pending->getWorks()->getId();
+            $before = $prevEntry ? $revisionService->snapshotFromWorksHistory($prevEntry) : null;
+            $diff = $revisionService->buildTypedHistoryDiffHtml($after, $before);
+            $worksId = $pending->getWorks()->getId();
 
             $historiqueUrl = $adminUrlGenerator
                 ->setController(WorksCrudController::class)
@@ -144,25 +144,25 @@ class RevisionsPendantesController extends AbstractCrudController
                 ->setAction('approuverHistoriqueWorks')
                 ->setEntityId($worksId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $rejeterUrl = $adminUrlGenerator
                 ->setController(WorksCrudController::class)
                 ->setAction('rejeterHistoriqueWorks')
                 ->setEntityId($worksId)
                 ->generateUrl()
-                . '?historyId=' . $pending->getId()
-                . '&returnUrl=' . urlencode($returnUrl);
+                .'?historyId='.$pending->getId()
+                .'&returnUrl='.urlencode($returnUrl);
 
             $entries[] = [
-                'type'          => 'Works',
-                'title'         => $pending->getTitle(),
-                'revision'      => $pending,
-                'diff'          => $diff,
+                'type' => 'Works',
+                'title' => $pending->getTitle(),
+                'revision' => $pending,
+                'diff' => $diff,
                 'historiqueUrl' => $historiqueUrl,
-                'approuverUrl'  => $approuverUrl,
-                'rejeterUrl'    => $rejeterUrl,
+                'approuverUrl' => $approuverUrl,
+                'rejeterUrl' => $rejeterUrl,
             ];
         }
 

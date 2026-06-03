@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Works;
 use App\Entity\WorksHistory;
+use App\Field\SunEditorField;
 use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use Symfony\Component\Translation\TranslatableMessage;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -26,11 +26,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use App\Field\SunEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class WorksCrudController extends AbstractCrudController
 {
@@ -113,7 +113,7 @@ class WorksCrudController extends AbstractCrudController
     /**
      * Empêche ROLE_PEDAGO, les stagiaires hors de leur works, et les formateurs non-responsables d'éditer.
      */
-    public function edit(AdminContext $context): KeyValueStore|\Symfony\Component\HttpFoundation\Response
+    public function edit(AdminContext $context): KeyValueStore|Response
     {
         // ROLE_PEDAGO : lecture seule
         if ($this->isGranted('ROLE_PEDAGO') && !$this->isGranted('ROLE_ADMIN')) {
@@ -124,12 +124,12 @@ class WorksCrudController extends AbstractCrudController
         $works = $context->getEntity()->getInstance();
 
         if (!$this->isGranted('ROLE_FORMATEUR')) {
-            if ($works !== null && !$works->getUsers()->contains($this->getUser())) {
+            if (null !== $works && !$works->getUsers()->contains($this->getUser())) {
                 throw $this->createAccessDeniedException('Vous n\'êtes pas étudiant de ce work.');
             }
         } elseif (!$this->isGranted('ROLE_ADMIN')) {
             // Formateur non-admin : doit être responsable de la formation parente
-            if ($works !== null && !$this->isGranted('WORKS_APPROVE', $works)) {
+            if (null !== $works && !$this->isGranted('WORKS_APPROVE', $works)) {
                 throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de ce work.');
             }
         }
@@ -159,18 +159,19 @@ class WorksCrudController extends AbstractCrudController
                         ->andWhere('r_form.id = :userId')
                         ->setParameter('userId', $this->getUser()?->getId());
                 }
+
                 return $qb;
             });
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
-                'Brouillon'  => 'draft',
-                'Publié'     => 'published',
-                'Archivé'    => 'archived',
+                'Brouillon' => 'draft',
+                'Publié' => 'published',
+                'Archivé' => 'archived',
             ])
             ->renderAsBadges([
-                'draft'     => 'secondary',
+                'draft' => 'secondary',
                 'published' => 'success',
-                'archived'  => 'danger',
+                'archived' => 'danger',
             ])
         ;
         yield DateTimeField::new('publishedAt', 'Publié le')
@@ -199,9 +200,9 @@ class WorksCrudController extends AbstractCrudController
     {
         return $filters
             ->add(ChoiceFilter::new('status')->setChoices([
-                'Brouillon'  => 'draft',
-                'Publié'     => 'published',
-                'Archivé'    => 'archived',
+                'Brouillon' => 'draft',
+                'Publié' => 'published',
+                'Archivé' => 'archived',
             ]))
         ;
     }
@@ -218,7 +219,7 @@ class WorksCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
 
         /** @var Works $works */
-        $works   = $context->getEntity()->getInstance();
+        $works = $context->getEntity()->getInstance();
         $worksId = $works->getId();
 
         $entries = $worksHistoryRepo->findHistoryForWorks($works);
@@ -257,26 +258,26 @@ class WorksCrudController extends AbstractCrudController
             );
 
             $histEntry = [
-                'revision'  => $entry,
-                'diff'      => $diff,
+                'revision' => $entry,
+                'diff' => $diff,
                 'isCurrent' => $isCurrent,
             ];
 
-            if ($entry->getRevisionStatus() === WorksHistory::STATUS_PENDING) {
+            if (WorksHistory::STATUS_PENDING === $entry->getRevisionStatus()) {
                 $histEntry['approuverUrl'] = $adminUrlGenerator
                     ->setController(self::class)
                     ->setAction('approuverHistoriqueWorks')
                     ->setEntityId($worksId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId()
-                    . '&returnUrl=' . urlencode($historiqueUrl);
+                    .'?historyId='.$entry->getId()
+                    .'&returnUrl='.urlencode($historiqueUrl);
                 $histEntry['rejeterUrl'] = $adminUrlGenerator
                     ->setController(self::class)
                     ->setAction('rejeterHistoriqueWorks')
                     ->setEntityId($worksId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId()
-                    . '&returnUrl=' . urlencode($historiqueUrl);
+                    .'?historyId='.$entry->getId()
+                    .'&returnUrl='.urlencode($historiqueUrl);
             }
 
             $restaurable = [WorksHistory::STATUS_APPROVED, WorksHistory::STATUS_AUTO_APPROVED];
@@ -286,16 +287,16 @@ class WorksCrudController extends AbstractCrudController
                     ->setAction('restaurerHistoriqueWorks')
                     ->setEntityId($worksId)
                     ->generateUrl()
-                    . '?historyId=' . $entry->getId();
+                    .'?historyId='.$entry->getId();
             }
 
             $historique[] = $histEntry;
         }
 
         return $this->render('admin/works/historique.html.twig', [
-            'works'      => $works,
+            'works' => $works,
             'historique' => $historique,
-            'editUrl'    => $editUrl,
+            'editUrl' => $editUrl,
         ]);
     }
 
@@ -312,9 +313,9 @@ class WorksCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('WORKS_APPROVE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $worksHistoryRepo->find($historyId);
+        $history = $worksHistoryRepo->find($historyId);
 
-        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+        if (!$history || WorksHistory::STATUS_PENDING !== $history->getRevisionStatus()) {
             $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
             $returnUrl = $context->getRequest()->query->get('returnUrl');
 
@@ -346,9 +347,9 @@ class WorksCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('WORKS_REJECT', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $worksHistoryRepo->find($historyId);
+        $history = $worksHistoryRepo->find($historyId);
 
-        if (!$history || $history->getRevisionStatus() !== WorksHistory::STATUS_PENDING) {
+        if (!$history || WorksHistory::STATUS_PENDING !== $history->getRevisionStatus()) {
             $this->addFlash('danger', 'Révision introuvable ou déjà traitée.');
             $returnUrl = $context->getRequest()->query->get('returnUrl');
 
@@ -381,8 +382,8 @@ class WorksCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('WORKS_RESTORE', $works);
 
         $historyId = (int) $context->getRequest()->query->get('historyId');
-        $history   = $worksHistoryRepo->find($historyId);
-        $worksId   = $context->getEntity()->getInstance()?->getId();
+        $history = $worksHistoryRepo->find($historyId);
+        $worksId = $context->getEntity()->getInstance()?->getId();
 
         $returnUrl = $adminUrlGenerator
             ->setController(self::class)
@@ -410,7 +411,7 @@ class WorksCrudController extends AbstractCrudController
      * Intercepte la mise à jour pour gérer les révisions.
      * - ROLE_STAGIAIRE : révision PENDING, contenu live inchangé, notifie les formateurs
      * - ROLE_FORMATEUR / ROLE_ADMIN / ROLE_SUPER_ADMIN : révision auto-approuvée
-     * - ROLE_PEDAGO : accès refusé (lecture seule)
+     * - ROLE_PEDAGO : accès refusé (lecture seule).
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
@@ -429,7 +430,7 @@ class WorksCrudController extends AbstractCrudController
 
             $existingPending = $this->worksHistoryRepo->findPendingForWorks($entityInstance);
 
-            if ($existingPending !== null) {
+            if (null !== $existingPending) {
                 $this->revisionService->updatePendingTypedHistory($entityInstance);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
@@ -438,8 +439,9 @@ class WorksCrudController extends AbstractCrudController
                 $revision = $this->revisionService->createRevision($entityInstance, $user, false);
                 $entityManager->refresh($entityInstance);
                 $entityManager->flush();
-                if ($revision === null) {
+                if (null === $revision) {
                     $this->addFlash('info', 'Aucune modification détectée, le works n\'a pas été mis à jour.');
+
                     return;
                 }
                 $this->revisionService->notifyFormateurs($revision, $entityInstance);

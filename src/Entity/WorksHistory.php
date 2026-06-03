@@ -67,7 +67,7 @@ class WorksHistory
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        if ($this->createdAt === null) {
+        if (null === $this->createdAt) {
             $this->createdAt = new \DateTimeImmutable();
         }
     }
@@ -78,16 +78,16 @@ class WorksHistory
     public static function fromWorks(Works $works, User $author, int $version): self
     {
         $history = new self();
-        $history->works       = $works;
-        $history->version     = $version;
-        $history->title       = $works->getTitle();
-        $history->slug        = $works->getSlug();
+        $history->works = $works;
+        $history->version = $version;
+        $history->title = $works->getTitle();
+        $history->slug = $works->getSlug();
         $history->description = $works->getDescription();
-        $history->status      = $works->getStatus();
+        $history->status = $works->getStatus();
         $history->publishedAt = $works->getPublishedAt();
-        $history->formation   = $works->getFormation();
-        $history->createdBy   = $author;
-        $history->createdAt   = new \DateTimeImmutable();
+        $history->formation = $works->getFormation();
+        $history->createdBy = $author;
+        $history->createdAt = new \DateTimeImmutable();
 
         foreach ($works->getUsers() as $user) {
             $history->users->add($user);

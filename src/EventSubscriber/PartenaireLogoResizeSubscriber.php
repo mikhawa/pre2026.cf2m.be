@@ -18,7 +18,9 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
     private const MAX_WIDTH = 400;
     private const MAX_HEIGHT = 300;
 
-    public function __construct(private readonly StorageInterface $storage) {}
+    public function __construct(private readonly StorageInterface $storage)
+    {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -35,12 +37,12 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
 
         $filepath = $this->storage->resolvePath($partenaire, 'logoFile');
 
-        if ($filepath === null || !file_exists($filepath)) {
+        if (null === $filepath || !file_exists($filepath)) {
             return;
         }
 
         $info = @getimagesize($filepath);
-        if ($info === false) {
+        if (false === $info) {
             return;
         }
 
@@ -56,19 +58,19 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
 
         $src = match ($type) {
             IMAGETYPE_JPEG => imagecreatefromjpeg($filepath),
-            IMAGETYPE_PNG  => imagecreatefrompng($filepath),
-            IMAGETYPE_GIF  => imagecreatefromgif($filepath),
+            IMAGETYPE_PNG => imagecreatefrompng($filepath),
+            IMAGETYPE_GIF => imagecreatefromgif($filepath),
             IMAGETYPE_WEBP => imagecreatefromwebp($filepath),
-            default        => null,
+            default => null,
         };
 
-        if ($src === null || $src === false) {
+        if (null === $src || false === $src) {
             return;
         }
 
         $dest = imagecreatetruecolor($destWidth, $destHeight);
 
-        if ($type === IMAGETYPE_PNG || $type === IMAGETYPE_GIF) {
+        if (IMAGETYPE_PNG === $type || IMAGETYPE_GIF === $type) {
             imagealphablending($dest, false);
             imagesavealpha($dest, true);
             $transparent = imagecolorallocatealpha($dest, 0, 0, 0, 127);
@@ -79,10 +81,10 @@ class PartenaireLogoResizeSubscriber implements EventSubscriberInterface
 
         match ($type) {
             IMAGETYPE_JPEG => imagejpeg($dest, $filepath, 85),
-            IMAGETYPE_PNG  => imagepng($dest, $filepath),
-            IMAGETYPE_GIF  => imagegif($dest, $filepath),
+            IMAGETYPE_PNG => imagepng($dest, $filepath),
+            IMAGETYPE_GIF => imagegif($dest, $filepath),
             IMAGETYPE_WEBP => imagewebp($dest, $filepath, 85),
-            default        => null,
+            default => null,
         };
 
         imagedestroy($src);

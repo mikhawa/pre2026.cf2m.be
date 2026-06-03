@@ -97,7 +97,7 @@ class Formation
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        if ($this->createdAt === null) {
+        if (null === $this->createdAt) {
             $this->createdAt = new \DateTimeImmutable();
         }
     }
@@ -176,7 +176,7 @@ class Formation
     {
         $this->logoFile = $logoFile;
 
-        if ($logoFile !== null) {
+        if (null !== $logoFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
 

@@ -21,10 +21,10 @@ class WorksVoterTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturnCallback(
             fn (string $role) => match ($role) {
-                'ROLE_ADMIN'     => $isAdmin,
-                'ROLE_PEDAGO'    => $isPedago,
+                'ROLE_ADMIN' => $isAdmin,
+                'ROLE_PEDAGO' => $isPedago,
                 'ROLE_FORMATEUR' => $isFormateur,
-                default          => false,
+                default => false,
             }
         );
 
@@ -42,7 +42,7 @@ class WorksVoterTest extends TestCase
     private function worksWithFormation(?User $responsable = null): Works
     {
         $formation = new Formation();
-        if ($responsable !== null) {
+        if (null !== $responsable) {
             $formation->addResponsable($responsable);
         }
 
@@ -126,7 +126,7 @@ class WorksVoterTest extends TestCase
     public function testGrantedForFormateurResponsable(string $attribute): void
     {
         $voter = $this->buildVoter(isAdmin: false, isPedago: false, isFormateur: true);
-        $user  = new User();
+        $user = new User();
         $works = $this->worksWithFormation($user);
 
         self::assertSame(
@@ -193,9 +193,9 @@ class WorksVoterTest extends TestCase
     {
         return [
             'EDIT_AUTOAPPROVE' => [WorksVoter::EDIT_AUTOAPPROVE],
-            'APPROVE'          => [WorksVoter::APPROVE],
-            'REJECT'           => [WorksVoter::REJECT],
-            'RESTORE'          => [WorksVoter::RESTORE],
+            'APPROVE' => [WorksVoter::APPROVE],
+            'REJECT' => [WorksVoter::REJECT],
+            'RESTORE' => [WorksVoter::RESTORE],
         ];
     }
 }

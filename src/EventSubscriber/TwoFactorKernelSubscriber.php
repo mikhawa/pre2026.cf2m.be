@@ -62,13 +62,13 @@ class TwoFactorKernelSubscriber implements EventSubscriberInterface
         }
 
         // 2FA déjà validé pour cette session
-        if ($request->getSession()->get('2fa_verified') === true) {
+        if (true === $request->getSession()->get('2fa_verified')) {
             return;
         }
 
         // Vérifier si l'utilisateur est authentifié
         $token = $this->tokenStorage->getToken();
-        if ($token === null) {
+        if (null === $token) {
             return;
         }
 

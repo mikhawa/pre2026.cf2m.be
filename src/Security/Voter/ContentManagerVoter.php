@@ -28,7 +28,7 @@ class ContentManagerVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::CONTENT_MANAGER;
+        return self::CONTENT_MANAGER === $attribute;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool

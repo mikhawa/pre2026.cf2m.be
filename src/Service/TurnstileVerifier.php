@@ -18,23 +18,24 @@ class TurnstileVerifier
         private readonly HttpClientInterface $httpClient,
         #[Autowire(env: 'TURNSTILE_SECRET_KEY')]
         private readonly string $secretKey,
-    ) {}
+    ) {
+    }
 
     /**
      * Retourne true si le token Turnstile est valide.
      */
     public function verify(string $token, ?string $ip = null): bool
     {
-        if ($token === '') {
+        if ('' === $token) {
             return false;
         }
 
         $body = [
-            'secret'   => $this->secretKey,
+            'secret' => $this->secretKey,
             'response' => $token,
         ];
 
-        if ($ip !== null) {
+        if (null !== $ip) {
             $body['remoteip'] = $ip;
         }
 

@@ -27,7 +27,7 @@ final class RatingFactory extends PersistentObjectFactory
     {
         return [
             'value' => self::faker()->numberBetween(1, 5),
-            'user'  => UserFactory::new(),
+            'user' => UserFactory::new(),
         ];
     }
 

@@ -69,10 +69,10 @@ class CommentCrudController extends AbstractCrudController
     {
         yield TextareaField::new('content', 'Contenu');
         yield AssociationField::new('user', 'Utilisateur')
-            ->setFormTypeOption('disabled', $pageName === Crud::PAGE_EDIT)
+            ->setFormTypeOption('disabled', Crud::PAGE_EDIT === $pageName)
         ;
         yield AssociationField::new('works', 'Work')
-            ->setFormTypeOption('disabled', $pageName === Crud::PAGE_EDIT)
+            ->setFormTypeOption('disabled', Crud::PAGE_EDIT === $pageName)
         ;
         yield BooleanField::new('approved', 'Approuvé')
             ->renderAsSwitch(true)

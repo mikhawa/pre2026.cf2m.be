@@ -54,7 +54,7 @@ final class NavigationExtension extends AbstractExtension
      */
     public function getPublishedFormations(): array
     {
-        if ($this->formations === null) {
+        if (null === $this->formations) {
             $this->formations = $this->formationRepository->findAllPublished();
         }
 
@@ -69,7 +69,7 @@ final class NavigationExtension extends AbstractExtension
      */
     public function getPublishedPages(): array
     {
-        if ($this->pages === null) {
+        if (null === $this->pages) {
             $this->pages = $this->pageRepository->findAllPublished();
         }
 
@@ -82,7 +82,7 @@ final class NavigationExtension extends AbstractExtension
      */
     public function getPendingRevisionsCount(): int
     {
-        if ($this->pendingRevisionsCount === null) {
+        if (null === $this->pendingRevisionsCount) {
             $this->pendingRevisionsCount = $this->formationHistoryRepo->countPending()
                 + $this->pageHistoryRepo->countPending()
                 + $this->worksHistoryRepo->countPending();

@@ -162,9 +162,9 @@ class RevisionService
 
         match ($type) {
             'formation' => $this->applyFormation($entityId, $data, $reviewer),
-            'page'      => $this->applyPage($entityId, $data),
-            'works'     => $this->applyWorks($entityId, $data),
-            default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
+            'page' => $this->applyPage($entityId, $data),
+            'works' => $this->applyWorks($entityId, $data),
+            default => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
         };
 
         // Double écriture : approbation dans la table typée (transition Phase 3)
@@ -204,9 +204,9 @@ class RevisionService
 
         match ($type) {
             'formation' => $this->applyFormation($entityId, $source->getData(), $reviewer),
-            'page'      => $this->applyPage($entityId, $source->getData()),
-            'works'     => $this->applyWorks($entityId, $source->getData()),
-            default     => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $type)),
+            'page' => $this->applyPage($entityId, $source->getData()),
+            'works' => $this->applyWorks($entityId, $source->getData()),
+            default => throw new \InvalidArgumentException(sprintf('Type inconnu : %s', $type)),
         };
 
         $this->em->flush();
@@ -237,9 +237,9 @@ class RevisionService
 
         match ($type) {
             'formation' => $this->applyFormation($entityId, $previousData),
-            'page'      => $this->applyPage($entityId, $previousData),
-            'works'     => $this->applyWorks($entityId, $previousData),
-            default     => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
+            'page' => $this->applyPage($entityId, $previousData),
+            'works' => $this->applyWorks($entityId, $previousData),
+            default => throw new \InvalidArgumentException(sprintf('Type d\'entité inconnu : %s', $type)),
         };
 
         $this->em->flush();
@@ -276,22 +276,22 @@ class RevisionService
     public function buildHistoryDiffHtml(Revision $revision): string
     {
         $before = $revision->getPreviousData();
-        $after  = $revision->getData();
+        $after = $revision->getData();
 
-        if ($before === null) {
+        if (null === $before) {
             return '<span class="badge bg-secondary">Création initiale</span>';
         }
 
         $labels = [
-            'title'          => 'Titre',
-            'slug'           => 'Slug',
-            'description'    => 'Description',
-            'content'        => 'Contenu',
-            'status'         => 'Statut',
-            'publishedAt'    => 'Date de publication',
-            'colorPrimary'   => 'Couleur primaire',
+            'title' => 'Titre',
+            'slug' => 'Slug',
+            'description' => 'Description',
+            'content' => 'Contenu',
+            'status' => 'Statut',
+            'publishedAt' => 'Date de publication',
+            'colorPrimary' => 'Couleur primaire',
             'colorSecondary' => 'Couleur secondaire',
-            'formationId'    => 'Formation (ID)',
+            'formationId' => 'Formation (ID)',
         ];
 
         $richFields = ['description', 'content'];
@@ -303,35 +303,35 @@ class RevisionService
                 continue;
             }
 
-            $label  = $labels[$key] ?? $key;
+            $label = $labels[$key] ?? $key;
             $isRich = in_array($key, $richFields, true);
             $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
         }
 
-        if ($changes === []) {
+        if ([] === $changes) {
             return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
         }
 
-        $uid = 'diff-' . $revision->getId();
+        $uid = 'diff-'.$revision->getId();
         $html = '<ul class="list-unstyled mb-0 small font-monospace">';
 
         foreach ($changes as $i => $c) {
             if ($c['rich']) {
-                $collapseId = $uid . '-' . $c['key'];
-                $oldFmt     = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
-                $newFmt     = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
+                $collapseId = $uid.'-'.$c['key'];
+                $oldFmt = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
+                $newFmt = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
                 $html .= sprintf(
                     '<li class="py-1 border-bottom border-light">'
-                    . '<span class="text-secondary fw-semibold">%s</span> '
-                    . '<button class="btn btn-link btn-sm p-0 text-decoration-none" '
-                    . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
-                    . 'aria-expanded="false">modifié ▾</button>'
-                    . '<div class="collapse mt-1" id="%s">'
-                    . '<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
-                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
-                    . '<pre class="p-2 bg-success-subtle text-success rounded small"'
-                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
-                    . '</div></li>',
+                    .'<span class="text-secondary fw-semibold">%s</span> '
+                    .'<button class="btn btn-link btn-sm p-0 text-decoration-none" '
+                    .'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                    .'aria-expanded="false">modifié ▾</button>'
+                    .'<div class="collapse mt-1" id="%s">'
+                    .'<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
+                    .' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    .'<pre class="p-2 bg-success-subtle text-success rounded small"'
+                    .' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    .'</div></li>',
                     htmlspecialchars($c['label']),
                     $collapseId, $collapseId,
                     htmlspecialchars($oldFmt['text']), $oldFmt['truncated'] ? "\n…" : '',
@@ -342,11 +342,11 @@ class RevisionService
                 $new = htmlspecialchars($this->truncateForDisplay((string) ($c['new'] ?? '—')));
                 $html .= sprintf(
                     '<li class="py-1%s">'
-                    . '<span class="text-secondary fw-semibold">%s :</span> '
-                    . '<del class="text-danger me-1">%s</del>'
-                    . '<span class="text-muted me-1">→</span>'
-                    . '<ins class="text-success fw-semibold">%s</ins>'
-                    . '</li>',
+                    .'<span class="text-secondary fw-semibold">%s :</span> '
+                    .'<del class="text-danger me-1">%s</del>'
+                    .'<span class="text-muted me-1">→</span>'
+                    .'<ins class="text-success fw-semibold">%s</ins>'
+                    .'</li>',
                     $i < count($changes) - 1 ? ' border-bottom border-light' : '',
                     htmlspecialchars($c['label']),
                     $old,
@@ -367,15 +367,15 @@ class RevisionService
     public function buildDiffHtml(Revision $revision): string
     {
         $labels = [
-            'title'          => 'Titre',
-            'slug'           => 'Slug',
-            'description'    => 'Description',
-            'content'        => 'Contenu',
-            'status'         => 'Statut',
-            'publishedAt'    => 'Date de publication',
-            'colorPrimary'   => 'Couleur primaire',
+            'title' => 'Titre',
+            'slug' => 'Slug',
+            'description' => 'Description',
+            'content' => 'Contenu',
+            'status' => 'Statut',
+            'publishedAt' => 'Date de publication',
+            'colorPrimary' => 'Couleur primaire',
             'colorSecondary' => 'Couleur secondaire',
-            'formationId'    => 'Formation (ID)',
+            'formationId' => 'Formation (ID)',
         ];
 
         try {
@@ -391,12 +391,12 @@ class RevisionService
         $rows = '';
 
         foreach ($proposed as $key => $newVal) {
-            $label   = $labels[$key] ?? $key;
-            $oldVal  = $current[$key] ?? null;
+            $label = $labels[$key] ?? $key;
+            $oldVal = $current[$key] ?? null;
             $changed = $oldVal !== $newVal;
 
-            $isRich  = in_array($key, $richFields, true);
-            $rowBg   = $changed ? 'background:#fff3cd;' : '';
+            $isRich = in_array($key, $richFields, true);
+            $rowBg = $changed ? 'background:#fff3cd;' : '';
             $newBold = $changed ? 'font-weight:bold;' : '';
 
             if ($isRich) {
@@ -416,10 +416,10 @@ class RevisionService
 
             $rows .= sprintf(
                 '<tr style="%s">'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;font-weight:bold;white-space:nowrap;vertical-align:top">%s</td>'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;color:#6c757d;word-break:break-word;vertical-align:top">%s</td>'
-                . '<td style="padding:6px 10px;border:1px solid #dee2e6;%sword-break:break-word;vertical-align:top">%s</td>'
-                . '</tr>',
+                .'<td style="padding:6px 10px;border:1px solid #dee2e6;font-weight:bold;white-space:nowrap;vertical-align:top">%s</td>'
+                .'<td style="padding:6px 10px;border:1px solid #dee2e6;color:#6c757d;word-break:break-word;vertical-align:top">%s</td>'
+                .'<td style="padding:6px 10px;border:1px solid #dee2e6;%sword-break:break-word;vertical-align:top">%s</td>'
+                .'</tr>',
                 $rowBg,
                 htmlspecialchars($label),
                 $oldCell,
@@ -429,13 +429,13 @@ class RevisionService
         }
 
         return '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-            . '<thead><tr>'
-            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Champ</th>'
-            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Valeur actuelle</th>'
-            . '<th style="padding:8px 10px;border:1px solid #dee2e6;background:#fff3cd;text-align:left">Valeur proposée ✎</th>'
-            . '</tr></thead>'
-            . '<tbody>' . $rows . '</tbody>'
-            . '</table>';
+            .'<thead><tr>'
+            .'<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Champ</th>'
+            .'<th style="padding:8px 10px;border:1px solid #dee2e6;background:#f8f9fa;text-align:left">Valeur actuelle</th>'
+            .'<th style="padding:8px 10px;border:1px solid #dee2e6;background:#fff3cd;text-align:left">Valeur proposée ✎</th>'
+            .'</tr></thead>'
+            .'<tbody>'.$rows.'</tbody>'
+            .'</table>';
     }
 
     /**
@@ -445,7 +445,7 @@ class RevisionService
     {
         $clean = strip_tags($value);
 
-        return mb_strlen($clean) > $max ? mb_substr($clean, 0, $max) . '…' : $clean;
+        return mb_strlen($clean) > $max ? mb_substr($clean, 0, $max).'…' : $clean;
     }
 
     /**
@@ -468,13 +468,13 @@ class RevisionService
         $formatted = preg_replace('/<br\s*\/?>/i', "<br>\n", $formatted) ?? $formatted;
 
         $lines = explode("\n", $formatted);
-        $lines = array_values(array_filter($lines, static fn(string $l): bool => trim($l) !== ''));
+        $lines = array_values(array_filter($lines, static fn (string $l): bool => '' !== trim($l)));
 
         $truncated = count($lines) > $maxLines;
-        $visible   = array_slice($lines, 0, $maxLines);
+        $visible = array_slice($lines, 0, $maxLines);
 
         return [
-            'text'      => implode("\n", $visible),
+            'text' => implode("\n", $visible),
             'truncated' => $truncated,
         ];
     }
@@ -493,8 +493,8 @@ class RevisionService
         }
 
         $subject = $approved
-            ? '[CF2m] Votre révision a été approuvée — ' . $revision->getEntityTitle()
-            : '[CF2m] Votre révision a été rejetée — ' . $revision->getEntityTitle();
+            ? '[CF2m] Votre révision a été approuvée — '.$revision->getEntityTitle()
+            : '[CF2m] Votre révision a été rejetée — '.$revision->getEntityTitle();
 
         $email = (new TemplatedEmail())
             ->from(new Address($this->mailFrom, 'CF2m — Révisions'))
@@ -517,7 +517,7 @@ class RevisionService
     public function notifyFormateurs(Revision $revision, Works $works): void
     {
         $formation = $works->getFormation();
-        if ($formation === null) {
+        if (null === $formation) {
             return;
         }
 
@@ -590,7 +590,7 @@ class RevisionService
             return null;
         }
 
-        $conn  = $this->em->getConnection();
+        $conn = $this->em->getConnection();
         $table = $this->em->getClassMetadata($entity::class)->getTableName();
 
         $row = $conn->fetchAssociative(
@@ -604,7 +604,7 @@ class RevisionService
 
         // Convertit une chaîne datetime DB en ISO 8601 (même format que les snapshots)
         $fmtDate = static function (?string $val): ?string {
-            if ($val === null || $val === '') {
+            if (null === $val || '' === $val) {
                 return null;
             }
             try {
@@ -616,32 +616,32 @@ class RevisionService
 
         if ($entity instanceof Formation) {
             return [
-                'title'          => $row['title'] ?? null,
-                'slug'           => $row['slug'] ?? null,
-                'description'    => $row['description'] ?? null,
-                'status'         => $row['status'] ?? null,
-                'publishedAt'    => $fmtDate($row['published_at'] ?? null),
-                'colorPrimary'   => $row['color_primary'] ?? null,
+                'title' => $row['title'] ?? null,
+                'slug' => $row['slug'] ?? null,
+                'description' => $row['description'] ?? null,
+                'status' => $row['status'] ?? null,
+                'publishedAt' => $fmtDate($row['published_at'] ?? null),
+                'colorPrimary' => $row['color_primary'] ?? null,
                 'colorSecondary' => $row['color_secondary'] ?? null,
             ];
         }
 
         if ($entity instanceof Page) {
             return [
-                'title'       => $row['title'] ?? null,
-                'slug'        => $row['slug'] ?? null,
-                'content'     => $row['content'] ?? null,
-                'status'      => $row['status'] ?? null,
+                'title' => $row['title'] ?? null,
+                'slug' => $row['slug'] ?? null,
+                'content' => $row['content'] ?? null,
+                'status' => $row['status'] ?? null,
                 'publishedAt' => $fmtDate($row['published_at'] ?? null),
             ];
         }
 
         if ($entity instanceof Works) {
             return [
-                'title'       => $row['title'] ?? null,
-                'slug'        => $row['slug'] ?? null,
+                'title' => $row['title'] ?? null,
+                'slug' => $row['slug'] ?? null,
                 'description' => $row['description'] ?? null,
-                'status'      => $row['status'] ?? null,
+                'status' => $row['status'] ?? null,
                 'publishedAt' => $fmtDate($row['published_at'] ?? null),
                 'formationId' => $row['formation_id'] ?? null,
             ];
@@ -688,16 +688,16 @@ class RevisionService
     private function snapshotFormation(Formation $entity): array
     {
         return [
-            'title'             => $entity->getTitle(),
-            'slug'              => $entity->getSlug(),
-            'description'       => $entity->getDescription(),
+            'title' => $entity->getTitle(),
+            'slug' => $entity->getSlug(),
+            'description' => $entity->getDescription(),
             'descriptionCourte' => $entity->getDescriptionCourte(),
-            'logo'              => $entity->getLogo(),
-            'status'            => $entity->getStatus(),
-            'publishedAt'       => $entity->getPublishedAt()?->format('c'),
-            'colorPrimary'      => $entity->getColorPrimary(),
-            'colorSecondary'    => $entity->getColorSecondary(),
-            'responsables'      => $this->usersToSortedString($entity->getResponsables()),
+            'logo' => $entity->getLogo(),
+            'status' => $entity->getStatus(),
+            'publishedAt' => $entity->getPublishedAt()?->format('c'),
+            'colorPrimary' => $entity->getColorPrimary(),
+            'colorSecondary' => $entity->getColorSecondary(),
+            'responsables' => $this->usersToSortedString($entity->getResponsables()),
         ];
     }
 
@@ -709,12 +709,12 @@ class RevisionService
     private function snapshotPage(Page $entity): array
     {
         return [
-            'title'       => $entity->getTitle(),
-            'slug'        => $entity->getSlug(),
-            'content'     => $entity->getContent(),
-            'status'      => $entity->getStatus(),
+            'title' => $entity->getTitle(),
+            'slug' => $entity->getSlug(),
+            'content' => $entity->getContent(),
+            'status' => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
-            'users'       => $this->usersToSortedString($entity->getUsers()),
+            'users' => $this->usersToSortedString($entity->getUsers()),
         ];
     }
 
@@ -726,13 +726,13 @@ class RevisionService
     private function snapshotWorks(Works $entity): array
     {
         return [
-            'title'       => $entity->getTitle(),
-            'slug'        => $entity->getSlug(),
+            'title' => $entity->getTitle(),
+            'slug' => $entity->getSlug(),
             'description' => $entity->getDescription(),
-            'status'      => $entity->getStatus(),
+            'status' => $entity->getStatus(),
             'publishedAt' => $entity->getPublishedAt()?->format('c'),
             'formationId' => $entity->getFormation()?->getId(),
-            'users'       => $this->usersToSortedString($entity->getUsers()),
+            'users' => $this->usersToSortedString($entity->getUsers()),
         ];
     }
 
@@ -775,7 +775,7 @@ class RevisionService
         $entity->setColorPrimary($data['colorPrimary'] ?? null);
         $entity->setColorSecondary($data['colorSecondary'] ?? null);
         $entity->setUpdatedAt(new \DateTimeImmutable());
-        if ($reviewer !== null) {
+        if (null !== $reviewer) {
             $entity->setUpdatedBy($reviewer);
         }
     }
@@ -811,16 +811,16 @@ class RevisionService
     public function snapshotFromFormationHistory(FormationHistory $h): array
     {
         return [
-            'title'             => $h->getTitle(),
-            'slug'              => $h->getSlug(),
-            'description'       => $h->getDescription(),
+            'title' => $h->getTitle(),
+            'slug' => $h->getSlug(),
+            'description' => $h->getDescription(),
             'descriptionCourte' => $h->getDescriptionCourte(),
-            'logo'              => $h->getLogo(),
-            'status'            => $h->getStatus(),
-            'publishedAt'       => $h->getPublishedAt()?->format('c'),
-            'colorPrimary'      => $h->getColorPrimary(),
-            'colorSecondary'    => $h->getColorSecondary(),
-            'responsables'      => $this->usersToSortedString($h->getResponsables()),
+            'logo' => $h->getLogo(),
+            'status' => $h->getStatus(),
+            'publishedAt' => $h->getPublishedAt()?->format('c'),
+            'colorPrimary' => $h->getColorPrimary(),
+            'colorSecondary' => $h->getColorSecondary(),
+            'responsables' => $this->usersToSortedString($h->getResponsables()),
         ];
     }
 
@@ -832,12 +832,12 @@ class RevisionService
     public function snapshotFromPageHistory(PageHistory $h): array
     {
         return [
-            'title'       => $h->getTitle(),
-            'slug'        => $h->getSlug(),
-            'content'     => $h->getContent(),
-            'status'      => $h->getStatus(),
+            'title' => $h->getTitle(),
+            'slug' => $h->getSlug(),
+            'content' => $h->getContent(),
+            'status' => $h->getStatus(),
             'publishedAt' => $h->getPublishedAt()?->format('c'),
-            'users'       => $this->usersToSortedString($h->getUsers()),
+            'users' => $this->usersToSortedString($h->getUsers()),
         ];
     }
 
@@ -849,13 +849,13 @@ class RevisionService
     public function snapshotFromWorksHistory(WorksHistory $h): array
     {
         return [
-            'title'       => $h->getTitle(),
-            'slug'        => $h->getSlug(),
+            'title' => $h->getTitle(),
+            'slug' => $h->getSlug(),
             'description' => $h->getDescription(),
-            'status'      => $h->getStatus(),
+            'status' => $h->getStatus(),
             'publishedAt' => $h->getPublishedAt()?->format('c'),
             'formationId' => $h->getFormation()?->getId(),
-            'users'       => $this->usersToSortedString($h->getUsers()),
+            'users' => $this->usersToSortedString($h->getUsers()),
         ];
     }
 
@@ -870,54 +870,54 @@ class RevisionService
     public function buildTypedHistoryDiffHtml(array $after, ?array $before): string
     {
         $labels = [
-            'title'             => 'Titre',
-            'slug'              => 'Slug',
-            'description'       => 'Description',
+            'title' => 'Titre',
+            'slug' => 'Slug',
+            'description' => 'Description',
             'descriptionCourte' => 'Description courte',
-            'logo'              => 'Logo',
-            'content'           => 'Contenu',
-            'status'            => 'Statut',
-            'publishedAt'       => 'Date de publication',
-            'colorPrimary'      => 'Couleur primaire',
-            'colorSecondary'    => 'Couleur secondaire',
-            'formationId'       => 'Formation (ID)',
-            'responsables'      => 'Responsables',
-            'users'             => 'Participants',
+            'logo' => 'Logo',
+            'content' => 'Contenu',
+            'status' => 'Statut',
+            'publishedAt' => 'Date de publication',
+            'colorPrimary' => 'Couleur primaire',
+            'colorSecondary' => 'Couleur secondaire',
+            'formationId' => 'Formation (ID)',
+            'responsables' => 'Responsables',
+            'users' => 'Participants',
         ];
 
         $richFields = ['description', 'content'];
 
         // Cas création initiale : afficher tous les champs non vides comme "ajoutés"
-        if ($before === null) {
-            $uid  = 'diff-init-' . substr(md5(serialize($after)), 0, 8);
+        if (null === $before) {
+            $uid = 'diff-init-'.substr(md5(serialize($after)), 0, 8);
             $html = '<span class="badge bg-secondary mb-1">Création initiale</span>'
-                . '<ul class="list-unstyled mb-0 small font-monospace mt-1">';
+                .'<ul class="list-unstyled mb-0 small font-monospace mt-1">';
 
             $idx = 0;
-            $total = count(array_filter($after, static fn ($v): bool => $v !== null && $v !== ''));
+            $total = count(array_filter($after, static fn ($v): bool => null !== $v && '' !== $v));
 
             foreach ($after as $key => $val) {
-                if ($val === null || $val === '') {
+                if (null === $val || '' === $val) {
                     continue;
                 }
 
-                $label  = $labels[$key] ?? $key;
+                $label = $labels[$key] ?? $key;
                 $isRich = in_array($key, $richFields, true);
                 $isLast = ++$idx === $total;
 
                 if ($isRich) {
-                    $collapseId = $uid . '-' . $key;
-                    $fmt        = $this->formatRichFieldForDiff((string) $val);
+                    $collapseId = $uid.'-'.$key;
+                    $fmt = $this->formatRichFieldForDiff((string) $val);
                     $html .= sprintf(
                         '<li class="py-1%s">'
-                        . '<span class="text-secondary fw-semibold">%s</span> '
-                        . '<button class="btn btn-link btn-sm p-0 text-decoration-none text-success" '
-                        . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
-                        . 'aria-expanded="false">voir ▾</button>'
-                        . '<div class="collapse mt-1" id="%s">'
-                        . '<pre class="p-2 bg-success-subtle text-success rounded small"'
-                        . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
-                        . '</div></li>',
+                        .'<span class="text-secondary fw-semibold">%s</span> '
+                        .'<button class="btn btn-link btn-sm p-0 text-decoration-none text-success" '
+                        .'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                        .'aria-expanded="false">voir ▾</button>'
+                        .'<div class="collapse mt-1" id="%s">'
+                        .'<pre class="p-2 bg-success-subtle text-success rounded small"'
+                        .' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                        .'</div></li>',
                         $isLast ? '' : ' border-bottom border-light',
                         htmlspecialchars($label),
                         $collapseId,
@@ -928,9 +928,9 @@ class RevisionService
                 } else {
                     $html .= sprintf(
                         '<li class="py-1%s">'
-                        . '<span class="text-secondary fw-semibold">%s :</span> '
-                        . '<ins class="text-success fw-semibold">%s</ins>'
-                        . '</li>',
+                        .'<span class="text-secondary fw-semibold">%s :</span> '
+                        .'<ins class="text-success fw-semibold">%s</ins>'
+                        .'</li>',
                         $isLast ? '' : ' border-bottom border-light',
                         htmlspecialchars($label),
                         htmlspecialchars($this->truncateForDisplay((string) $val)),
@@ -952,18 +952,18 @@ class RevisionService
                 continue;
             }
 
-            $label    = $labels[$key] ?? $key;
-            $isRich   = in_array($key, $richFields, true);
+            $label = $labels[$key] ?? $key;
+            $isRich = in_array($key, $richFields, true);
             $changes[] = ['label' => $label, 'key' => $key, 'old' => $oldVal, 'new' => $newVal, 'rich' => $isRich];
         }
 
-        if ($changes === []) {
+        if ([] === $changes) {
             return '<span class="text-muted fst-italic small">Aucun changement détecté</span>';
         }
 
         $count = count($changes);
-        $uid   = 'diff-typed-' . substr(md5(serialize($after)), 0, 8);
-        $html  = sprintf(
+        $uid = 'diff-typed-'.substr(md5(serialize($after)), 0, 8);
+        $html = sprintf(
             '<p class="text-muted small mb-1">%d champ%s modifié%s</p>',
             $count,
             $count > 1 ? 's' : '',
@@ -973,21 +973,21 @@ class RevisionService
 
         foreach ($changes as $i => $c) {
             if ($c['rich']) {
-                $collapseId = $uid . '-' . $c['key'];
-                $oldFmt     = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
-                $newFmt     = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
+                $collapseId = $uid.'-'.$c['key'];
+                $oldFmt = $this->formatRichFieldForDiff((string) ($c['old'] ?? ''));
+                $newFmt = $this->formatRichFieldForDiff((string) ($c['new'] ?? ''));
                 $html .= sprintf(
                     '<li class="py-1 border-bottom border-light">'
-                    . '<span class="text-secondary fw-semibold">%s</span> '
-                    . '<button class="btn btn-link btn-sm p-0 text-decoration-none" '
-                    . 'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
-                    . 'aria-expanded="false">modifié ▾</button>'
-                    . '<div class="collapse mt-1" id="%s">'
-                    . '<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
-                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
-                    . '<pre class="p-2 bg-success-subtle text-success rounded small"'
-                    . ' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
-                    . '</div></li>',
+                    .'<span class="text-secondary fw-semibold">%s</span> '
+                    .'<button class="btn btn-link btn-sm p-0 text-decoration-none" '
+                    .'type="button" data-bs-toggle="collapse" data-bs-target="#%s" '
+                    .'aria-expanded="false">modifié ▾</button>'
+                    .'<div class="collapse mt-1" id="%s">'
+                    .'<pre class="p-2 mb-1 bg-danger-subtle text-danger rounded small mb-1"'
+                    .' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    .'<pre class="p-2 bg-success-subtle text-success rounded small"'
+                    .' style="white-space:pre-wrap;word-break:break-all;max-height:none;">%s%s</pre>'
+                    .'</div></li>',
                     htmlspecialchars($c['label']),
                     $collapseId, $collapseId,
                     htmlspecialchars($oldFmt['text']), $oldFmt['truncated'] ? "\n…" : '',
@@ -998,11 +998,11 @@ class RevisionService
                 $new = htmlspecialchars($this->truncateForDisplay((string) ($c['new'] ?? '—')));
                 $html .= sprintf(
                     '<li class="py-1%s">'
-                    . '<span class="text-secondary fw-semibold">%s :</span> '
-                    . '<del class="text-danger me-1">%s</del>'
-                    . '<span class="text-muted me-1">→</span>'
-                    . '<ins class="text-success fw-semibold">%s</ins>'
-                    . '</li>',
+                    .'<span class="text-secondary fw-semibold">%s :</span> '
+                    .'<del class="text-danger me-1">%s</del>'
+                    .'<span class="text-muted me-1">→</span>'
+                    .'<ins class="text-success fw-semibold">%s</ins>'
+                    .'</li>',
                     $i < $count - 1 ? ' border-bottom border-light' : '',
                     htmlspecialchars($c['label']),
                     $old,
@@ -1022,7 +1022,7 @@ class RevisionService
     public function approuverFormationHistory(FormationHistory $h, User $reviewer): void
     {
         $formation = $h->getFormation();
-        if ($formation === null) {
+        if (null === $formation) {
             throw new \RuntimeException('FormationHistory sans Formation liée.');
         }
 
@@ -1053,7 +1053,7 @@ class RevisionService
     public function approuverPageHistory(PageHistory $h, User $reviewer): void
     {
         $page = $h->getPage();
-        if ($page === null) {
+        if (null === $page) {
             throw new \RuntimeException('PageHistory sans Page liée.');
         }
 
@@ -1084,7 +1084,7 @@ class RevisionService
     public function approuverWorksHistory(WorksHistory $h, User $reviewer): void
     {
         $works = $h->getWorks();
-        if ($works === null) {
+        if (null === $works) {
             throw new \RuntimeException('WorksHistory sans Works lié.');
         }
 
@@ -1117,7 +1117,7 @@ class RevisionService
     public function restaurerFormationHistory(FormationHistory $h, User $reviewer): FormationHistory
     {
         $formation = $h->getFormation();
-        if ($formation === null) {
+        if (null === $formation) {
             throw new \RuntimeException('FormationHistory sans Formation liée.');
         }
 
@@ -1133,7 +1133,7 @@ class RevisionService
         $this->em->flush();
 
         $nextVersion = $this->formationHistoryRepo->getNextVersion($formation);
-        $newHistory  = FormationHistory::fromFormation($formation, $reviewer, $nextVersion);
+        $newHistory = FormationHistory::fromFormation($formation, $reviewer, $nextVersion);
         $newHistory->setRevisionStatus(FormationHistory::STATUS_AUTO_APPROVED);
         $newHistory->setReviewedBy($reviewer);
         $newHistory->setReviewedAt(new \DateTimeImmutable());
@@ -1152,7 +1152,7 @@ class RevisionService
     public function restaurerPageHistory(PageHistory $h, User $reviewer): PageHistory
     {
         $page = $h->getPage();
-        if ($page === null) {
+        if (null === $page) {
             throw new \RuntimeException('PageHistory sans Page liée.');
         }
 
@@ -1168,7 +1168,7 @@ class RevisionService
         $this->em->flush();
 
         $nextVersion = $this->pageHistoryRepo->getNextVersion($page);
-        $newHistory  = PageHistory::fromPage($page, $reviewer, $nextVersion);
+        $newHistory = PageHistory::fromPage($page, $reviewer, $nextVersion);
         $newHistory->setRevisionStatus(PageHistory::STATUS_AUTO_APPROVED);
         $newHistory->setReviewedBy($reviewer);
         $newHistory->setReviewedAt(new \DateTimeImmutable());
@@ -1187,7 +1187,7 @@ class RevisionService
     public function restaurerWorksHistory(WorksHistory $h, User $reviewer): WorksHistory
     {
         $works = $h->getWorks();
-        if ($works === null) {
+        if (null === $works) {
             throw new \RuntimeException('WorksHistory sans Works lié.');
         }
 
@@ -1203,7 +1203,7 @@ class RevisionService
         $this->em->flush();
 
         $nextVersion = $this->worksHistoryRepo->getNextVersion($works);
-        $newHistory  = WorksHistory::fromWorks($works, $reviewer, $nextVersion);
+        $newHistory = WorksHistory::fromWorks($works, $reviewer, $nextVersion);
         $newHistory->setRevisionStatus(WorksHistory::STATUS_AUTO_APPROVED);
         $newHistory->setReviewedBy($reviewer);
         $newHistory->setReviewedAt(new \DateTimeImmutable());
@@ -1222,7 +1222,7 @@ class RevisionService
     public function notifyAuthorFromHistory(FormationHistory|PageHistory|WorksHistory $history, bool $approved): void
     {
         $createdBy = $history->getCreatedBy();
-        if ($createdBy === null) {
+        if (null === $createdBy) {
             return;
         }
 
@@ -1261,7 +1261,7 @@ class RevisionService
 
         if ($entity instanceof Formation) {
             $last = $this->formationHistoryRepo->findLatest($entity);
-            if ($last !== null && $this->snapshotFromFormationHistory($last) === $this->snapshotFormation($entity)) {
+            if (null !== $last && $this->snapshotFromFormationHistory($last) === $this->snapshotFormation($entity)) {
                 return false;
             }
             $version = $this->formationHistoryRepo->getNextVersion($entity);
@@ -1278,7 +1278,7 @@ class RevisionService
 
         if ($entity instanceof Page) {
             $last = $this->pageHistoryRepo->findLatest($entity);
-            if ($last !== null && $this->snapshotFromPageHistory($last) === $this->snapshotPage($entity)) {
+            if (null !== $last && $this->snapshotFromPageHistory($last) === $this->snapshotPage($entity)) {
                 return false;
             }
             $version = $this->pageHistoryRepo->getNextVersion($entity);
@@ -1295,7 +1295,7 @@ class RevisionService
 
         if ($entity instanceof Works) {
             $last = $this->worksHistoryRepo->findLatest($entity);
-            if ($last !== null && $this->snapshotFromWorksHistory($last) === $this->snapshotWorks($entity)) {
+            if (null !== $last && $this->snapshotFromWorksHistory($last) === $this->snapshotWorks($entity)) {
                 return false;
             }
             $version = $this->worksHistoryRepo->getNextVersion($entity);
@@ -1321,7 +1321,7 @@ class RevisionService
     {
         if ($entity instanceof Formation) {
             $pending = $this->formationHistoryRepo->findPendingForFormation($entity);
-            if ($pending === null) {
+            if (null === $pending) {
                 return;
             }
             $pending->setTitle($entity->getTitle() ?? '');
@@ -1337,7 +1337,7 @@ class RevisionService
 
         if ($entity instanceof Page) {
             $pending = $this->pageHistoryRepo->findPendingForPage($entity);
-            if ($pending === null) {
+            if (null === $pending) {
                 return;
             }
             $pending->setTitle($entity->getTitle() ?? '');
@@ -1351,7 +1351,7 @@ class RevisionService
 
         if ($entity instanceof Works) {
             $pending = $this->worksHistoryRepo->findPendingForWorks($entity);
-            if ($pending === null) {
+            if (null === $pending) {
                 return;
             }
             $pending->setTitle($entity->getTitle() ?? '');
@@ -1381,7 +1381,7 @@ class RevisionService
             default => null,
         };
 
-        if ($pending === null) {
+        if (null === $pending) {
             return;
         }
 

@@ -71,7 +71,7 @@ class ContactController extends AbstractController
                 ->from(new Address($this->mailForm, 'CF2m — Contact'))
                 ->to($this->mailAdmin)
                 ->replyTo(new Address($message->getEmail(), $message->getNom()))
-                ->subject('[CF2m] ' . $message->getSujet())
+                ->subject('[CF2m] '.$message->getSujet())
                 ->htmlTemplate('emails/contact.html.twig')
                 ->context($context)
             ;
@@ -79,14 +79,14 @@ class ContactController extends AbstractController
 
             // Copies aux ROLE_PEDAGO (en plus de MAIL_ADMIN)
             foreach ($userRepo->findContactRecipients() as $recipient) {
-                if ($recipient->getEmail() === null || $recipient->getEmail() === $this->mailAdmin) {
+                if (null === $recipient->getEmail() || $recipient->getEmail() === $this->mailAdmin) {
                     continue;
                 }
                 $copy = (new TemplatedEmail())
                     ->from(new Address($this->mailForm, 'CF2m — Contact'))
                     ->to(new Address($recipient->getEmail(), (string) $recipient))
                     ->replyTo(new Address($message->getEmail(), $message->getNom()))
-                    ->subject('[CF2m] ' . $message->getSujet())
+                    ->subject('[CF2m] '.$message->getSujet())
                     ->htmlTemplate('emails/contact.html.twig')
                     ->context($context)
                 ;

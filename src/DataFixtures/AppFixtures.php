@@ -13,10 +13,10 @@ use App\Factory\PartenaireFactory;
 use App\Factory\RatingFactory;
 use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
+use App\Service\RevisionService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
-use App\Service\RevisionService;
 use faker\Factory as Faker;
 
 class AppFixtures extends Fixture implements FixtureGroupInterface
@@ -39,99 +39,98 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         // ── Acteur Super administrateur de test ────────────────────────────────────────
         $usersManuel = [];
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'mikhawa@cf2m.be',
-            'userName'      => 'Mikhawa',
-            'roles'         => ['ROLE_SUPER_ADMIN'],
-            'status'        => 1,
+            'email' => 'mikhawa@cf2m.be',
+            'userName' => 'Mikhawa',
+            'roles' => ['ROLE_SUPER_ADMIN'],
+            'status' => 1,
             'plainPassword' => '123mikhawa',
         ]);
         // ── Acteur Administrateur de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'thejoe@cf2m.be',
-            'userName'      => 'TheJoe',
-            'roles'         => ['ROLE_ADMIN'],
-            'status'        => 1,
+            'email' => 'thejoe@cf2m.be',
+            'userName' => 'TheJoe',
+            'roles' => ['ROLE_ADMIN'],
+            'status' => 1,
             'plainPassword' => '123joe',
         ]);
         // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'thelee@cf2m.be',
-            'userName'      => 'TheLee',
-            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO'],
-            'status'        => 1,
+            'email' => 'thelee@cf2m.be',
+            'userName' => 'TheLee',
+            'roles' => ['ROLE_ADMIN', 'ROLE_PEDAGO'],
+            'status' => 1,
             'plainPassword' => '123lee',
         ]);
         // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'thenoemie@cf2m.be',
-            'userName'      => 'TheNoemie',
-            'roles'         => ['ROLE_PEDAGO'],
-            'status'        => 1,
+            'email' => 'thenoemie@cf2m.be',
+            'userName' => 'TheNoemie',
+            'roles' => ['ROLE_PEDAGO'],
+            'status' => 1,
             'plainPassword' => '123noemie',
         ]);
         // ── Acteur Administrateur Pédagogique et Formateur de test ──────────────
-        //──────────────────────────
+        // ──────────────────────────
         $formateurs[] = $usersManuel[] = UserFactory::createOne([
-            'email'         => 'therick@cf2m.be',
-            'userName'      => 'TheRick',
-            'roles'         => ['ROLE_PEDAGO','ROLE_FORMATEUR'],
-            'status'        => 1,
+            'email' => 'therick@cf2m.be',
+            'userName' => 'TheRick',
+            'roles' => ['ROLE_PEDAGO', 'ROLE_FORMATEUR'],
+            'status' => 1,
             'plainPassword' => '123rick',
         ]);
         // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
         $formateurs[] = $usersManuel[] = UserFactory::createOne([
-            'email'         => 'piet@cf2m.be',
-            'userName'      => 'ThePiet',
-            'roles'         => ['ROLE_ADMIN','ROLE_PEDAGO','ROLE_FORMATEUR'],
-            'status'        => 1,
+            'email' => 'piet@cf2m.be',
+            'userName' => 'ThePiet',
+            'roles' => ['ROLE_ADMIN', 'ROLE_PEDAGO', 'ROLE_FORMATEUR'],
+            'status' => 1,
             'plainPassword' => '123piet',
         ]);
         // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
         $formateurs[] = $usersManuel[] = UserFactory::createOne([
-            'email'         => 'alex@cf2m.be',
-            'userName'      => 'TheAlexandra',
-            'roles'         => ['ROLE_FORMATEUR'],
-            'status'        => 1,
+            'email' => 'alex@cf2m.be',
+            'userName' => 'TheAlexandra',
+            'roles' => ['ROLE_FORMATEUR'],
+            'status' => 1,
             'plainPassword' => '123alex',
         ]);
         // ── Acteur Administrateur Pédagogique Formateur de test ────────────────────────────────────────
         $formateurs[] = $usersManuel[] = UserFactory::createOne([
-            'email'         => 'greg@cf2m.be',
-            'userName'      => 'TheGreg',
-            'roles'         => ['ROLE_FORMATEUR'],
-            'status'        => 1,
+            'email' => 'greg@cf2m.be',
+            'userName' => 'TheGreg',
+            'roles' => ['ROLE_FORMATEUR'],
+            'status' => 1,
             'plainPassword' => '123greg',
         ]);
         // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'magib@cf2m.be',
-            'userName'      => 'TheMagib',
-            'roles'         => ['ROLE_STAGIAIRE'],
-            'status'        => 1,
+            'email' => 'magib@cf2m.be',
+            'userName' => 'TheMagib',
+            'roles' => ['ROLE_STAGIAIRE'],
+            'status' => 1,
             'plainPassword' => '123magib',
         ]);
         // ── Acteur Stagiaire de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
-            'email'         => 'nabil@cf2m.be',
-            'userName'      => 'TheNab',
-            'roles'         => ['ROLE_USER'],
-            'status'        => 1,
+            'email' => 'nabil@cf2m.be',
+            'userName' => 'TheNab',
+            'roles' => ['ROLE_USER'],
+            'status' => 1,
             'plainPassword' => '123nabil',
         ]);
 
-
         // ── Fakers Utilisateurs ────────────────────────────────────────────────
-        //$admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
-        //$formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
+        // $admins     = UserFactory::createMany(2, ['roles' => ['ROLE_ADMIN']]);
+        // $formateurs = UserFactory::createMany(15, fn () => ['roles' => ['ROLE_FORMATEUR']]);
         $stagiaires = UserFactory::createMany(30, fn () => ['roles' => ['ROLE_STAGIAIRE']]);
-        $commentateurs  = UserFactory::createMany(10);
+        $commentateurs = UserFactory::createMany(10);
 
         // Regrouper les utilisateurs manuels, admins et formateurs pour les associer à des formations
-        # Ne plus ajouter les admins et formateurs fakers.
-        $adminsAndFormateurs = [...$usersManuel,/* ...$admins, ...$formateurs*/];
+        // Ne plus ajouter les admins et formateurs fakers.
+        $adminsAndFormateurs = [...$usersManuel/* ...$admins, ...$formateurs */];
 
         // Regrouper tous les utilisateurs pour les associer à des commentaires, notations, etc.
-        $tousLesUsers = [...$usersManuel,/*  ...$admins, ...$formateurs,*/ ...$stagiaires, ...$commentateurs];
+        $tousLesUsers = [...$usersManuel, /*  ...$admins, ...$formateurs, */ ...$stagiaires, ...$commentateurs];
 
         // ── Partenaires ─────────────────────────────────────────────────
         PartenaireFactory::createOne(['nom' => 'ACTIRIS Formation',          'url' => 'https://www.actiris.brussels/fr/citoyens/',         'active' => true]);
@@ -144,23 +143,23 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         // ── Pages CMS ───────────────────────────────────────────────────
         $pagesManuel = [];
         $pagesManuel[] = PageFactory::createOne([
-            'title'       => 'A propos de notre centre',
-            'slug'        => 'about',
-            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
-            'status'      => 'published',
+            'title' => 'A propos de notre centre',
+            'slug' => 'about',
+            'content' => '<p>'.$faker->realText(300).'</p><p>'.$faker->realText(300).'</p><p>'.$faker->realText(200).'</p>',
+            'status' => 'published',
             'publishedAt' => new \DateTimeImmutable('-3 month'),
         ]);
         $pagesManuel[] = PageFactory::createOne([
-            'title'       => 'RGPD et confidentialité',
-            'slug'        => 'rgpd',
-            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
-            'status'      => 'published',
+            'title' => 'RGPD et confidentialité',
+            'slug' => 'rgpd',
+            'content' => '<p>'.$faker->realText(300).'</p><p>'.$faker->realText(300).'</p><p>'.$faker->realText(200).'</p>',
+            'status' => 'published',
             'publishedAt' => new \DateTimeImmutable('-2 months'),
         ]);
         $pagesManuel[] = PageFactory::createOne([
-            'title'  => 'Nos valeurs et notre mission',
-            'slug'   => 'nos-valeurs-et-notre-mission',
-            'content'     => '<p>' . $faker->realText(300) . '</p><p>' . $faker->realText(300) . '</p><p>' . $faker->realText(200) . '</p>',
+            'title' => 'Nos valeurs et notre mission',
+            'slug' => 'nos-valeurs-et-notre-mission',
+            'content' => '<p>'.$faker->realText(300).'</p><p>'.$faker->realText(300).'</p><p>'.$faker->realText(200).'</p>',
             'status' => 'published',
             'publishedAt' => new \DateTimeImmutable('-2 months'),
         ]);
@@ -176,10 +175,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $formations = [];
         // AD
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Aventure digitale',
-            'slug'   => 'aventure-digitale',
+            'title' => 'Aventure digitale',
+            'slug' => 'aventure-digitale',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
@@ -192,10 +191,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // AM
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Animateur multimédia',
-            'slug'   => 'animateur-multimedia',
+            'title' => 'Animateur multimédia',
+            'slug' => 'animateur-multimedia',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
@@ -208,10 +207,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // TR
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Technicien PC & réseaux',
-            'slug'   => 'technicien-reseaux',
+            'title' => 'Technicien PC & réseaux',
+            'slug' => 'technicien-reseaux',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
@@ -224,10 +223,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // DD
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Digital Designer',
-            'slug'   => 'digital-designer',
+            'title' => 'Digital Designer',
+            'slug' => 'digital-designer',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
@@ -240,10 +239,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // Web Dev
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Web Developer Full Stack',
-            'slug'   => 'developpeur-web',
+            'title' => 'Web Developer Full Stack',
+            'slug' => 'developpeur-web',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'recruiting',
@@ -256,10 +255,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
         // Chèques TIC
         $formations[] = FormationFactory::createOne([
-            'title'  => 'Chèques TIC',
-            'slug'   => 'cheques-tic',
+            'title' => 'Chèques TIC',
+            'slug' => 'cheques-tic',
             'description' => $faker->realText(1200),
-            'createdAt'   => \DateTimeImmutable::createFromMutable(
+            'createdAt' => \DateTimeImmutable::createFromMutable(
                 $faker->dateTimeBetween('-3 years', '-1 year')
             ),
             'status' => 'published',
@@ -272,7 +271,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         ]);
 
         FormationFactory::createMany(2, fn () => [
-            'status'    => 'draft',
+            'status' => 'draft',
             'createdBy' => $adminsAndFormateurs[array_rand($adminsAndFormateurs)],
             'colorPrimary' => '#00589a',
             'colorSecondary' => '#00589a',
@@ -301,7 +300,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         foreach ($formations as $formation) {
             $nbWorks = random_int(1, 3);
             $newWorks = WorksFactory::createMany($nbWorks, fn () => [
-                'createdAt'   => \DateTimeImmutable::createFromMutable(
+                'createdAt' => \DateTimeImmutable::createFromMutable(
                     $faker->dateTimeBetween('-3 years', '-1 year')
                 ),
                 'status' => 'published',
@@ -335,8 +334,8 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         foreach (array_slice($works, 0, 20) as $work) {
             $nbComments = random_int(1, 4);
             CommentFactory::createMany($nbComments, fn () => [
-                'works'    => $work,
-                'user'     => $tousLesUsers[array_rand($tousLesUsers)],
+                'works' => $work,
+                'user' => $tousLesUsers[array_rand($tousLesUsers)],
                 'approved' => (bool) random_int(0, 1),
             ]);
         }
@@ -346,7 +345,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $nbRatings = random_int(1, 5);
             for ($i = 0; $i < $nbRatings; ++$i) {
                 $rating = RatingFactory::createOne([
-                    'user'  => $commentateurs[array_rand($commentateurs)],
+                    'user' => $commentateurs[array_rand($commentateurs)],
                     'value' => random_int(1, 5),
                 ]);
                 $rating->addWork($work);
@@ -359,13 +358,13 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $nbInscriptions = random_int(3, 8);
             InscriptionFactory::createMany((int) ($nbInscriptions * 0.6), fn () => [
                 'formation' => $formation,
-                'treat'     => true,
-                'treatAt'   => new \DateTimeImmutable(sprintf('-%d days', random_int(1, 90))),
+                'treat' => true,
+                'treatAt' => new \DateTimeImmutable(sprintf('-%d days', random_int(1, 90))),
             ]);
             InscriptionFactory::createMany((int) ceil($nbInscriptions * 0.4), fn () => [
                 'formation' => $formation,
-                'treat'     => false,
-                'treatAt'   => null,
+                'treat' => false,
+                'treatAt' => null,
             ]);
         }
 

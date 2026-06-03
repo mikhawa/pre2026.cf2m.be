@@ -26,25 +26,25 @@ final class InscriptionFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'nom'       => self::faker()->lastName(),
-            'prenom'    => self::faker()->firstName(),
-            'email'     => self::faker()->safeEmail(),
+            'nom' => self::faker()->lastName(),
+            'prenom' => self::faker()->firstName(),
+            'email' => self::faker()->safeEmail(),
             'telephone' => self::faker()->phoneNumber(),
-            'age'       => self::faker()->numberBetween(16, 65),
-            'message'   => self::faker()->optional(0.8)->paragraph(),
+            'age' => self::faker()->numberBetween(16, 65),
+            'message' => self::faker()->optional(0.8)->paragraph(),
             'formation' => FormationFactory::new(),
-            'treat'     => false,
-            'treatAt'   => null,
+            'treat' => false,
+            'treatAt' => null,
         ];
     }
 
     /**
-     * État : inscription traitée
+     * État : inscription traitée.
      */
     public function traitee(): static
     {
         return $this->with([
-            'treat'   => true,
+            'treat' => true,
             'treatAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-3 months', 'now')),
         ]);
     }

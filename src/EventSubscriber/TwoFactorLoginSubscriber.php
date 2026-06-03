@@ -50,7 +50,7 @@ class TwoFactorLoginSubscriber implements EventSubscriberInterface
         // Symfony sauvegarde l'URL protégée tentée avant le login dans cette clé.
         // On la recopie pour notre propre redirection post-2FA.
         $targetPath = $session->get('_security.main.target_path');
-        if ($targetPath !== null) {
+        if (null !== $targetPath) {
             $session->set('2fa_target_path', $targetPath);
         }
 

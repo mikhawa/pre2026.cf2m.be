@@ -15,7 +15,8 @@ class InscriptionAjaxController extends AbstractController
 {
     public function __construct(
         private readonly InscriptionRepository $inscriptionRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('/admin/inscription/{id}/traitement-info', name: 'admin_inscription_traitement_info', methods: ['GET'])]
     public function traitementInfo(int $id): JsonResponse
@@ -30,9 +31,9 @@ class InscriptionAjaxController extends AbstractController
         $treatBy = $inscription->getTreatBy();
 
         return $this->json([
-            'treatAt'        => $treatAt?->format('d/m/Y H:i') ?? '',
-            'treatAtIso'     => $treatAt?->format('c') ?? '',
-            'treatBy'        => $treatBy ? (string) $treatBy : '',
+            'treatAt' => $treatAt?->format('d/m/Y H:i') ?? '',
+            'treatAtIso' => $treatAt?->format('c') ?? '',
+            'treatBy' => $treatBy ? (string) $treatBy : '',
             'untreatedCount' => $this->inscriptionRepository->findUntreatedCount(),
         ]);
     }
