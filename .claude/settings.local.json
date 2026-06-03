@@ -26,7 +26,8 @@
       "Bash(ls /home/mikhawa/pre2026_cf2m_be/config/packages/when@*/)",
       "Bash(git fetch:*)",
       "Bash(printf:*)",
-      "Bash(/home/mikhawa/pre2026_cf2m_be/assets/styles/app.css:*)"
+      "Bash(/home/mikhawa/pre2026_cf2m_be/assets/styles/app.css:*)",
+      "Bash(docker port pre_cf2m_nginx *)"
     ]
   }
 }
