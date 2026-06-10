@@ -41,7 +41,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $usersManuel[] = UserFactory::createOne([
             'email' => 'mikhawa@cf2m.be',
             'userName' => 'Mikhawa',
-            'roles' => ['ROLE_SUPER_ADMIN'],
+            'roles' => ["ROLE_SUPER_ADMIN","ROLE_USER","ROLE_ADMIN","ROLE_PEDAGO","ROLE_FORMATEUR","ROLE_STAGIAIRE"],
             'status' => 1,
             'plainPassword' => '123mikhawa',
         ]);
