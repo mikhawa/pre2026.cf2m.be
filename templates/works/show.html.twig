@@ -3,6 +3,25 @@
 {% block title %}{{ work.title }} — CF2m Centre de Formation{% endblock %}
 {% block meta_description %}<meta name="description" content="{{ (work.description|striptags|slice(0, 155) ~ '…')|e('html_attr') }}">{% endblock %}
 
+{% block meta_og %}
+{% set _og_url   = url('app_works_show', {formationSlug: work.formation.slug, slug: work.slug}) %}
+{% set _og_title = (work.title ~ ' — CF2m Centre de Formation')|e('html_attr') %}
+{% set _og_desc  = (work.description|striptags|slice(0, 155) ~ '…')|e('html_attr') %}
+{% set _og_image = work.formation.logo
+    ? absolute_url(asset('uploads/formation-logos/' ~ work.formation.logo))
+    : absolute_url(asset('images/hero-groupe.jpg')) %}
+<meta property="og:type"        content="article">
+<meta property="og:url"         content="{{ _og_url }}">
+<meta property="og:title"       content="{{ _og_title }}">
+<meta property="og:description" content="{{ _og_desc }}">
+<meta property="og:image"       content="{{ _og_image }}">
+<meta property="og:site_name"   content="CF2m Centre de Formation">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="{{ _og_title }}">
+<meta name="twitter:description" content="{{ _og_desc }}">
+<meta name="twitter:image"       content="{{ _og_image }}">
+{% endblock %}
+
 {% block body_class %}page-works-show{% endblock %}
 
 {% block body %}

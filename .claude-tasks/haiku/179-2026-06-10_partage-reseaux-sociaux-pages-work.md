@@ -12,3 +12,8 @@ Ajout de 4 boutons de partage (Facebook, X/Twitter, LinkedIn, WhatsApp) dans la
 sidebar des pages de détail d'une réalisation étudiante (`/formation/{slug}/works/{slug}`).
 Les boutons sont **exclusifs à ce template**, ils n'apparaissent nulle part ailleurs.
 L'URL partagée est générée avec la fonction Twig `url()` (URL absolue).
+
+Ajout des balises **Open Graph** et **Twitter Card** dans un bloc `{% block meta_og %}`
+(vide par défaut dans base.html.twig, rempli uniquement sur show.html.twig).
+Image OG : logo de la formation si disponible, sinon `hero-groupe.jpg` en fallback.
+Ces balises permettent aux réseaux sociaux d'afficher un aperçu riche (titre, description, image).
