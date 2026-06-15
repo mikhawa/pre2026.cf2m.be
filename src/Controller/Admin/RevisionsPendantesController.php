@@ -37,6 +37,7 @@ class RevisionsPendantesController extends AbstractCrudController
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
         $returnUrl = $adminUrlGenerator
+            ->unset('entityId')
             ->setController(self::class)
             ->setAction('revisionsPendantes')
             ->generateUrl();

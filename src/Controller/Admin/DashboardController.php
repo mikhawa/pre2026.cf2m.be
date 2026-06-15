@@ -94,6 +94,7 @@ class DashboardController extends AbstractDashboardController
         $totalPending = $pendingFormations + $pendingWorks + $pendingPages;
 
         $revisionsPendantesUrl = $this->adminUrlGenerator
+            ->unset('entityId')
             ->setController(RevisionsPendantesController::class)
             ->setAction('revisionsPendantes')
             ->generateUrl();
