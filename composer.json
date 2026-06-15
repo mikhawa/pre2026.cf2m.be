@@ -104,7 +104,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "friendsofphp/php-cs-fixer": "^3.95.5",
+        "friendsofphp/php-cs-fixer": "^3.95.7",
         "phpunit/phpunit": "^13.2.0",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
