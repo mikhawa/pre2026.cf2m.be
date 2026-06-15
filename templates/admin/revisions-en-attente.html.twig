@@ -57,6 +57,11 @@
                        onclick="return confirm('Rejeter cette révision ?')">
                         <i class="fa fa-times me-1"></i> Rejeter
                     </a>
+                    <a href="{{ entry.previewUrl }}"
+                       target="_blank"
+                       class="btn btn-sm btn-outline-info">
+                        <i class="fa fa-eye me-1"></i> Prévisualiser v{{ entry.revision.version }}
+                    </a>
                     <a href="{{ entry.historiqueUrl }}" class="btn btn-sm btn-outline-secondary ms-auto">
                         <i class="fa fa-history me-1"></i> Historique complet
                     </a>

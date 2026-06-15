@@ -45,7 +45,7 @@ class ProdFixtures extends Fixture
         $admin
             ->setEmail($email)
             ->setUserName($username)
-            ->setRoles(['ROLE_SUPER_ADMIN'])
+            ->setRoles(["ROLE_SUPER_ADMIN","ROLE_USER","ROLE_ADMIN","ROLE_PEDAGO","ROLE_FORMATEUR","ROLE_STAGIAIRE"])
             ->setStatus(1)
             ->setPassword($this->hasher->hashPassword($admin, $password));
 
