@@ -1792,6 +1792,8 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
 }
 [data-theme="light"] .cf2m-work-sidebar-title { color: #7a95aa; }
+[data-theme="light"] .cf2m-work-share-btn,
+[data-theme="light"] .cf2m-work-share-btn:hover { color: #fff !important; }
 
 /* Bouton thème en light mode */
 [data-theme="light"] .cf2m-theme-toggle {
