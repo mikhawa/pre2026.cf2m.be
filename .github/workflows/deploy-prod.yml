@@ -55,7 +55,6 @@ jobs:
             cd /var/www/vhosts/cf2m.be/production.cf2m.be
 
             echo "=== Git pull ==="
-            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
             git pull origin production
 
             echo "=== Composer install ==="
