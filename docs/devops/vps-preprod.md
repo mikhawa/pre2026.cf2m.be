@@ -13,37 +13,53 @@
 | Répertoire | `/var/www/preprod/cf2m` | `/var/www/cf2m` |
 
 ## Déploiement automatisé (GitHub Actions)
-Voir `.github/workflows/symfony.yml` et `docs/devops/github-actions.md`.
+Trois workflows distincts dans `.github/workflows/` :
 
-Déclenchement : push ou PR sur `main`.
+| Workflow | Déclenchement | Rôle |
+|----------|----------------|------|
+| `symfony.yml` | push/PR sur `main` | Tests PHPUnit uniquement (pas de déploiement) |
+| `deploy-preprod.yml` | push sur `preprod/*` | Tests + déploiement SSH sur `pre2026.cf2m.be` |
+| `deploy-prod.yml` | push sur `production` | Tests + déploiement SSH sur `production.cf2m.be` |
 
-Étapes du pipeline :
+Étapes du pipeline de déploiement (preprod et prod) :
 1. Checkout du dépôt
 2. Installation PHP 8.5 via `shivammathur/setup-php@v2`
 3. Cache Composer
-4. `composer install --no-dev --optimize-autoloader`
+4. `composer install`
 5. Exécution des tests PHPUnit
-6. SSH vers VPS → `git pull` + migrations + `cache:clear`
+6. SSH vers VPS (`appleboy/ssh-action`) → `git pull` + `composer install` + migrations + fixtures (preprod) + `cache:clear` + assets + permissions
+
+Différences notables :
+- **Preprod** (`--env=dev`) : charge les fixtures (`doctrine:fixtures:load --group=app`), répertoire codé en dur `/var/www/vhosts/cf2m.be/pre2026.cf2m.be`.
+- **Prod** (`--env=prod`) : pas de fixtures, `composer install --no-dev --optimize-autoloader`, répertoire fourni par le secret `PROD_VPS_PATH`.
 
 ## Secrets GitHub requis
-À configurer dans **Settings > Secrets and variables > Actions** du dépôt :
+À configurer dans **Settings > Secrets and variables > Actions** du dépôt. Les deux workflows de déploiement (preprod et prod) partagent les mêmes secrets de connexion SSH :
 
 | Secret | Description |
 |--------|-------------|
-| `SSH_PRIVATE_KEY` | Clé SSH privée pour accès au VPS |
-| `VPS_HOST` | IP ou hostname du VPS |
-| `VPS_USER` | Utilisateur SSH |
-| `DATABASE_URL` | DSN MariaDB préprod |
-| `APP_SECRET` | Clé secrète Symfony |
-| `MAILER_DSN` | DSN du service mail |
+| `PROD_VPS_HOST` | IP ou hostname du VPS |
+| `PROD_VPS_USER` | Utilisateur SSH (utilisateur système Plesk dédié au domaine) |
+| `PROD_SSH_PRIVATE_KEY` | Clé SSH privée pour accès au VPS |
+| `PROD_VPS_PATH` | Chemin absolu du répertoire de déploiement (utilisé par `deploy-prod.yml` uniquement ; `deploy-preprod.yml` a son chemin codé en dur) |
 
 ## Déploiement manuel (si nécessaire)
 ```bash
-ssh user@vps-host
-cd /var/www/preprod/cf2m
-git pull origin main
+ssh $PROD_VPS_USER@$PROD_VPS_HOST
+# Préprod
+cd /var/www/vhosts/cf2m.be/pre2026.cf2m.be
+git pull origin preprod/<branche>
+composer install
+php bin/console doctrine:migrations:migrate --no-interaction --env=dev
+php bin/console doctrine:fixtures:load --group=app --no-interaction --env=dev
+php bin/console cache:clear --env=dev
+php bin/console cache:warmup --env=dev
+
+# Production
+cd <PROD_VPS_PATH>
+git pull origin production
 composer install --no-dev --optimize-autoloader
-php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:migrations:migrate --no-interaction --env=prod
 php bin/console cache:clear --env=prod
 php bin/console cache:warmup --env=prod
 ```

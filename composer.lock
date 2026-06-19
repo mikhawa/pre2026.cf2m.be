@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60a4d92935e0fd277e69b841ae17831a",
+    "content-hash": "195721ab1fdbc1cb7ea7b0b5305f72dd",
     "packages": [
         {
             "name": "composer/semver",
@@ -1200,16 +1200,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v5.0.13",
+            "version": "v5.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "11b06ef648b6d5fccb3e62ccd8f67f59534e006a"
+                "reference": "adf0bb325f874e874cddf92daad559d4a19aee6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/11b06ef648b6d5fccb3e62ccd8f67f59534e006a",
-                "reference": "11b06ef648b6d5fccb3e62ccd8f67f59534e006a",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/adf0bb325f874e874cddf92daad559d4a19aee6b",
+                "reference": "adf0bb325f874e874cddf92daad559d4a19aee6b",
                 "shasum": ""
             },
             "require": {
@@ -1295,7 +1295,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v5.0.13"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v5.0.15"
             },
             "funding": [
                 {
@@ -1303,7 +1303,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-04T06:25:35+00:00"
+            "time": "2026-06-17T17:33:50+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -7779,21 +7779,21 @@
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v3.1.0",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "69763f39367d7185ebff3a8aec3e9d6ec7e10d55"
+                "reference": "a9b93b10fe2056a6f93ebc1f9e3509f7fafb5bf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/69763f39367d7185ebff3a8aec3e9d6ec7e10d55",
-                "reference": "69763f39367d7185ebff3a8aec3e9d6ec7e10d55",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/a9b93b10fe2056a6f93ebc1f9e3509f7fafb5bf2",
+                "reference": "a9b93b10fe2056a6f93ebc1f9e3509f7fafb5bf2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.4",
-                "symfony/dependency-injection": "^7.4|^8.0",
+                "psr/container": "^1.1|^2.0",
                 "symfony/deprecation-contracts": "^2.2|^3.0",
                 "symfony/event-dispatcher": "^7.4|^8.0",
                 "symfony/property-access": "^7.4|^8.0",
@@ -7806,6 +7806,7 @@
                 "phpunit/phpunit": "^11.1|^12.0",
                 "symfony/console": "^7.4|^8.0",
                 "symfony/css-selector": "^7.4|^8.0",
+                "symfony/dependency-injection": "^7.4|^8.0",
                 "symfony/dom-crawler": "^7.4|^8.0",
                 "symfony/framework-bundle": "^7.4|^8.0",
                 "symfony/stimulus-bundle": "^2.9.1|^3.0",
@@ -7843,7 +7844,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v3.1.0"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v3.2.0"
             },
             "funding": [
                 {
@@ -7863,7 +7864,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T07:08:56+00:00"
+            "time": "2026-06-11T20:32:06+00:00"
         },
         {
             "name": "symfony/validator",
@@ -8632,16 +8633,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "9007ea6f45ecf352a9422b36644e4bfc039b9155"
+                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9007ea6f45ecf352a9422b36644e4bfc039b9155",
-                "reference": "9007ea6f45ecf352a9422b36644e4bfc039b9155",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/2ccb7c2e821038c03a3e6e1700c570c158c55f70",
+                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70",
                 "shasum": ""
             },
             "require": {
@@ -8692,9 +8693,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.4.0"
+                "source": "https://github.com/webmozarts/assert/tree/2.4.1"
             },
-            "time": "2026-05-20T13:07:01+00:00"
+            "time": "2026-06-15T15:31:57+00:00"
         }
     ],
     "packages-dev": [
@@ -9317,16 +9318,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.95.7",
+            "version": "v3.95.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "4fa4102a5617acae53f804f7c81475aaa2d6e813"
+                "reference": "7a6a04758239105992ec278e3248dfe76968ff89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/4fa4102a5617acae53f804f7c81475aaa2d6e813",
-                "reference": "4fa4102a5617acae53f804f7c81475aaa2d6e813",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/7a6a04758239105992ec278e3248dfe76968ff89",
+                "reference": "7a6a04758239105992ec278e3248dfe76968ff89",
                 "shasum": ""
             },
             "require": {
@@ -9410,7 +9411,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.7"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.9"
             },
             "funding": [
                 {
@@ -9418,7 +9419,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-13T17:51:53+00:00"
+            "time": "2026-06-19T10:25:34+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -10108,16 +10109,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.2.0",
+            "version": "13.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3796ea973f1e7698f0d432c1c66662af9764fd9a"
+                "reference": "60da0ff1e10a0f72ee18a24117ec3b613a346bba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3796ea973f1e7698f0d432c1c66662af9764fd9a",
-                "reference": "3796ea973f1e7698f0d432c1c66662af9764fd9a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60da0ff1e10a0f72ee18a24117ec3b613a346bba",
+                "reference": "60da0ff1e10a0f72ee18a24117ec3b613a346bba",
                 "shasum": ""
             },
             "require": {
@@ -10131,7 +10132,7 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.4.1",
-                "phpunit/php-code-coverage": "^14.2",
+                "phpunit/php-code-coverage": "^14.2.2",
                 "phpunit/php-file-iterator": "^7.0.0",
                 "phpunit/php-invoker": "^7.0.0",
                 "phpunit/php-text-template": "^6.0.0",
@@ -10188,7 +10189,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.2.0"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.2.1"
             },
             "funding": [
                 {
@@ -10196,7 +10197,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-06-05T03:13:07+00:00"
+            "time": "2026-06-15T13:14:22+00:00"
         },
         {
             "name": "react/cache",
