@@ -34,23 +34,31 @@ Le message *"are being forced to run on Node.js 24"* est **informatif uniquement
 ## À faire plus tard (améliorations possibles)
 
 ## Branches
-- `main` → déploiement automatique en préprod
-- `develop` → tests CI uniquement
-- `feature/*` → tests CI uniquement
+- `main` → tests CI uniquement (`symfony.yml`)
+- `preprod/*` → tests + déploiement automatique sur `pre2026.cf2m.be` (`deploy-preprod.yml`)
+- `production` → tests + déploiement automatique sur `production.cf2m.be` (`deploy-prod.yml`)
 
 ## Workflow préprod (.github/workflows/deploy-preprod.yml)
 Étapes :
 1. Checkout + cache Composer
-2. composer install --no-dev --optimize-autoloader
+2. composer install
 3. Tests PHPUnit
-4. SSH vers VPS → git pull + migrations + cache:clear
-5. Notification (optionnel)
+4. SSH vers VPS → git pull + composer install + migrations (`--env=dev`) + fixtures + cache:clear/warmup + assets + permissions
+
+## Workflow prod (.github/workflows/deploy-prod.yml)
+Étapes :
+1. Checkout + cache Composer
+2. composer install
+3. Tests PHPUnit
+4. SSH vers VPS → git pull + composer install --no-dev --optimize-autoloader + migrations (`--env=prod`) + cache:clear/warmup + assets + permissions
 
 ## Secrets GitHub requis
-- SSH_PRIVATE_KEY
-- VPS_HOST, VPS_USER
-- DATABASE_URL_PREPROD
+- `PROD_SSH_PRIVATE_KEY`
+- `PROD_VPS_HOST`, `PROD_VPS_USER`
+- `PROD_VPS_PATH` (prod uniquement — preprod a son chemin codé en dur)
+
+Voir `docs/devops/vps-preprod.md` pour le détail complet des secrets et du déploiement manuel.
 
 ## Serveur cible
-Ubuntu 22.04 — Nginx — PHP 8.5-FPM — MariaDB
-Répertoire : /var/www/preprod/[projet]
+Debian 12.13 — Plesk — Nginx — PHP 8.5-FPM — MariaDB 11.4
+Répertoire préprod : `/var/www/vhosts/cf2m.be/pre2026.cf2m.be`

@@ -37,6 +37,7 @@ class RevisionsPendantesController extends AbstractCrudController
         AdminUrlGenerator $adminUrlGenerator,
     ): Response {
         $returnUrl = $adminUrlGenerator
+            ->unset('entityId')
             ->setController(self::class)
             ->setAction('revisionsPendantes')
             ->generateUrl();
@@ -78,6 +79,7 @@ class RevisionsPendantesController extends AbstractCrudController
                 'title' => $pending->getTitle(),
                 'revision' => $pending,
                 'diff' => $diff,
+                'previewUrl' => $this->generateUrl('admin_preview_history_formation', ['id' => $pending->getId()]),
                 'historiqueUrl' => $historiqueUrl,
                 'approuverUrl' => $approuverUrl,
                 'rejeterUrl' => $rejeterUrl,
@@ -119,6 +121,7 @@ class RevisionsPendantesController extends AbstractCrudController
                 'title' => $pending->getTitle(),
                 'revision' => $pending,
                 'diff' => $diff,
+                'previewUrl' => $this->generateUrl('admin_preview_history_page', ['id' => $pending->getId()]),
                 'historiqueUrl' => $historiqueUrl,
                 'approuverUrl' => $approuverUrl,
                 'rejeterUrl' => $rejeterUrl,
@@ -160,6 +163,7 @@ class RevisionsPendantesController extends AbstractCrudController
                 'title' => $pending->getTitle(),
                 'revision' => $pending,
                 'diff' => $diff,
+                'previewUrl' => $this->generateUrl('admin_preview_history_works', ['id' => $pending->getId()]),
                 'historiqueUrl' => $historiqueUrl,
                 'approuverUrl' => $approuverUrl,
                 'rejeterUrl' => $rejeterUrl,

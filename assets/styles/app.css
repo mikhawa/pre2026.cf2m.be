@@ -1557,6 +1557,35 @@ header {
     color: var(--cf2m-dark);
 }
 
+/* ── Boutons de partage réseaux sociaux (pages work uniquement) ─────── */
+.cf2m-work-share-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.cf2m-work-share-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.15s;
+    border: none;
+    color: #fff;
+}
+.cf2m-work-share-btn:hover {
+    opacity: 0.85;
+    transform: translateX(3px);
+    color: #fff;
+}
+.cf2m-work-share-facebook  { background: #1877f2; }
+.cf2m-work-share-twitter   { background: #000; }
+.cf2m-work-share-linkedin  { background: #0a66c2; }
+.cf2m-work-share-whatsapp  { background: #25d366; }
+
 /* ── Page contact : carte sans hauteur fixe ─────────────────────────── */
 .page-contact .cf2m-card {
     height: auto;
@@ -1763,6 +1792,8 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
 }
 [data-theme="light"] .cf2m-work-sidebar-title { color: #7a95aa; }
+[data-theme="light"] .cf2m-work-share-btn,
+[data-theme="light"] .cf2m-work-share-btn:hover { color: #fff !important; }
 
 /* Bouton thème en light mode */
 [data-theme="light"] .cf2m-theme-toggle {
