@@ -52,10 +52,9 @@ jobs:
           script: |
             set -e
             export PATH="/var/www/vhosts/cf2m.be/.phpenv/shims:/var/www/vhosts/cf2m.be/.phpenv/bin:$PATH"
-            cd ${{ secrets.PROD_VPS_PATH }}
+            cd /var/www/vhosts/cf2m.be/production.cf2m.be
 
             echo "=== Git pull ==="
-            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
             git pull origin production
 
             echo "=== Composer install ==="
