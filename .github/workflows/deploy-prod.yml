@@ -69,8 +69,8 @@ jobs:
             php bin/console cache:warmup --env=prod
 
             echo "=== Permissions ==="
-            chmod -R 775 public/uploads
-            chmod -R 775 var/
+            find public/uploads var/ -user "$(whoami)" -type d -exec chmod 775 {} \;
+            find public/uploads var/ -user "$(whoami)" -type f -exec chmod 664 {} \;
 
             echo "=== Assets ==="
             php bin/console importmap:install
