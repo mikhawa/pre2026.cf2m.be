@@ -55,6 +55,7 @@ jobs:
             cd ${{ secrets.PROD_VPS_PATH }}
 
             echo "=== Git pull ==="
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
             git pull origin production
 
             echo "=== Composer install ==="
