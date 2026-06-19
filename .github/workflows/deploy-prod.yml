@@ -49,7 +49,6 @@ jobs:
           host: ${{ secrets.PROD_VPS_HOST }}
           username: ${{ secrets.PROD_VPS_USER }}
           key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          ssh_options: -o StrictHostKeyChecking=accept-new
           script: |
             set -e
             export PATH="/var/www/vhosts/cf2m.be/.phpenv/shims:/var/www/vhosts/cf2m.be/.phpenv/bin:$PATH"
