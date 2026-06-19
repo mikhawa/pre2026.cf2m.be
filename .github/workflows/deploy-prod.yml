@@ -52,7 +52,7 @@ jobs:
           script: |
             set -e
             export PATH="/var/www/vhosts/cf2m.be/.phpenv/shims:/var/www/vhosts/cf2m.be/.phpenv/bin:$PATH"
-            cd /var/www/vhosts/cf2m.be/production.cf2m.be
+            cd /var/www/vhosts/cf2m.be/production.cf2m.be/pre2026.cf2m.be/
 
             echo "=== Git pull ==="
             git pull origin production
