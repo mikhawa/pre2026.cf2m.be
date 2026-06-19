@@ -52,7 +52,8 @@ jobs:
           script: |
             set -e
             export PATH="/var/www/vhosts/cf2m.be/.phpenv/shims:/var/www/vhosts/cf2m.be/.phpenv/bin:$PATH"
-            cd ${{ secrets.PROD_VPS_PATH }}
+            cd /var/www/vhosts/cf2m.be/production.cf2m.be/pre2026.cf2m.be
+            git remote set-url origin https://github.com/mikhawa/pre2026.cf2m.be
 
             echo "=== Git pull ==="
             git pull origin production
@@ -67,12 +68,13 @@ jobs:
             php bin/console cache:clear --env=prod
             php bin/console cache:warmup --env=prod
 
+            echo "=== Permissions ==="
+            find public/uploads var/ -user "$(whoami)" -type d -exec chmod 775 {} \;
+            find public/uploads var/ -user "$(whoami)" -type f -exec chmod 664 {} \;
+
             echo "=== Assets ==="
             php bin/console importmap:install
             php bin/console asset-map:compile --env=prod
 
-            echo "=== Permissions ==="
-            chmod -R 775 public/uploads
-            chmod -R 775 var/
 
             echo "=== Déploiement terminé ==="
