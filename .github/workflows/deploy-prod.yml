@@ -68,12 +68,13 @@ jobs:
             php bin/console cache:clear --env=prod
             php bin/console cache:warmup --env=prod
 
+            echo "=== Permissions ==="
+            chmod -R 775 public/uploads
+            chmod -R 775 var/
+
             echo "=== Assets ==="
             php bin/console importmap:install
             php bin/console asset-map:compile --env=prod
 
-            echo "=== Permissions ==="
-            chmod -R 775 public/uploads
-            chmod -R 775 var/
 
             echo "=== Déploiement terminé ==="
