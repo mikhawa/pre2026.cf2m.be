@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-107 (2026-05-03) — Mise à jour temps réel traitement inscriptions (AJAX + badge menu)
+118 (2026-06-25) — Git WSL2 permission pack files
 
 ## Dernier numéro .claude-tasks
-166 (2026-05-03)
+184 (2026-06-25)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
