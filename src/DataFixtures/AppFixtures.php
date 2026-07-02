@@ -14,6 +14,7 @@ use App\Factory\RatingFactory;
 use App\Factory\UserFactory;
 use App\Factory\WorksFactory;
 use App\Service\RevisionService;
+use App\Service\StagiaireService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -23,6 +24,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
         private readonly RevisionService $revisionService,
+        private readonly StagiaireService $stagiaireService,
     ) {
     }
 
@@ -103,7 +105,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'plainPassword' => '123greg',
         ]);
         // ── Acteur Stagiaire de test ────────────────────────────────────────
-        $usersManuel[] = UserFactory::createOne([
+        $stagiaireDemo = $usersManuel[] = UserFactory::createOne([
             'email' => 'magib@cf2m.be',
             'userName' => 'TheMagib',
             'roles' => ['ROLE_STAGIAIRE'],
@@ -319,6 +321,34 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             }
         }
         $manager->flush();
+
+        // ── Stagiaires rattachés aux formations (FormationStagiaire) ─────
+        // Un stagiaire auteur d'un Works d'une formation est considéré comme
+        // inscrit à cette formation, plus quelques stagiaires supplémentaires
+        // par formation pour simuler des inscrits n'ayant pas encore de travail.
+        foreach ($formations as $formation) {
+            $membres = [];
+            foreach ($formation->getWorks() as $work) {
+                foreach ($work->getUsers() as $auteur) {
+                    $membres[$auteur->getId()] = $auteur;
+                }
+            }
+
+            $nbSupplementaires = random_int(2, 5);
+            foreach (array_slice($stagiaires, 0, $nbSupplementaires) as $supplementaire) {
+                $membres[$supplementaire->getId()] = $supplementaire;
+            }
+
+            $responsable = $formation->getResponsables()->first();
+            $addedBy = false !== $responsable ? $responsable : $usersManuel[0];
+
+            foreach ($membres as $membre) {
+                $this->stagiaireService->ajouterStagiaire($formation, $membre, $addedBy);
+            }
+        }
+
+        // Stagiaire de démonstration explicitement rattaché à la première formation
+        $this->stagiaireService->ajouterStagiaire($formations[0], $stagiaireDemo, $usersManuel[0]);
 
         // ── Révisions initiales des Works ────────────────────────────────
         // Créées explicitement pour la même raison que les Pages.
