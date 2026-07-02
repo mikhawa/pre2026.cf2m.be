@@ -1,0 +1,87 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <a href="{{ editUrl }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Retour à l'édition
+        </a>
+        <h1 class="h4 mb-0">
+            <i class="fa fa-user-graduate text-muted me-1"></i>
+            Stagiaires — <strong>{{ formation.title }}</strong>
+        </h1>
+        <span class="badge bg-secondary">{{ stagiaires|length }} stagiaire(s)</span>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {# Formulaire d'ajout d'un stagiaire #}
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-light py-2">
+            <i class="fa fa-user-plus me-1"></i> Ajouter un stagiaire
+        </div>
+        <div class="card-body">
+            {% if candidats is empty %}
+                <div class="alert alert-info mb-0">
+                    <i class="fa fa-info-circle me-1"></i>
+                    Aucun utilisateur disponible à ajouter.
+                </div>
+            {% else %}
+                <form method="post" action="{{ ajouterUrl }}" class="row g-2 align-items-end">
+                    <div class="col-md-8">
+                        <label for="stagiaire-user" class="form-label">Utilisateur</label>
+                        <select name="userId" id="stagiaire-user" class="form-select" required>
+                            <option value="">— Sélectionner un utilisateur —</option>
+                            {% for candidat in candidats %}
+                                <option value="{{ candidat.id }}">{{ candidat.userName }} ({{ candidat.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-plus me-1"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Liste des stagiaires actuels #}
+    {% if stagiaires is empty %}
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle me-1"></i>
+            Aucun stagiaire n'est rattaché à cette formation pour le moment.
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Stagiaire</th>
+                        <th>Email</th>
+                        <th>Ajouté par</th>
+                        <th>Ajouté le</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fs in stagiaires %}
+                        <tr>
+                            <td><strong>{{ fs.user.userName }}</strong></td>
+                            <td>{{ fs.user.email }}</td>
+                            <td>{{ fs.addedBy ? fs.addedBy.userName : '—' }}</td>
+                            <td>{{ fs.addedAt|date('d/m/Y H:i') }}</td>
+                            <td class="text-end">
+                                <a href="{{ retirerUrl }}?userId={{ fs.user.id }}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Retirer {{ fs.user.userName|e('js') }} de cette formation ? S\'il s\'agit de sa dernière formation, il perdra l\'accès à l\'espace admin (ROLE_STAGIAIRE).')">
+                                    <i class="fa fa-user-minus me-1"></i> Retirer
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
