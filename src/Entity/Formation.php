@@ -87,11 +87,16 @@ class Formation
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'formation', orphanRemoval: true)]
     private Collection $inscriptions;
 
+    /** @var Collection<int, FormationStagiaire> */
+    #[ORM\OneToMany(targetEntity: FormationStagiaire::class, mappedBy: 'formation', orphanRemoval: true)]
+    private Collection $stagiaires;
+
     public function __construct()
     {
         $this->responsables = new ArrayCollection();
         $this->works = new ArrayCollection();
         $this->inscriptions = new ArrayCollection();
+        $this->stagiaires = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -357,6 +362,33 @@ class Formation
         if ($this->inscriptions->removeElement($inscription)) {
             if ($inscription->getFormation() === $this) {
                 $inscription->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, FormationStagiaire> */
+    public function getStagiaires(): Collection
+    {
+        return $this->stagiaires;
+    }
+
+    public function addStagiaire(FormationStagiaire $stagiaire): static
+    {
+        if (!$this->stagiaires->contains($stagiaire)) {
+            $this->stagiaires->add($stagiaire);
+            $stagiaire->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStagiaire(FormationStagiaire $stagiaire): static
+    {
+        if ($this->stagiaires->removeElement($stagiaire)) {
+            if ($stagiaire->getFormation() === $this) {
+                $stagiaire->setFormation(null);
             }
         }
 
