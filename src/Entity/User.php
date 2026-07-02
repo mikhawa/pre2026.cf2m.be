@@ -191,6 +191,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Ajoute un rôle au tableau brut persisté (colonne roles), sans doublon.
+     *
+     * Manipule directement $this->roles (et non getRoles()) pour ne pas
+     * persister ROLE_USER, qui est ajouté à la volée par getRoles().
+     */
+    public function addRole(string $role): static
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retire un rôle du tableau brut persisté (colonne roles).
+     */
+    public function removeRole(string $role): static
+    {
+        $this->roles = array_values(array_filter($this->roles, static fn (string $r): bool => $r !== $role));
+
+        return $this;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;

@@ -6,9 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\Formation;
 use App\Entity\FormationHistory;
+use App\Entity\User;
 use App\Field\SunEditorField;
 use App\Repository\FormationHistoryRepository;
+use App\Repository\FormationStagiaireRepository;
+use App\Repository\UserRepository;
 use App\Service\RevisionService;
+use App\Service\StagiaireService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -42,6 +46,9 @@ class FormationCrudController extends AbstractCrudController
     public function __construct(
         private readonly RevisionService $revisionService,
         private readonly FormationHistoryRepository $formationHistoryRepo,
+        private readonly StagiaireService $stagiaireService,
+        private readonly FormationStagiaireRepository $formationStagiaireRepo,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -62,13 +69,21 @@ class FormationCrudController extends AbstractCrudController
             })
         ;
 
+        $gererStagiaires = Action::new('gererStagiaires', 'Stagiaires', 'fa fa-user-graduate')
+            ->linkToCrudAction('gererStagiaires')
+        ;
+
         return $actions
             ->setPermission(Action::NEW, 'FORMATION_CREATE')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission('historiqueFormation', 'ROLE_FORMATEUR')
+            ->setPermission('gererStagiaires', 'ROLE_FORMATEUR')
             ->add(Crud::PAGE_INDEX, $historique)
             ->add(Crud::PAGE_EDIT, $historique)
             ->add(Crud::PAGE_DETAIL, $historique)
+            ->add(Crud::PAGE_INDEX, $gererStagiaires)
+            ->add(Crud::PAGE_EDIT, $gererStagiaires)
+            ->add(Crud::PAGE_DETAIL, $gererStagiaires)
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, static fn (Action $a) => $a
                 ->setLabel('Sauvegarder et continuer les changements')
                 ->asWarningAction()
@@ -366,7 +381,7 @@ class FormationCrudController extends AbstractCrudController
             return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
         }
 
-        /** @var \App\Entity\User $reviewer */
+        /** @var User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->approuverFormationHistory($history, $reviewer);
         $this->revisionService->notifyAuthorFromHistory($history, true);
@@ -401,7 +416,7 @@ class FormationCrudController extends AbstractCrudController
             return $returnUrl ? $this->redirect($returnUrl) : $this->redirectToRoute('admin');
         }
 
-        /** @var \App\Entity\User $reviewer */
+        /** @var User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->rejeterFormationHistory($history, $reviewer);
         $this->revisionService->notifyAuthorFromHistory($history, false);
@@ -443,13 +458,147 @@ class FormationCrudController extends AbstractCrudController
             return $this->redirect($returnUrl);
         }
 
-        /** @var \App\Entity\User $reviewer */
+        /** @var User $reviewer */
         $reviewer = $this->getUser();
         $this->revisionService->restaurerFormationHistory($history, $reviewer);
 
         $this->addFlash('success', sprintf('La version v%d de « %s » a été restaurée.', $history->getVersion(), $history->getTitle()));
 
         return $this->redirect($returnUrl);
+    }
+
+    /**
+     * Page de gestion des stagiaires d'une Formation : liste des stagiaires actuels
+     * et formulaire d'ajout d'un nouvel utilisateur.
+     */
+    #[AdminRoute(path: '/{entityId}/stagiaires', name: 'gerer_stagiaires_formation')]
+    public function gererStagiaires(
+        AdminContext $context,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_MANAGE_STAGIAIRES', $formation);
+
+        $formationId = $formation->getId();
+
+        $stagiaires = $this->formationStagiaireRepo->findForFormation($formation);
+
+        // Utilisateurs candidats : tous ceux qui ne sont pas déjà stagiaires de cette formation.
+        // Un formateur/admin peut aussi être ajouté comme stagiaire (décision du doc de proposition).
+        // Amélioration UX future possible : remplacer le <select> par un champ autocomplete Ajax.
+        $dejaStagiaireIds = array_map(
+            static fn ($fs): ?int => $fs->getUser()?->getId(),
+            $stagiaires
+        );
+        $candidats = array_filter(
+            $this->userRepository->findAllOrderedByName(),
+            static fn (User $u): bool => !in_array($u->getId(), $dejaStagiaireIds, true)
+        );
+
+        $editUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $ajouterUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('ajouterStagiaireFormation')
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        $retirerUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('retirerStagiaireFormation')
+            ->setEntityId($formationId)
+            ->generateUrl();
+
+        return $this->render('admin/formation/stagiaires.html.twig', [
+            'formation' => $formation,
+            'stagiaires' => $stagiaires,
+            'candidats' => $candidats,
+            'editUrl' => $editUrl,
+            'ajouterUrl' => $ajouterUrl,
+            'retirerUrl' => $retirerUrl,
+        ]);
+    }
+
+    /**
+     * Traite l'ajout d'un stagiaire à une Formation (POST depuis la page de gestion).
+     */
+    #[AdminRoute(path: '/{entityId}/stagiaires/ajouter', name: 'ajouter_stagiaire_formation')]
+    public function ajouterStagiaireFormation(
+        AdminContext $context,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_MANAGE_STAGIAIRES', $formation);
+
+        $retourUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('gererStagiaires')
+            ->setEntityId($formation->getId())
+            ->generateUrl();
+
+        $userId = (int) $context->getRequest()->request->get('userId');
+        $user = $userId > 0 ? $this->userRepository->find($userId) : null;
+
+        if (!$user instanceof User) {
+            $this->addFlash('danger', 'Utilisateur introuvable.');
+
+            return $this->redirect($retourUrl);
+        }
+
+        /** @var User $addedBy */
+        $addedBy = $this->getUser();
+        $this->stagiaireService->ajouterStagiaire($formation, $user, $addedBy);
+
+        $this->addFlash('success', sprintf('%s a été ajouté comme stagiaire de cette formation.', $user->getUserName()));
+
+        return $this->redirect($retourUrl);
+    }
+
+    /**
+     * Traite le retrait d'un stagiaire d'une Formation (lien avec confirmation JS).
+     */
+    #[AdminRoute(path: '/{entityId}/stagiaires/retirer', name: 'retirer_stagiaire_formation')]
+    public function retirerStagiaireFormation(
+        AdminContext $context,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): Response {
+        /** @var Formation $formation */
+        $formation = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted('FORMATION_MANAGE_STAGIAIRES', $formation);
+
+        $retourUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction('gererStagiaires')
+            ->setEntityId($formation->getId())
+            ->generateUrl();
+
+        $userId = (int) $context->getRequest()->query->get('userId');
+        $user = $userId > 0 ? $this->userRepository->find($userId) : null;
+
+        if (!$user instanceof User) {
+            $this->addFlash('danger', 'Utilisateur introuvable.');
+
+            return $this->redirect($retourUrl);
+        }
+
+        $etaitDerniere = $this->stagiaireService->retirerStagiaire($formation, $user);
+
+        if ($etaitDerniere) {
+            $this->addFlash('warning', sprintf(
+                '%s a été retiré de cette formation. Il s\'agissait de sa dernière formation : il a perdu l\'accès à l\'espace admin (ROLE_STAGIAIRE).',
+                $user->getUserName()
+            ));
+        } else {
+            $this->addFlash('success', sprintf('%s a été retiré de cette formation.', $user->getUserName()));
+        }
+
+        return $this->redirect($retourUrl);
     }
 
     /**
