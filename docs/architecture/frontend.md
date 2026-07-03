@@ -6,76 +6,99 @@
 | CSS framework | Bootstrap 5 |
 | JS | Stimulus + Turbo (ImportMap, pas de bundler) |
 | Templates | Twig |
-| Icônes | À définir (Bootstrap Icons recommandé) |
+| Polices | Google Fonts (`Outfit` en titres, `DM Sans` en corps de texte) — chargement non bloquant, voir `docs/architecture/seo-performances.md` |
 
 ## Palette de couleurs
-Extraite de la maquette d'accueil (`datas/`).
+Définie dans `assets/styles/app.css` (`:root`), mode sombre par défaut avec bascule mode clair (voir plus bas).
 
-| Rôle | Couleur | Hex |
+| Variable CSS | Rôle | Hex |
 |------|---------|-----|
-| Primaire (fond header, boutons) | Bleu foncé | `#0d2b4e` (à confirmer) |
-| Accent (chiffres clés, CTA) | Vert clair | `#4fcf8a` (à confirmer) |
-| Texte principal | Blanc sur fond sombre / Noir sur fond clair | `#ffffff` / `#1a1a1a` |
-| Fond hero | Overlay sombre sur photo | `rgba(0,0,0,0.5)` |
-| Bouton CTA principal | Bleu moyen | `#1a5eb8` (à confirmer) |
+| `--cf2m-dark` | Fond hero / navbar | `#08111e` |
+| `--cf2m-navy` | Fond alternatif | `#0d1e35` |
+| `--cf2m-navy-md` | Variante mid | `#142f52` |
+| `--cf2m-cyan` | Accent principal (liens, CTA, icônes) | `#00b4d8` |
+| `--cf2m-cyan-light` | Cyan clair / hover | `#48cae4` |
+| `--cf2m-gold` | Accent secondaire (stats, labels) | `#f4c430` |
+| `--cf2m-light` | Fond clair de section | `#f0f6fa` |
+| `--cf2m-white` | Blanc | `#ffffff` |
+| `--cf2m-muted` | Texte atténué (sur fond sombre) | `rgba(255,255,255,0.6)` |
 
-> **TODO** : extraire les codes hex exacts depuis la charte graphique officielle ou le fichier Figma/XD.
+En mode clair (`[data-theme="light"]`), les variables Bootstrap (`--bs-body-color`, `--bs-emphasis-color`, etc.) sont réécrites — les couleurs `--cf2m-*` restent identiques, c'est le contraste texte/fond qui change.
 
-## Structure des templates Twig
+## Mode sombre / clair — toggle
+
+Géré par le Stimulus controller `theme_controller.js` :
+- Thème par défaut : `dark`, persisté dans `localStorage` (clé `cf2m-theme`)
+- Bascule via `data-theme` sur `<html>`, piloté entièrement en CSS (pas de classes JS)
+- De nombreuses règles `[data-theme="light"] ...` dans `app.css` réécrivent les couleurs pour le mode clair (attention aux règles trop génériques qui peuvent écraser des couleurs de composants spécifiques — voir `documentations-dev/117-...` pour un cas vécu sur les boutons de partage)
+
+## Structure des templates Twig (état réel)
 ```
 templates/
-├── base.html.twig                # Layout principal (head, navbar, footer)
+├── base.html.twig                # Layout principal (head, navbar, footer, toggle thème)
+├── _matomo.html.twig             # Partial Matomo (voir docs/architecture/analytics.md)
 ├── home/
-│   └── index.html.twig           # Page d'accueil
+│   └── index.html.twig           # Page d'accueil (hero, formations, activités, partenaires)
 ├── formation/
-│   ├── index.html.twig           # Liste des formations
-│   └── show.html.twig            # Détail d'une formation
+│   └── show.html.twig            # Détail d'une formation + works publiés
 ├── works/
-│   ├── index.html.twig           # Liste des travaux
-│   └── show.html.twig            # Détail d'un travail
+│   └── show.html.twig            # Détail d'un travail (sidebar partage réseaux sociaux)
 ├── page/
-│   └── show.html.twig            # Pages statiques (mentions légales, etc.)
+│   └── show.html.twig            # Pages statiques (activités, mentions légales, etc.)
 ├── contact/
-│   └── index.html.twig           # Formulaire de contact
+│   ├── index.html.twig
+│   └── success.html.twig
 ├── security/
-│   └── login.html.twig           # Page de connexion
-└── components/                   # Composants Twig réutilisables
-    ├── _navbar.html.twig
-    ├── _footer.html.twig
-    ├── _formation_card.html.twig
-    └── _flash_messages.html.twig
+│   ├── login.html.twig
+│   ├── reset_password.html.twig
+│   └── two_factor.html.twig      # Saisie du code 2FA
+├── registration/
+│   └── register.html.twig
+├── profil/
+│   ├── index.html.twig           # Profil connecté
+│   ├── edit.html.twig            # Édition profil (avatar, bio, liens)
+│   ├── public.html.twig          # Profil public d'un utilisateur
+│   └── utilisateurs.html.twig    # Liste des membres (ROLE_FORMATEUR+)
+├── admin/
+│   ├── dashboard.html.twig
+│   ├── revisions-en-attente.html.twig
+│   └── formation/stagiaires.html.twig  # (voir docs/architecture/easyadmin.md)
+├── bundles/EasyAdminBundle/      # Overrides de layout EasyAdmin (ex: Matomo back-office)
+└── emails/                       # Templates d'emails transactionnels
 ```
 
+> Pas de dossier `components/` avec partials `_navbar` / `_footer` / `_flash_messages` : la navbar et le footer sont directement dans `base.html.twig`. Il n'y a pas non plus de vue `formation/index.html.twig` séparée — la liste des formations est intégrée à `home/index.html.twig`.
+
 ## Structure de base.html.twig
-Blocs Bootstrap à définir :
+Blocs Twig disponibles (surchargeables par page) :
 - `{% block title %}` — titre de la page
-- `{% block meta %}` — balises meta SEO
+- `{% block meta_description %}` / `{% block meta_robots %}` — SEO (voir `docs/architecture/seo-performances.md`)
+- `{% block meta_og %}` — Open Graph / Twitter Card (surchargé par ex. dans `works/show.html.twig`)
 - `{% block stylesheets %}` — CSS supplémentaire par page
 - `{% block body %}` — contenu principal
 - `{% block javascripts %}` — JS supplémentaire par page
 
 ## Composants de la page d'accueil
-D'après la maquette :
 
 ### Navbar
-- Logo CF2m (haut gauche)
-- Liens : Nos Formations · Nous contacter · Nos activités
+- Logo CF2m (haut gauche), liens principaux, bascule thème
 - **Position sticky universelle** : `position: sticky; top: 0; z-index: 1030` sur toutes les pages sans exception (home, login, register, pages internes)
-- Les compensations de hauteur (`padding-top: 70px`) ont été supprimées des templates auth et de `.cf2m-hero`
-- Bootstrap : `navbar navbar-expand-lg`
+- Bootstrap : `navbar navbar-expand-lg navbar-dark cf2m-navbar`
 
 ### Section Hero
 - Image de fond plein écran avec overlay sombre (fichiers WebP optimisés — voir `docs/architecture/seo-performances.md`)
 - Titre : "FORMATIONS PROFESSIONNELLES des métiers du numérique"
-- Chiffres clés mis en avant avec couleur accent :
+- Chiffres clés mis en avant avec couleur accent (`--cf2m-gold`) :
   - **100%** gratuit
   - **80%** de pratique
   - **1600 h** de cours
 - Bouton CTA : "NOS FORMATIONS" (Bootstrap `btn btn-primary`)
-- **Colonne droite** : photo de groupe (`.jpg` + `.webp`, 900×675 px, format 4:3) dans un cadre arrondi (`border-radius: 16px`) — remplace l'ancien portrait circulaire
+- **Colonne droite** : photo de groupe (`.jpg` + `.webp`, 900×675 px, format 4:3) dans un cadre arrondi (`border-radius: 16px`)
 
-### Footer
-- À définir
+### Footer (`cf2m-footer`, dans `base.html.twig`)
+- Colonne gauche : logo (`logo-cf2m-blanc.svg`) + « Centre de Formation 2M »
+- Colonne centre : « Nos activités » — liste des `Page` publiées (`_nav_pages`)
+- Colonne droite : copyright dynamique (`{{ 'now'|date('Y') }}`)
 
 ## Conventions Bootstrap 5
 - Breakpoints : `sm` (576px), `md` (768px), `lg` (992px), `xl` (1200px)
@@ -84,26 +107,19 @@ D'après la maquette :
 - Alertes flash : `alert alert-success/danger/warning/info`
 - Formulaires : `form-control`, `form-label`, `form-select`
 
-## Variables CSS personnalisées
-À définir dans `assets/styles/app.css` :
-```css
-:root {
-    --cf2m-primary:   #0d2b4e; /* à confirmer */
-    --cf2m-accent:    #4fcf8a; /* à confirmer */
-    --cf2m-cta:       #1a5eb8; /* à confirmer */
-}
-```
-
 ## Stimulus controllers
 Répertoire : `assets/controllers/`
 
 | Controller | Rôle |
 |------------|------|
+| `theme_controller.js` | Bascule dark/light mode, persistance `localStorage` |
 | `suneditor_controller.js` | Active SunEditor sur les textarea du back-office |
-| `navbar_controller.js` | Gestion scroll (navbar transparente → opaque) |
+| `avatar_crop_controller.js` | Recadrage client de l'avatar (80×80) avant upload VichUploader |
+| `csrf_protection_controller.js` | Protection CSRF sur formulaires spécifiques (ex: AJAX) |
+| `hello_controller.js` | Contrôleur de démonstration Symfony (scaffold par défaut) |
 
 ## ImportMap
-Packages à déclarer dans `importmap.php` :
+Packages déclarés dans `importmap.php` :
 - `bootstrap` (CSS + JS)
 - `@hotwired/stimulus`
 - `@hotwired/turbo`
@@ -119,6 +135,5 @@ Voir `docs/architecture/seo-performances.md` pour :
 - Lazy loading des images hors-écran
 
 ## TODO
-- [ ] Confirmer les codes hex exacts avec la charte graphique
-- [ ] Héberger Google Fonts en local (`@font-face` + `.woff2`) pour supprimer la dépendance réseau
 - [ ] Optimiser `logo-cf2m-blanc.svg` (136 KB → < 10 KB via SVGO)
+- [ ] Héberger Google Fonts en local (`@font-face` + `.woff2`) pour supprimer la dépendance réseau
