@@ -1,6 +1,6 @@
 # Permissions fines par Formation — État implémenté
 
-**Dernière mise à jour** : 2026-04-04  
+**Dernière mise à jour** : 2026-07-02 (ajout `FormationStagiaireVoter`)
 **Statut** : Implémenté et en production
 
 ---
@@ -77,6 +77,16 @@ Le voter remonte à `$works->getFormation()` pour vérifier les responsables. Si
 | `CONTENT_MANAGER` | `ROLE_ADMIN` ou `ROLE_PEDAGO` | aucun |
 
 Utilisé dans `setPermission()`, `denyAccessUnlessGranted()` et les menus EasyAdmin pour toutes les ressources partagées entre `ROLE_ADMIN` et `ROLE_PEDAGO` : Pages, Inscriptions, Utilisateurs, Messages de contact.
+
+### `FormationStagiaireVoter` — `src/Security/Voter/FormationStagiaireVoter.php`
+
+| Attribut | Accordé si | Sujet |
+|---|---|---|
+| `FORMATION_MANAGE_STAGIAIRES` | `ROLE_ADMIN`, `ROLE_PEDAGO`, ou (`ROLE_FORMATEUR` + responsable de la formation) | `Formation` |
+
+Toujours évalué avec un sujet `Formation` (pas de cas `CREATE` sans sujet). Contrôle l'accès à l'action EasyAdmin « Stagiaires » de `FormationCrudController` (ajout/retrait de stagiaires rattachés via l'entité pivot `FormationStagiaire`).
+
+Voir `docs/architecture/proposition-gestion-stagiaires-formation.md` pour le contexte de conception, et `docs/architecture/database-schema.md#formationstagiaire-entité-pivot` pour le schéma.
 
 ---
 

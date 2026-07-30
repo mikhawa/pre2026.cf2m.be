@@ -33,8 +33,8 @@ src/
 ├── Service/          # Logique métier (voir .claude/CONTEXT.md pour le détail)
 ├── Form/             # FormTypes Symfony
 ├── Security/
-│   └── Voter/        # Voters custom (FormationVoter, WorksVoter, ContentManagerVoter)
-└── EventSubscriber/  # Subscribers Kernel et Sécurité (Turnstile, 2FA)
+│   └── Voter/        # Voters custom (FormationVoter, WorksVoter, ContentManagerVoter, FormationStagiaireVoter)
+└── EventSubscriber/  # Subscribers Kernel/Sécurité (Turnstile, 2FA) + PartenaireLogoResizeSubscriber (VichUploader)
 
 templates/            # Twig
 assets/               # JS (Stimulus controllers) + CSS
