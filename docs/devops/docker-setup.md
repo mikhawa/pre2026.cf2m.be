@@ -25,3 +25,9 @@ Fichier `.env.local` (non commité) — voir `.env` pour le template
 - Mailpit : http://localhost:8025
 - phpMyAdmin : http://localhost:8181 (user/pass dans .env.local)
 - BDD : localhost:3307 (user/pass dans .env.local)
+
+## Intégration MCP (PHPStorm)
+Serveur MCP `phpstorm` déclaré dans `.mcp.json` (racine du projet, commité) et activé dans `.claude/settings.local.json` (`enabledMcpjsonServers`, non commité — spécifique au poste).
+- Type : HTTP, exposé localement par le plugin PHPStorm (`http://127.0.0.1:64442/stream`)
+- Permet à Claude Code d'interroger l'IDE (navigation, diagnostics) depuis le terminal
+- Nécessite PHPStorm ouvert sur le projet avec le plugin MCP actif
