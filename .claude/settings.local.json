@@ -29,7 +29,12 @@
       "Bash(/home/mikhawa/pre2026_cf2m_be/assets/styles/app.css:*)",
       "Bash(docker port pre_cf2m_nginx *)",
       "Bash(git -C /home/mikhawa/pre2026.cf2m.be show 5ee852e --stat)",
-      "Bash(git -C /home/mikhawa/pre2026.cf2m.be show 157d6a2 --stat)"
+      "Bash(git -C /home/mikhawa/pre2026.cf2m.be show 157d6a2 --stat)",
+      "Bash(sort -t- -k1 -n)",
+      "Bash(xargs -n1 basename)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "phpstorm"
+  ]
 }

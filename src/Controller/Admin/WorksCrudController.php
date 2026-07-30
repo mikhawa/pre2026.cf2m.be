@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\FormationStagiaire;
 use App\Entity\Works;
 use App\Entity\WorksHistory;
 use App\Field\SunEditorField;
+use App\Repository\FormationRepository;
+use App\Repository\FormationStagiaireRepository;
 use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -29,6 +33,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -185,10 +190,21 @@ class WorksCrudController extends AbstractCrudController
         yield AssociationField::new('users', 'Étudiants')
             ->hideOnIndex()
             ->setRequired(false)
-            ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
-                ->andWhere('entity.roles LIKE :stagiaire')
-                ->setParameter('stagiaire', '%ROLE_STAGIAIRE%')
-            )
+            ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                $qb->andWhere('entity.roles LIKE :stagiaire')
+                    ->setParameter('stagiaire', '%ROLE_STAGIAIRE%');
+
+                /** @var Works|null $works */
+                $works = $this->getContext()?->getEntity()?->getInstance();
+                $formation = $works?->getFormation();
+
+                if (null !== $formation) {
+                    $qb->join(FormationStagiaire::class, 'fs', Join::WITH, 'fs.user = entity AND fs.formation = :formation')
+                        ->setParameter('formation', $formation);
+                }
+
+                return $qb;
+            })
         ;
         yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()
@@ -205,6 +221,40 @@ class WorksCrudController extends AbstractCrudController
                 'Archivé' => 'archived',
             ]))
         ;
+    }
+
+    /**
+     * Liste (JSON) des étudiants d'une formation, pour le rafraîchissement dynamique
+     * du champ « Étudiants » en fonction de la formation choisie sur le formulaire
+     * Works (création comme édition), avant même l'enregistrement du Work.
+     */
+    #[AdminRoute(path: '/etudiants-formation/{formationId}', name: 'works_etudiants_formation')]
+    public function etudiantsFormation(
+        int $formationId,
+        FormationRepository $formationRepo,
+        FormationStagiaireRepository $formationStagiaireRepo,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('ROLE_FORMATEUR');
+
+        $formation = $formationRepo->find($formationId);
+
+        if (null === $formation) {
+            return new JsonResponse([]);
+        }
+
+        if (!$this->isGranted('ROLE_ADMIN') && !$formation->getResponsables()->contains($this->getUser())) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas responsable de cette formation.');
+        }
+
+        $etudiants = array_map(
+            static fn (FormationStagiaire $fs): array => [
+                'id' => $fs->getUser()?->getId(),
+                'text' => (string) $fs->getUser(),
+            ],
+            $formationStagiaireRepo->findForFormation($formation)
+        );
+
+        return new JsonResponse($etudiants);
     }
 
     /**

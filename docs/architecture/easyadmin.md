@@ -19,17 +19,22 @@ php bin/console importmap:require suneditor
 ## Structure des fichiers
 ```
 src/Controller/Admin/
-├── DashboardController.php       # Point d'entrée principal du back-office
+├── DashboardController.php          # Point d'entrée principal du back-office
 ├── UserCrudController.php
-├── FormationCrudController.php
+├── FormationCrudController.php      # + actions historique et gestion des stagiaires
 ├── WorksCrudController.php
-├── CommentCrudController.php    
+├── CommentCrudController.php
+├── CommentAjaxController.php        # Approbation AJAX d'un commentaire
 ├── RatingCrudController.php
 ├── InscriptionCrudController.php
+├── InscriptionAjaxController.php    # Mise à jour temps réel (traitement-info)
 ├── ContactMessageCrudController.php
+├── ContactMessageAjaxController.php # Lecture AJAX d'un message
 ├── PageCrudController.php
-└── PartenaireCrudController.php
-
+├── PartenaireCrudController.php
+├── RevisionsPendantesController.php # Page centralisée « Révisions en attente »
+├── HistoryPreviewController.php     # Prévisualisation d'une version d'historique
+└── MediaUploadController.php        # Endpoints upload image/fichier pour SunEditor
 ```
 
 ## DashboardController
@@ -60,10 +65,11 @@ Responsabilités :
 - Le contenu d'un banni reste intact — suppression manuelle depuis EasyAdmin si nécessaire
 
 ### FormationCrudController
-- Champs : title, slug (auto-généré), description, status, published_at, user (formateur)
+- Champs : title, slug (auto-généré), description, descriptionCourte, status, colorPrimary/colorSecondary, logo (VichUploader), published_at, responsables (formateurs)
 - Champ `description` : `TextareaField` + SunEditor (avec upload d'images)
 - Filtre par status (draft / published / archived / recruiting)
-- Action rapide : publier / dépublier
+- Action `historiqueFormation` : timeline des révisions (approuver/rejeter/restaurer), voir `docs/architecture/permissions-fines-formations.md`
+- Action `gererStagiaires` (« Stagiaires ») : liste/ajout/retrait des stagiaires rattachés via l'entité pivot `FormationStagiaire`, protégée par `FORMATION_MANAGE_STAGIAIRES` (voir `permissions-fines-formations.md`) — synchronise physiquement `ROLE_STAGIAIRE` sur `User`
 
 ### WorksCrudController
 - Champs : title, slug, description, status, formation, published_at
@@ -159,34 +165,31 @@ Intégration via un Stimulus controller qui cible les `textarea[data-controller=
 - Langue : `fr` (fichier de langue SunEditor)
 
 ### Uploads & médias — VichUploader
-`vich/uploader-bundle` remplace le `FileUploadService` custom pour tous les uploads du back-office.
+`vich/uploader-bundle` gère les uploads du back-office (avatar, logo formation, logo partenaire). Les images d'illustration éditoriales (SunEditor) transitent par `MediaUploadController`, pas par un mapping VichUploader dédié.
 
 Configuration (`config/packages/vich_uploader.yaml`) :
 ```yaml
 vich_uploader:
     db_driver: orm
     mappings:
-        formation_images:
-            uri_prefix: /uploads/formations
-            upload_destination: '%kernel.project_dir%/public/uploads/formations'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
-        works_files:
-            uri_prefix: /uploads/works
-            upload_destination: '%kernel.project_dir%/public/uploads/works'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
-        partenaire_logos:
-            uri_prefix: /uploads/partenaires
-            upload_destination: '%kernel.project_dir%/public/uploads/partenaires'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
-        user_avatars:
+        user_avatar:
             uri_prefix: /uploads/avatars
             upload_destination: '%kernel.project_dir%/public/uploads/avatars'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        formation_logo:
+            uri_prefix: /uploads/formation-logos
+            upload_destination: '%kernel.project_dir%/public/uploads/formation-logos'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        partenaire_logo:
+            uri_prefix: /uploads/partenaire-logos
+            upload_destination: '%kernel.project_dir%/public/uploads/partenaire-logos'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
 ```
 
 Redimensionnement des images :
-- Toujours effectué côté serveur après upload (via `ImageResizeService` utilisant GD ou Intervention Image)
-- Tailles cibles à définir par mapping (ex: logos partenaires → 300×150px max)
+- Logo partenaire uniquement : `PartenaireLogoResizeSubscriber` écoute `vich_uploader.post_upload`, redimensionne via GD à 400×300 px max (voir section `PartenaireCrudController` ci-dessus)
+- Avatar utilisateur : recadrage 80×80 côté client via le Stimulus controller `avatar_crop_controller.js` avant upload — pas de retraitement serveur
+- Logo formation : pas de redimensionnement automatique
 
 ## Configuration Doctrine Migrations
 
@@ -251,14 +254,11 @@ Importé dans `assets/admin.js`. Fonctionne par **event delegation** sur `docume
 
 > **Note dev** : après toute modification JS/CSS, supprimer `public/assets/` et vider le cache (`php bin/console cache:clear`) pour forcer la recompilation.
 
-## TODO
-- [ ] Implémenter `DashboardController` avec le menu complet
-- [ ] Créer chaque `CrudController` et configurer `configureFields()`
-- [ ] Restreindre les actions sensibles via `configureActions()` selon les rôles
-- [ ] Intégrer SunEditor via un Stimulus controller sur tous les `TextareaField` éditoriaux
-- [ ] Créer les endpoints `/admin/upload/image` et `/admin/upload/file` pour SunEditor
-- [ ] Configurer VichUploader avec les mappings par entité
-- [ ] Brancher `ImageResizeService` sur les listeners VichUploader post-upload
-- [ ] Ajouter des filtres et tris personnalisés sur les listes
-- [ ] Prévoir l'export CSV pour Inscription et ContactMessage
-- [ ] Internationaliser les labels en français (`labels` dans chaque `CrudController`)
+## Révisions en attente (menu centralisé)
+
+Route `RevisionsPendantesController::revisionsPendantes()` — page unique listant les révisions `PENDING` sur Formation/Page/Works, avec actions Approuver/Rejeter, lien « Prévisualiser vX » (`HistoryPreviewController`) et lien « Historique complet ». Voir `docs/architecture/permissions-fines-formations.md` pour le détail des permissions par type de contenu, et `documentations-dev/115…` / `116…` pour l'historique des correctifs (entityId parasite, aperçu de version).
+
+## TODO restant
+- [ ] Export CSV pour Inscription et ContactMessage
+- [ ] Autocomplete Ajax sur le `<select>` d'ajout de stagiaire (action « Stagiaires » de `FormationCrudController`) — actuellement un `<select>` HTML simple
+- [ ] Lien automatique `Inscription` acceptée → création `FormationStagiaire` (actuellement manuel)
