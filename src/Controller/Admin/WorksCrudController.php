@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\FormationStagiaire;
 use App\Entity\Works;
 use App\Entity\WorksHistory;
 use App\Field\SunEditorField;
 use App\Repository\WorksHistoryRepository;
 use App\Service\RevisionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -185,10 +187,21 @@ class WorksCrudController extends AbstractCrudController
         yield AssociationField::new('users', 'Étudiants')
             ->hideOnIndex()
             ->setRequired(false)
-            ->setQueryBuilder(fn (QueryBuilder $qb) => $qb
-                ->andWhere('entity.roles LIKE :stagiaire')
-                ->setParameter('stagiaire', '%ROLE_STAGIAIRE%')
-            )
+            ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                $qb->andWhere('entity.roles LIKE :stagiaire')
+                    ->setParameter('stagiaire', '%ROLE_STAGIAIRE%');
+
+                /** @var Works|null $works */
+                $works = $this->getContext()?->getEntity()?->getInstance();
+                $formation = $works?->getFormation();
+
+                if (null !== $formation) {
+                    $qb->join(FormationStagiaire::class, 'fs', Join::WITH, 'fs.user = entity AND fs.formation = :formation')
+                        ->setParameter('formation', $formation);
+                }
+
+                return $qb;
+            })
         ;
         yield SunEditorField::new('description', 'Description')
             ->hideOnIndex()
