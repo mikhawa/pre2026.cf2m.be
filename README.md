@@ -88,7 +88,7 @@ Email : mikhawa@cf2m.be
 Email : thejoe@cf2m.be
 - userName : TheJoe
 - Rôle : ROLE_ADMIN
-- Mot de passe : 123joe
+- Mot de passe : 123joe321
 
 Email : thelee@cf2m.be
 - userName : TheLee
