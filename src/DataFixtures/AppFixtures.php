@@ -53,7 +53,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             'userName' => 'TheJoe',
             'roles' => ['ROLE_ADMIN'],
             'status' => 1,
-            'plainPassword' => '123joe',
+            'plainPassword' => '123joe321',
         ]);
         // ── Acteur Administrateur Pédagogique de test ────────────────────────────────────────
         $usersManuel[] = UserFactory::createOne([
