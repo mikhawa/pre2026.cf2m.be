@@ -39,6 +39,14 @@ alias gb='git branch'
 alias gf='git fetch --all'
 ```
 
+### ----------------------
+### Claude Code Agents
+### ----------------------
+
+#### design-review
+Invoque l'agent de revue UI/UX pour vérifier la cohérence visuelle, l'accessibilité et le responsive d'une page ou d'un formulaire récemment modifié.
+
+
 URL de WSL maison
 \\wsl.localhost\Ubuntu\home\
 
