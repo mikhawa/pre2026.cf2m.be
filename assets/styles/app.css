@@ -816,14 +816,17 @@ header {
     align-items: center;
     gap: 0.35em;
 }
-.cf2m-card .btn-outline-secondary::after {
-    content: '→';
-    transition: transform 0.2s;
-}
 .cf2m-card .btn-outline-secondary:hover {
     color: var(--cf2m-white);
 }
-.cf2m-card .btn-outline-secondary:hover::after {
+/* Flèche uniquement sur la carte formation de l'accueil ("En savoir plus →") —
+   la fiche formation a son propre lien "← Retour aux formations", qui a déjà
+   ses flèches dans le texte : lui ajouter ::after créait une double flèche. */
+.page-home .cf2m-card .btn-outline-secondary::after {
+    content: '→';
+    transition: transform 0.2s;
+}
+.page-home .cf2m-card .btn-outline-secondary:hover::after {
     transform: translateX(3px);
 }
 
@@ -986,7 +989,7 @@ header {
     width: 100%;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 0.6rem;
+    border-radius: 0.75rem;
     color: var(--cf2m-white);
     font-family: var(--font-body);
     font-size: 0.95rem;
@@ -1020,7 +1023,7 @@ header {
     gap: 0.6rem;
     background: rgba(220, 53, 69, 0.15);
     border: 1px solid rgba(220, 53, 69, 0.35);
-    border-radius: 0.6rem;
+    border-radius: 0.75rem;
     color: #ff8896;
     font-size: 0.88rem;
     padding: 0.75rem 1rem;
@@ -1032,7 +1035,7 @@ header {
     width: 100%;
     background: var(--cf2m-cyan);
     border: none;
-    border-radius: 0.6rem;
+    border-radius: 999px;
     color: var(--cf2m-dark);
     font-family: var(--font-display);
     font-size: 1rem;
@@ -1087,7 +1090,7 @@ header {
 .cf2m-input {
     background: #f8fafc;
     border: 1.5px solid #d0dce8;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-size: 0.92rem;
     color: #1a2b3c !important;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -1125,7 +1128,7 @@ header {
     font-weight: 600;
     font-size: 0.92rem;
     padding: 0.65rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: 999px;
     border: none;
     letter-spacing: 0.3px;
     transition: background 0.2s, transform 0.1s;

@@ -1,9 +1,9 @@
 # pre2026.cf2m.be
 
 # TO DO
-impossible de recadrer la photo de ptofil sur Android .
+impossible de recadrer la photo de profil sur Android .
 Améliorer les groupes et permissions. 
-trouver ub design qui colle
+
 
 ## Description du projet
 
