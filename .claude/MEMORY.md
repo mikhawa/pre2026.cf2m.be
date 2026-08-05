@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-118 (2026-06-25) — Git WSL2 permission pack files
+125 (2026-08-05) — Restyle accueil : hero, cartes formations, partenaires
 
 ## Dernier numéro .claude-tasks
-192 (2026-08-05)
+193 (2026-08-05)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -196,7 +196,7 @@ Garder Bootstrap intégralement, ne perdre aucune fonctionnalité existante, ne 
 Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/plans/foamy-sniffing-petal.md`. 7 étapes :
 1. ✅ Tokens couleur dans `assets/styles/app.css` (tâche `.claude-tasks/sonnet/192-...md`)
 2. ✅ Navbar + footer
-3. ⏳ Page d'accueil (hero, cartes formations, partenaires)
+3. ✅ Page d'accueil (hero, cartes formations, partenaires) — tâche `.claude-tasks/sonnet/193-...md`
 4. ⏳ Page formation/show
 5. ⏳ Contact (formulaire réel + Turnstile)
 6. ⏳ Login (formulaire réel + Turnstile + liens forgot-password/register)
@@ -209,5 +209,11 @@ Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/pla
 - Nav-link desktop : soulignement `::after` remplacé par fond pastille au survol (`rgba(60,200,230,.12)`, `border-radius: .6rem`), aligné sur le style déjà utilisé en mobile.
 - Footer : `py-4 → py-5`.
 
+### Ce qui a changé (étape 3 — accueil)
+- Rayons passés en "pill" (`999px`) pour coller au signature visuelle du mockup : `.cf2m-hero-btn`, `.cf2m-card .btn-outline-secondary` (CTA carte formation), `.cf2m-card .badge-status`, `.cf2m-partner-item`.
+- `.cf2m-card` : rayon `0.75rem → 1.25rem` (impacte toutes les cartes du site, pas seulement l'accueil — cohérence globale voulue).
+- `.cf2m-partners` : ajout d'un `border-top` en dark mode (séparateur déjà présent en light, manquant en dark).
+- Bug corrigé au passage : texte du bouton CTA hero invisible en light mode (conflit de spécificité entre `[data-theme="light"] a` et `.cf2m-hero-btn` — la règle générique `a` gagnait sur la classe). Toujours vérifier la spécificité quand un sélecteur `[data-theme="light"] <balise>` générique coexiste avec une classe `.cf2m-*` sur le même élément.
+
 ### Convention de vérification utilisée
-Pas d'outillage Playwright/chromium-cli fonctionnel dans ce conteneur (libs système manquantes, `libnspr4.so`) — ne pas repartir sur cette piste sans en discuter avec l'utilisateur. Vérification faite via `docker compose exec -T php php bin/console lint:twig`, `curl` (code HTTP + présence de classes), et vérification manuelle des accolades CSS.
+`docker compose exec -T php php bin/console lint:twig`, `curl` (code HTTP), vérification manuelle des accolades CSS, **+ vérification visuelle possible via Playwright en passant par le `npx` **Windows** (pas le conteneur Linux)** : `cmd.exe /c "cd /d C:\<dossier> && npx playwright install chromium"` puis un script `.mjs` avec `import { chromium } from 'playwright'` ciblant `http://localhost:8085` (port Docker publié, accessible depuis Windows). Écrire les fichiers directement sur `/mnt/c/...` (pas via l'outil Write avec un chemin `C:\...`, qui crée un fichier au nom littéral côté Linux). C'est la voie qui fonctionne — le conteneur Linux, lui, n'a toujours pas les libs système pour un Chromium natif (`libnspr4.so` manquant).

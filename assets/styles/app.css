@@ -1939,6 +1939,11 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-hero-label         { color: #0a6ea0; }
 [data-theme="light"] .cf2m-stat-value         { color: #0d5a8a; }
 
+/* Bouton CTA hero : le sélecteur générique [data-theme="light"] a (spécificité
+   attribut+balise) l'emporterait sinon sur .cf2m-hero-btn (simple classe) et
+   rendrait le texte invisible (même couleur que le fond) */
+[data-theme="light"] .cf2m-hero-btn { color: var(--cf2m-dark); }
+
 /* Lueur cyan du hero : couleur adoucie en light */
 [data-theme="light"] .cf2m-hero::after {
     background: radial-gradient(circle, rgba(60, 200, 230, 0.08) 0%, transparent 65%);

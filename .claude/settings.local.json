@@ -37,7 +37,16 @@
       "Bash(PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install playwright@1.62.1)",
       "Bash(node check.j)",
       "Read(//home/mikhawa/.cache/ms-playwright/chromium-1234/**)",
-      "Bash(ldd ~/.cache/ms-playwright/chromium-1234/chrome-linux/chrome)"
+      "Bash(ldd ~/.cache/ms-playwright/chromium-1234/chrome-linux/chrome)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(cmd.exe /c \"mkdir C:\\\\tmp_shots 2>nul & cd /d C:\\\\tmp_shots && npx --yes playwright screenshot --viewport-size=1440,1000 --full-page http://localhost:8085/ home-dark.png\")",
+      "Bash(cmd.exe /c \"mkdir C:\\\\tmp_shots\")",
+      "Bash(cmd.exe /c \"dir C:\\\\tmp_shots\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npx --yes playwright screenshot --viewport-size=1440,1000 --full-page http://localhost:8085/ home-dark.png\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npx --yes playwright install chromium\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npm install playwright\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-light.mjs\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-btn.mjs\")"
     ]
   },
   "enabledMcpjsonServers": [
