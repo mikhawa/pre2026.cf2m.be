@@ -1,10 +1,10 @@
 /* ── Variables CF2m ──────────────────────────────────────────────────── */
 :root {
-    --cf2m-dark:       #08111e;   /* fond hero / navbar */
+    --cf2m-dark:       #050e18;   /* fond hero / navbar */
     --cf2m-navy:       #0d1e35;   /* fond alternatif */
     --cf2m-navy-md:    #142f52;   /* variante mid */
-    --cf2m-cyan:       #00b4d8;   /* accent principal */
-    --cf2m-cyan-light: #48cae4;   /* cyan clair / hover */
+    --cf2m-cyan:       #3cc8e6;   /* accent principal */
+    --cf2m-cyan-light: #7fdcef;   /* cyan clair / hover */
     --cf2m-gold:       #f4c430;   /* accent secondaire — stats, labels */
     --cf2m-light:      #f0f6fa;   /* fond clair sections */
     --cf2m-white:      #ffffff;
@@ -21,7 +21,7 @@
     --bs-card-color:          rgba(255, 255, 255, 0.87);
     --bs-card-bg:             transparent;
     --bs-card-border-color:   rgba(255, 255, 255, 0.10);
-    --bs-link-color:          #48cae4;
+    --bs-link-color:          var(--cf2m-cyan-light);
     --bs-link-hover-color:    #ffffff;
     --bs-heading-color:       #ffffff;
     --bs-list-group-color:    rgba(255, 255, 255, 0.87);
@@ -76,9 +76,9 @@ a:hover {
 body {
     font-family: var(--font-body);
     color: rgba(255, 255, 255, 0.87);
-    background-color: #05111f;
+    background-color: #050e18;
     background-image:
-        radial-gradient(ellipse 80% 60% at 75%  5%,  rgba(0, 180, 216, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 75%  5%,  rgba(60, 200, 230, 0.22) 0%, transparent 60%),
         radial-gradient(ellipse 55% 60% at  5% 40%,  rgba(10,  55, 130, 0.40) 0%, transparent 65%),
         radial-gradient(ellipse 50% 45% at 88% 85%,  rgba(0,  90, 165, 0.18) 0%, transparent 60%),
         radial-gradient(ellipse 85% 35% at 50% 115%, rgba(3,  12,  35, 0.95) 0%, transparent 70%);
@@ -127,7 +127,7 @@ body:not(.page-home):not(.page-login) .breadcrumb-item + .breadcrumb-item::befor
 
 /* Cartes glassmorphisme sombres sur pages intérieures */
 body:not(.page-home):not(.page-login) .cf2m-card {
-    background: rgba(8, 17, 30, 0.72);
+    background: rgba(5, 14, 24, 0.72);
     backdrop-filter: blur(16px) saturate(1.3);
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
 }
@@ -196,7 +196,7 @@ header {
     }
     .cf2m-navbar .nav-link:hover,
     .cf2m-navbar .nav-link.active {
-        background: rgba(0, 180, 216, 0.1);
+        background: rgba(60, 200, 230, 0.1);
         color: var(--cf2m-cyan) !important;
     }
     .cf2m-navbar .nav-link.active {
@@ -241,30 +241,15 @@ header {
     color: rgba(255, 255, 255, 0.82) !important;
     letter-spacing: 0.3px;
     padding: 0.4rem 1rem !important;
-    position: relative;
-    transition: color 0.2s;
-}
-.cf2m-navbar .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 1rem;
-    right: 1rem;
-    height: 1.5px;
-    background: var(--cf2m-cyan);
-    transform: scaleX(0);
-    transition: transform 0.2s ease;
-    border-radius: 1px;
+    border-radius: 0.6rem;
+    transition: color 0.2s, background 0.2s;
 }
 .cf2m-navbar .nav-link:hover,
 .cf2m-navbar .nav-link.active {
     color: var(--cf2m-white) !important;
+    background: rgba(60, 200, 230, 0.12);
 }
-.cf2m-navbar .nav-link:hover::after,
-.cf2m-navbar .nav-link.active::after {
-    transform: scaleX(1);
-}
-/* Indicateur dropdown : remplace le soulignement par un chevron */
+/* Indicateur dropdown : remplace le caret Bootstrap par défaut par un chevron texte */
 .cf2m-navbar .nav-link.dropdown-toggle::after {
     content: ' ▾';
     position: static;
@@ -296,7 +281,7 @@ header {
 .cf2m-btn-connexion:hover {
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-cyan);
-    background: rgba(0, 180, 216, 0.08);
+    background: rgba(60, 200, 230, 0.08);
 }
 
 /* Alignement vertical de la flèche Bootstrap sur les nav-links dropdown */
@@ -329,7 +314,7 @@ header {
 .cf2m-user-dropdown-toggle[aria-expanded="true"] {
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-cyan);
-    background: rgba(0, 180, 216, 0.08);
+    background: rgba(60, 200, 230, 0.08);
 }
 .cf2m-user-avatar-icon {
     display: inline-flex;
@@ -356,7 +341,7 @@ header {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         border: none;
-        border-left: 2px solid rgba(0, 180, 216, 0.4);
+        border-left: 2px solid rgba(60, 200, 230, 0.4);
         border-radius: 0 0.5rem 0.5rem 0;
         box-shadow: none;
         min-width: 100%;
@@ -393,7 +378,7 @@ header {
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border: none;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 0 0 0.75rem 0.75rem;
+    border-radius: 0 0 1rem 1rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     min-width: 300px;
     padding: 0.5rem 0;
@@ -420,7 +405,7 @@ header {
 }
 .cf2m-dropdown-item:hover,
 .cf2m-dropdown-item:focus {
-    background-color: rgba(0, 180, 216, 0.08);
+    background-color: rgba(60, 200, 230, 0.08);
     color: var(--cf2m-cyan);
     padding-left: 1.6rem;
 }
@@ -454,7 +439,7 @@ header {
     transition: background 0.15s;
 }
 .cf2m-dropdown-all:hover {
-    background-color: rgba(0, 180, 216, 0.1);
+    background-color: rgba(60, 200, 230, 0.1);
     color: var(--cf2m-cyan-light);
 }
 
@@ -494,7 +479,7 @@ header {
     right: -80px;
     width: 620px;
     height: 620px;
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.20) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(60, 200, 230, 0.20) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
 }
@@ -518,7 +503,7 @@ header {
         0 16px 60px rgba(0, 0, 0, 0.30),
         0 0 0 0.5px rgba(255, 255, 255, 0.08) inset,
         0 2px 0 rgba(255, 255, 255, 0.12) inset,
-        0 0 40px rgba(0, 180, 216, 0.05);
+        0 0 40px rgba(60, 200, 230, 0.05);
 }
 
 @media (max-width: 991px) {
@@ -569,10 +554,10 @@ header {
     height: clamp(220px, 28vw, 340px);
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid rgba(0, 180, 216, 0.45);
+    border: 2px solid rgba(60, 200, 230, 0.45);
     box-shadow:
-        0 0 0 10px rgba(0, 180, 216, 0.08),
-        0 0 0 20px rgba(0, 180, 216, 0.04),
+        0 0 0 10px rgba(60, 200, 230, 0.08),
+        0 0 0 20px rgba(60, 200, 230, 0.04),
         0 20px 60px rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 1;
@@ -617,7 +602,7 @@ header {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: rgba(0, 180, 216, 0.5);
+    color: rgba(60, 200, 230, 0.5);
 }
 .cf2m-hero-portrait-placeholder svg {
     width: 60px;
@@ -688,13 +673,13 @@ header {
     border-radius: 0.4rem;
     text-decoration: none;
     transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(0, 180, 216, 0.35);
+    box-shadow: 0 4px 20px rgba(60, 200, 230, 0.35);
 }
 .cf2m-hero-btn:hover {
     background: var(--cf2m-cyan-light);
     color: var(--cf2m-dark);
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(0, 180, 216, 0.45);
+    box-shadow: 0 8px 28px rgba(60, 200, 230, 0.45);
 }
 
 /* ── Section commune ─────────────────────────────────────────────────── */
@@ -731,7 +716,7 @@ header {
     background-color: #060d1a;
     background-image:
         radial-gradient(ellipse 90% 35% at 50%   0%, rgba(0,   0,   0, 0.60) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 55% at 12%  65%, rgba(0, 180, 216, 0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 55% at 12%  65%, rgba(60, 200, 230, 0.09) 0%, transparent 60%),
         radial-gradient(ellipse 70% 50% at 88%  30%, rgba(10,  40, 100, 0.38) 0%, transparent 65%),
         radial-gradient(ellipse 80% 30% at 50% 115%, rgba(0,   0,   0, 0.70) 0%, transparent 60%);
     border-top: 5px solid #38476b;
@@ -748,7 +733,7 @@ header {
 
 /* Cartes formations accueil : glassmorphisme sombre */
 .page-home #formations .cf2m-card {
-    background: rgba(8, 17, 30, 0.78);
+    background: rgba(5, 14, 24, 0.78);
     backdrop-filter: blur(12px) saturate(1.2);
     -webkit-backdrop-filter: blur(12px) saturate(1.2);
 }
@@ -758,7 +743,7 @@ header {
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 0.75rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
-    background: rgba(8, 17, 30, 0.65);
+    background: rgba(5, 14, 24, 0.65);
     backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     -webkit-backdrop-filter: blur(18px) saturate(1.6) brightness(1.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
@@ -767,8 +752,8 @@ header {
 }
 .cf2m-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(0, 180, 216, 0.16);
-    border-color: rgba(0, 180, 216, 0.4);
+    box-shadow: 0 12px 32px rgba(60, 200, 230, 0.16);
+    border-color: rgba(60, 200, 230, 0.4);
 }
 .cf2m-card .card-header {
     background: color-mix(in srgb, var(--card-color-primary, var(--cf2m-dark)) 80%, transparent);
@@ -816,8 +801,8 @@ header {
     overflow-wrap: break-word;
 }
 .cf2m-card .btn-outline-secondary {
-    background: rgba(0, 180, 216, 0.08);
-    border: 1px solid rgba(0, 180, 216, 0.35);
+    background: rgba(60, 200, 230, 0.08);
+    border: 1px solid rgba(60, 200, 230, 0.35);
     border-radius: 0.6rem;
     color: var(--cf2m-cyan-light);
     font-family: var(--font-display);
@@ -828,11 +813,11 @@ header {
     transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
 }
 .cf2m-card .btn-outline-secondary:hover {
-    box-shadow: 0 6px 18px rgba(0, 180, 216, 0.2);
+    box-shadow: 0 6px 18px rgba(60, 200, 230, 0.2);
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-white);
     transform: translateY(-2px);
-    background: rgba(0, 180, 216, 0.18);
+    background: rgba(60, 200, 230, 0.18);
 }
 
 /* ── Section partenaires ─────────────────────────────────────────────── */
@@ -844,7 +829,7 @@ header {
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(0, 180, 216, 0.2);
+    border: 1px solid rgba(60, 200, 230, 0.2);
     border-radius: 0.6rem;
     padding: 0.9rem 1.5rem;
     font-family: var(--font-display);
@@ -857,7 +842,7 @@ header {
     min-width: 140px;
 }
 .cf2m-partner-item:hover {
-    box-shadow: 0 6px 18px rgba(0, 180, 216, 0.2);
+    box-shadow: 0 6px 18px rgba(60, 200, 230, 0.2);
     color: var(--cf2m-cyan);
     border-color: var(--cf2m-cyan);
     transform: translateY(-2px);
@@ -880,7 +865,7 @@ header {
     background-color: #06101c;
     background-image:
         radial-gradient(ellipse 55% 50% at 10% 30%, rgba(0, 90, 160, 0.40) 0%, transparent 100%),
-        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(0, 180, 216, 0.22) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(60, 200, 230, 0.22) 0%, transparent 100%),
         radial-gradient(ellipse 60% 60% at 50% 100%, rgba(8, 35, 75, 0.50) 0%, transparent 100%);
     min-height: 100vh;
     position: relative;
@@ -897,7 +882,7 @@ header {
     left: -80px;
     width: 320px;
     height: 320px;
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(60, 200, 230, 0.14) 0%, transparent 70%);
 }
 .cf2m-login-blob--br {
     bottom: -100px;
@@ -920,7 +905,7 @@ header {
     box-shadow:
         0 8px 40px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.07),
-        inset 0 0 0 0.5px rgba(0, 180, 216, 0.08);
+        inset 0 0 0 0.5px rgba(60, 200, 230, 0.08);
     position: relative;
     z-index: 1;
 }
@@ -932,7 +917,7 @@ header {
 
 .cf2m-login-logo {
     margin-bottom: 1rem;
-    filter: drop-shadow(0 0 12px rgba(0, 180, 216, 0.4));
+    filter: drop-shadow(0 0 12px rgba(60, 200, 230, 0.4));
 }
 
 .cf2m-login-title {
@@ -996,8 +981,8 @@ header {
 }
 .cf2m-login-input:focus {
     border-color: var(--cf2m-cyan);
-    background: rgba(0, 180, 216, 0.06);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+    background: rgba(60, 200, 230, 0.06);
+    box-shadow: 0 0 0 3px rgba(60, 200, 230, 0.15);
 }
 
 /* Lien mot de passe oublié */
@@ -1039,12 +1024,12 @@ header {
     margin-top: 0.5rem;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(0, 180, 216, 0.35);
+    box-shadow: 0 4px 20px rgba(60, 200, 230, 0.35);
 }
 .cf2m-login-btn:hover {
     background: var(--cf2m-cyan-light);
     transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(0, 180, 216, 0.45);
+    box-shadow: 0 6px 28px rgba(60, 200, 230, 0.45);
 }
 .cf2m-login-btn:active { transform: translateY(0); }
 
@@ -1098,7 +1083,7 @@ header {
 .cf2m-input:focus {
     background: #fff;
     border-color: var(--cf2m-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.12);
+    box-shadow: 0 0 0 3px rgba(60, 200, 230, 0.12);
     outline: none;
     color: #1a2b3c !important;
 }
@@ -1144,18 +1129,18 @@ header {
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid rgba(0, 180, 216, 0.4);
+    border: 2px solid rgba(60, 200, 230, 0.4);
 }
 .cf2m-avatar-placeholder {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(0, 180, 216, 0.08);
-    border: 2px solid rgba(0, 180, 216, 0.25);
+    background: rgba(60, 200, 230, 0.08);
+    border: 2px solid rgba(60, 200, 230, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(0, 180, 216, 0.6);
+    color: rgba(60, 200, 230, 0.6);
 }
 .cf2m-avatar-placeholder svg {
     width: 40px;
@@ -1195,7 +1180,7 @@ header {
 }
 .cf2m-crop-modal-content {
     background: #0d1e2e;
-    border: 1px solid rgba(0, 180, 216, 0.2);
+    border: 1px solid rgba(60, 200, 230, 0.2);
     color: rgba(255, 255, 255, 0.87);
 }
 .cf2m-crop-modal-content .modal-header,
@@ -1249,7 +1234,7 @@ header {
     background-color: rgba(255, 255, 255, 0.10);
     color: rgba(255, 255, 255, 0.95);
     border-color: var(--cf2m-cyan);
-    box-shadow: 0 0 0 0.2rem rgba(0, 180, 216, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(60, 200, 230, 0.25);
 }
 .cf2m-modal .form-control::placeholder {
     color: rgba(255, 255, 255, 0.35);
@@ -1292,7 +1277,7 @@ header {
     background-color: #ffffff;
     color: #1a2b3c;
     border-color: var(--cf2m-cyan);
-    box-shadow: 0 0 0 0.2rem rgba(0, 180, 216, 0.20);
+    box-shadow: 0 0 0 0.2rem rgba(60, 200, 230, 0.20);
 }
 [data-theme="light"] .cf2m-modal .form-control::placeholder {
     color: #9fb3c8;
@@ -1361,7 +1346,7 @@ header {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0, 180, 216, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(60, 200, 230, 0.08) 0%, transparent 70%),
         radial-gradient(ellipse 40% 60% at 10% 80%, rgba(20, 47, 82, 0.6) 0%, transparent 70%);
     pointer-events: none;
 }
@@ -1383,7 +1368,7 @@ header {
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--cf2m-cyan);
-    border: 1px solid rgba(0, 180, 216, 0.35);
+    border: 1px solid rgba(60, 200, 230, 0.35);
     padding: 0.25rem 0.75rem;
     border-radius: 2rem;
     margin-bottom: 1.25rem;
@@ -1414,8 +1399,8 @@ header {
 .cf2m-work-body { background: transparent; }
 
 .cf2m-work-description-card {
-    background: rgba(8, 17, 30, 0.72);
-    border: 1px solid rgba(0, 180, 216, 0.12);
+    background: rgba(5, 14, 24, 0.72);
+    border: 1px solid rgba(60, 200, 230, 0.12);
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
@@ -1441,8 +1426,8 @@ header {
 
 /* Sidebar */
 .cf2m-work-sidebar-block {
-    background: rgba(8, 17, 30, 0.72);
-    border: 1px solid rgba(0, 180, 216, 0.12);
+    background: rgba(5, 14, 24, 0.72);
+    border: 1px solid rgba(60, 200, 230, 0.12);
     border-radius: 0.75rem;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1.25rem;
@@ -1529,19 +1514,19 @@ header {
     font-weight: 500;
     padding: 0.5rem 0.75rem;
     border-radius: 0.4rem;
-    background: rgba(0, 180, 216, 0.06);
-    border: 1px solid rgba(0, 180, 216, 0.15);
+    background: rgba(60, 200, 230, 0.06);
+    border: 1px solid rgba(60, 200, 230, 0.15);
     transition: background 0.2s, color 0.2s;
 }
 .cf2m-work-formation-link:hover {
-    background: rgba(0, 180, 216, 0.12);
+    background: rgba(60, 200, 230, 0.12);
     color: var(--cf2m-cyan);
 }
 
 /* Bouton retour */
 .cf2m-work-back-btn {
     background: transparent;
-    border: 1.5px solid rgba(0, 180, 216, 0.35);
+    border: 1.5px solid rgba(60, 200, 230, 0.35);
     color: var(--cf2m-cyan);
     font-family: var(--font-display);
     font-size: 0.85rem;
@@ -1595,7 +1580,7 @@ header {
 /* ── Footer ──────────────────────────────────────────────────────────── */
 .cf2m-footer {
     background: var(--cf2m-dark);
-    border-top: 2px solid rgba(0, 180, 216, 0.25);
+    border-top: 2px solid rgba(60, 200, 230, 0.25);
 }
 .cf2m-footer .text-muted {
     color: var(--cf2m-muted) !important;
@@ -1627,7 +1612,7 @@ header {
     padding: 0;
 }
 .cf2m-theme-toggle:hover {
-    background: rgba(0, 180, 216, 0.18);
+    background: rgba(60, 200, 230, 0.18);
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-white);
     transform: rotate(20deg);
@@ -1655,7 +1640,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     transition: background 0.2s, border-color 0.2s;
 }
 .cf2m-theme-toggle-mobile:hover {
-    background: rgba(0, 180, 216, 0.20);
+    background: rgba(60, 200, 230, 0.20);
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-white);
 }
@@ -1679,6 +1664,8 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     --bs-border-color:      rgba(0, 0, 0, 0.12);
     --bs-alert-color:       #1a2b3c;
     --cf2m-muted:           rgba(0, 0, 0, 0.50);
+    /* Accent plus foncé en light mode : meilleur contraste sur fond blanc */
+    --cf2m-cyan:            #0072a3;
 }
 
 /* Body */
@@ -1726,11 +1713,11 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-card .card-text       { color: #4a6070; }
 [data-theme="light"] .cf2m-card .btn-outline-secondary {
     background: #ffffff;
-    border-color: rgba(0, 180, 216, 0.35);
+    border-color: rgba(60, 200, 230, 0.35);
     color: var(--cf2m-navy);
 }
 [data-theme="light"] .cf2m-card .btn-outline-secondary:hover {
-    background: rgba(0, 180, 216, 0.08);
+    background: rgba(60, 200, 230, 0.08);
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-navy);
 }
@@ -1744,7 +1731,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-partner-item {
     background: #ffffff;
     color: var(--cf2m-navy);
-    border-color: rgba(0, 180, 216, 0.25);
+    border-color: rgba(60, 200, 230, 0.25);
     box-shadow: 0 1px 8px rgba(0,0,0,0.07);
 }
 [data-theme="light"] .cf2m-partner-item:hover { color: var(--cf2m-cyan); }
@@ -1763,7 +1750,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-work-title       { color: #ffffff !important; }
 [data-theme="light"] .cf2m-work-meta-item   { color: rgba(255, 255, 255, 0.72) !important; }
 [data-theme="light"] .cf2m-work-meta-item svg { color: rgba(255, 255, 255, 0.72) !important; }
-[data-theme="light"] .cf2m-work-label       { color: var(--cf2m-cyan) !important; border-color: rgba(0, 180, 216, 0.40) !important; }
+[data-theme="light"] .cf2m-work-label       { color: var(--cf2m-cyan) !important; border-color: rgba(60, 200, 230, 0.40) !important; }
 
 /* Contenu riche (SunEditor) */
 [data-theme="light"] .cf2m-formation-description,
@@ -1802,6 +1789,12 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 }
 
 /* ── Light mode : corrections lisibilité ─────────────────────────────── */
+
+/* Navbar + footer restent sombres en light mode → l'accent doit rester le cyan clair (pas la variante foncée utilisée sur fond blanc) */
+[data-theme="light"] .cf2m-navbar,
+[data-theme="light"] .cf2m-footer {
+    --cf2m-cyan: #3cc8e6;
+}
 
 /* Navbar + dropdowns : fond toujours sombre → texte toujours blanc */
 [data-theme="light"] .cf2m-navbar .nav-link,
@@ -1877,7 +1870,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 
 /* Bouton thème : adapter si on veut (la navbar reste sombre, donc pas de changement) */
 [data-theme="light"] .cf2m-theme-toggle:hover {
-    background: rgba(0, 180, 216, 0.25);
+    background: rgba(60, 200, 230, 0.25);
     border-color: var(--cf2m-cyan);
     color: var(--cf2m-white);
 }
@@ -1901,7 +1894,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-hero {
     background-color: #c4dff0;
     background-image:
-        radial-gradient(ellipse 70% 55% at 80% 10%,  rgba(0, 180, 216, 0.38) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 55% at 80% 10%,  rgba(60, 200, 230, 0.38) 0%, transparent 60%),
         radial-gradient(ellipse 50% 65% at  5% 55%,  rgba(0,  80, 180, 0.22) 0%, transparent 65%),
         radial-gradient(ellipse 80% 40% at 50% 108%, rgba(0,  40, 120, 0.20) 0%, transparent 65%);
     background-attachment: scroll;
@@ -1947,7 +1940,7 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 
 /* Lueur cyan du hero : couleur adoucie en light */
 [data-theme="light"] .cf2m-hero::after {
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.08) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(60, 200, 230, 0.08) 0%, transparent 65%);
 }
 
 /* Section partenaires : bord supérieur et ombre */
@@ -1978,13 +1971,13 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     background-color: #c4dff0;
     background-image:
         radial-gradient(ellipse 55% 50% at 10% 30%, rgba(0, 120, 200, 0.18) 0%, transparent 100%),
-        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(0, 180, 216, 0.12) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(60, 200, 230, 0.12) 0%, transparent 100%),
         radial-gradient(ellipse 60% 60% at 50% 100%, rgba(0, 80, 160, 0.12) 0%, transparent 100%);
 }
 
 /* Blobs décoratifs : teintes claires */
 [data-theme="light"] .cf2m-login-blob--tl {
-    background: radial-gradient(circle, rgba(0, 180, 216, 0.18) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(60, 200, 230, 0.18) 0%, transparent 70%);
 }
 [data-theme="light"] .cf2m-login-blob--br {
     background: radial-gradient(circle, rgba(0, 80, 160, 0.14) 0%, transparent 70%);
@@ -2019,8 +2012,8 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-login-input::placeholder { color: rgba(0, 30, 60, 0.35); }
 [data-theme="light"] .cf2m-login-input:focus {
     border-color: var(--cf2m-cyan);
-    background: rgba(0, 180, 216, 0.06);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.18);
+    background: rgba(60, 200, 230, 0.06);
+    box-shadow: 0 0 0 3px rgba(60, 200, 230, 0.18);
 }
 
 /* Logo connexion : version claire masquée par défaut (dark mode) */

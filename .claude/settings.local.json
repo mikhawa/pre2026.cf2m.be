@@ -31,7 +31,13 @@
       "Bash(git -C /home/mikhawa/pre2026.cf2m.be show 5ee852e --stat)",
       "Bash(git -C /home/mikhawa/pre2026.cf2m.be show 157d6a2 --stat)",
       "Bash(sort -t- -k1 -n)",
-      "Bash(xargs -n1 basename)"
+      "Bash(xargs -n1 basename)",
+      "Bash(mkdir -p /tmp/claude-1000/-home-mikhawa-pre2026-cf2m-be/2ccf56f0-d22c-4d3a-88a3-ba2f96398b01/scratchpad/pw)",
+      "Bash(npm init *)",
+      "Bash(PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install playwright@1.62.1)",
+      "Bash(node check.j)",
+      "Read(//home/mikhawa/.cache/ms-playwright/chromium-1234/**)",
+      "Bash(ldd ~/.cache/ms-playwright/chromium-1234/chrome-linux/chrome)"
     ]
   },
   "enabledMcpjsonServers": [

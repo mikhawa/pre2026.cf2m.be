@@ -71,7 +71,7 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 118 (2026-06-25) — Git WSL2 permission pack files
 
 ## Dernier numéro .claude-tasks
-184 (2026-06-25)
+192 (2026-08-05)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -183,3 +183,31 @@ Ne jamais modifier un fichier qui n'a pas été explicitement demandé. Toujours
 - **CSS admin via AssetMapper** : utiliser `import './styles/admin.css'` dans `admin.js`, PAS `addHtmlContentToHead(...)` dans `configureAssets()` (chemin non-fingerprinted → 404 avec assets compilés)
 - **Event delegation toggle** : écouter `change` sur `document`, vérifier `checkbox.closest('td[data-column="treat"]')` — survit aux navigations Turbo sans réinitialisation
 - **Assets compilés dev** : supprimer `public/assets/` + `cache:clear` après chaque modif JS/CSS pour forcer la recompilation
+
+## Restyle visuel "raffiné white/dark" — EN COURS 🔄 (démarré 2026-08-05)
+
+### Origine
+Un mockup généré par claude.ai/design a été reçu dans `datas/Site raffiné whitedark mode/`. Analyse : c'est une refonte complète hors-Bootstrap avec un modèle de données fictif (`formation.name`, `.price`, `.duration`...) et seulement 4 pages sur la vingtaine du site réel — inutilisable tel quel (routes inexistantes `app_pixel_and_co`/`app_dashboard`, `ContactType` incompatible, Turnstile absent, `.claude-tasks/192-...md` documente l'analyse complète).
+
+### Décision utilisateur
+Garder Bootstrap intégralement, ne perdre aucune fonctionnalité existante, ne pas importer le modèle de données fictif. Le mockup sert uniquement de **référence visuelle** (palette, typo, rayons) portée dans l'architecture CSS existante — pas de copier-coller de templates.
+
+### Plan
+Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/plans/foamy-sniffing-petal.md`. 7 étapes :
+1. ✅ Tokens couleur dans `assets/styles/app.css` (tâche `.claude-tasks/sonnet/192-...md`)
+2. ✅ Navbar + footer
+3. ⏳ Page d'accueil (hero, cartes formations, partenaires)
+4. ⏳ Page formation/show
+5. ⏳ Contact (formulaire réel + Turnstile)
+6. ⏳ Login (formulaire réel + Turnstile + liens forgot-password/register)
+7. ⏳ Vérification visuelle des pages non couvertes (registration, profil, works, page)
+
+### Ce qui a changé (étapes 1-2)
+- Accent cyan : `#00b4d8 → #3cc8e6` (dark), `#48cae4 → #7fdcef` (hover), propagé aussi dans les `rgba()` codés en dur (glows/ombres/bordures, pas seulement les `var(--cf2m-cyan)`).
+- Fond sombre : `#08111e → #050e18`.
+- Accent light mode assombri à `#0072a3` pour le contraste sur fond blanc — **piège identifié** : ça casse la lisibilité dans `.cf2m-navbar`/`.cf2m-footer`, qui restent volontairement sombres même en light mode (cf. section "Convention navbar" ci-dessus). Corrigé par un override scopé `[data-theme="light"] .cf2m-navbar, .cf2m-footer { --cf2m-cyan: #3cc8e6; }`. **À garder en tête pour toute nouvelle variable retintée en light mode : vérifier si elle retombe dans une zone "toujours sombre".**
+- Nav-link desktop : soulignement `::after` remplacé par fond pastille au survol (`rgba(60,200,230,.12)`, `border-radius: .6rem`), aligné sur le style déjà utilisé en mobile.
+- Footer : `py-4 → py-5`.
+
+### Convention de vérification utilisée
+Pas d'outillage Playwright/chromium-cli fonctionnel dans ce conteneur (libs système manquantes, `libnspr4.so`) — ne pas repartir sur cette piste sans en discuter avec l'utilisateur. Vérification faite via `docker compose exec -T php php bin/console lint:twig`, `curl` (code HTTP + présence de classes), et vérification manuelle des accolades CSS.
