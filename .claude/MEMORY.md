@@ -210,9 +210,14 @@ Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/pla
 - Footer : `py-4 → py-5`.
 
 ### Ce qui a changé (étape 3 — accueil)
-- Rayons passés en "pill" (`999px`) pour coller au signature visuelle du mockup : `.cf2m-hero-btn`, `.cf2m-card .btn-outline-secondary` (CTA carte formation), `.cf2m-card .badge-status`, `.cf2m-partner-item`.
-- `.cf2m-card` : rayon `0.75rem → 1.25rem` (impacte toutes les cartes du site, pas seulement l'accueil — cohérence globale voulue).
-- `.cf2m-partners` : ajout d'un `border-top` en dark mode (séparateur déjà présent en light, manquant en dark).
+Première passe (rayons seuls) jugée insuffisante par l'utilisateur ("aucune ressemblance au thème envoyé") → **toujours comparer par capture d'écran avant de considérer un restyle "terminé"**, ne pas se fier au diff CSS seul. Méthode qui a débloqué la suite : rendu HTML statique du mockup (ses propres templates + `app.css` + données d'exemple du README) capturé via Playwright, comparé côte à côte avec le site réel.
+
+- Rayons "pill" (`999px`) : `.cf2m-hero-btn`, `.cf2m-card .badge-status`, `.cf2m-partner-item`, `.cf2m-card .btn-warning`.
+- `.cf2m-card` : rayon `0.75rem → 1.25rem` (toutes les cartes du site, pas seulement l'accueil).
+- `.cf2m-partners` : `border-top` ajouté en dark mode.
+- **Hero** : panneau vitré (`.cf2m-hero-glass`) supprimé (`padding:0`, plus de fond/blur/bordure/ombre) — le texte repose directement sur `public/images/hero-bg.jpg` (asset existant mais plus référencé nulle part avant cette tâche) via un scrim `linear-gradient` propre à chaque thème. `text-shadow` de sécurité sur `h1`/`.lead`. Filet `border-top` ajouté au-dessus de `.cf2m-hero-stats`.
+- **Cartes formations** : CTA secondaire ("En savoir plus") converti en lien texte + flèche `→` (plus de bouton). CTA prioritaire ("S'inscrire", formations en recrutement) **volontairement gardé en bouton plein** — différenciation UX délibérée (action prioritaire vs secondaire), absente du mockup mais jugée meilleure. **Décision produit tranchée avec l'utilisateur** : la couleur par formation (`colorPrimary`/`colorSecondary`, feature back-office réelle) est **conservée**, contrairement au panneau uniforme du mockup.
+- `.page-home #formations` et `.cf2m-partners` : padding vertical `clamp(3rem, 6vw, 6rem)` (plus généreux).
 - Bug corrigé au passage : texte du bouton CTA hero invisible en light mode (conflit de spécificité entre `[data-theme="light"] a` et `.cf2m-hero-btn` — la règle générique `a` gagnait sur la classe). Toujours vérifier la spécificité quand un sélecteur `[data-theme="light"] <balise>` générique coexiste avec une classe `.cf2m-*` sur le même élément.
 
 ### Convention de vérification utilisée
