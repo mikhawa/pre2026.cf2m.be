@@ -47,7 +47,9 @@
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npm install playwright\")",
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-light.mjs\")",
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-btn.mjs\")",
-      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-formation.mjs\")"
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-formation.mjs\")",
+      "Bash(sed -i \"s#localhost:8085/login#localhost:8085/connexion#\" /mnt/c/tmp_shots/shot-login.mjs)",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-login.mjs\")"
     ]
   },
   "enabledMcpjsonServers": [

@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-127 (2026-08-05) — Restyle contact : rayons pill sur champs et bouton d'envoi
+128 (2026-08-05) — Restyle login : rayons pill sur champs et bouton (composant partagé)
 
 ## Dernier numéro .claude-tasks
-195 (2026-08-05)
+196 (2026-08-05)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -199,7 +199,7 @@ Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/pla
 3. ✅ Page d'accueil (hero, cartes formations, partenaires) — tâche `.claude-tasks/sonnet/193-...md`
 4. ✅ Page formation/show — tâche `.claude-tasks/sonnet/194-...md` (héritait déjà des styles de l'étape 3 ; entité `Formation` réelle n'a pas les champs du mockup — duration/price/modules — donc pas de reproduction de sa structure hero+meta+modules, juste vérification + fix d'une régression : flèche en double sur "Retour aux formations")
 5. ✅ Contact (formulaire réel + Turnstile) — tâche `.claude-tasks/sonnet/195-...md` (page déjà fonctionnelle et cohérente ; juste harmonisation des derniers rayons carrés — `.cf2m-input`, `.cf2m-btn-submit` — en pill, comme le reste du site)
-6. ⏳ Login (formulaire réel + Turnstile + liens forgot-password/register)
+6. ✅ Login (formulaire réel + Turnstile + liens forgot-password/register) — tâche `.claude-tasks/sonnet/196-...md` (composant `.cf2m-login-*` partagé par login/forgot-password/register/reset-password/2FA : un seul jeu de règles CSS harmonisées en pill couvre tout le parcours)
 7. ⏳ Vérification visuelle des pages non couvertes (registration, profil, works, page)
 
 ### Ce qui a changé (étapes 1-2)

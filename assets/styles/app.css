@@ -989,7 +989,7 @@ header {
     width: 100%;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 0.6rem;
+    border-radius: 0.75rem;
     color: var(--cf2m-white);
     font-family: var(--font-body);
     font-size: 0.95rem;
@@ -1023,7 +1023,7 @@ header {
     gap: 0.6rem;
     background: rgba(220, 53, 69, 0.15);
     border: 1px solid rgba(220, 53, 69, 0.35);
-    border-radius: 0.6rem;
+    border-radius: 0.75rem;
     color: #ff8896;
     font-size: 0.88rem;
     padding: 0.75rem 1rem;
@@ -1035,7 +1035,7 @@ header {
     width: 100%;
     background: var(--cf2m-cyan);
     border: none;
-    border-radius: 0.6rem;
+    border-radius: 999px;
     color: var(--cf2m-dark);
     font-family: var(--font-display);
     font-size: 1rem;
