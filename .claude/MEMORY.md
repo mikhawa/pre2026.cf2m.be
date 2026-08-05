@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-125 (2026-08-05) — Restyle accueil : hero, cartes formations, partenaires
+126 (2026-08-05) — Fix double flèche lien retour formation
 
 ## Dernier numéro .claude-tasks
-193 (2026-08-05)
+194 (2026-08-05)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -197,7 +197,7 @@ Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/pla
 1. ✅ Tokens couleur dans `assets/styles/app.css` (tâche `.claude-tasks/sonnet/192-...md`)
 2. ✅ Navbar + footer
 3. ✅ Page d'accueil (hero, cartes formations, partenaires) — tâche `.claude-tasks/sonnet/193-...md`
-4. ⏳ Page formation/show
+4. ✅ Page formation/show — tâche `.claude-tasks/sonnet/194-...md` (héritait déjà des styles de l'étape 3 ; entité `Formation` réelle n'a pas les champs du mockup — duration/price/modules — donc pas de reproduction de sa structure hero+meta+modules, juste vérification + fix d'une régression : flèche en double sur "Retour aux formations")
 5. ⏳ Contact (formulaire réel + Turnstile)
 6. ⏳ Login (formulaire réel + Turnstile + liens forgot-password/register)
 7. ⏳ Vérification visuelle des pages non couvertes (registration, profil, works, page)

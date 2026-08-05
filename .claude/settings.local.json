@@ -46,7 +46,8 @@
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npx --yes playwright install chromium\")",
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && npm install playwright\")",
       "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-light.mjs\")",
-      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-btn.mjs\")"
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-btn.mjs\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\tmp_shots && node shot-formation.mjs\")"
     ]
   },
   "enabledMcpjsonServers": [

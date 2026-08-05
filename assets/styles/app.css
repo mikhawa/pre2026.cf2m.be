@@ -816,14 +816,17 @@ header {
     align-items: center;
     gap: 0.35em;
 }
-.cf2m-card .btn-outline-secondary::after {
-    content: '→';
-    transition: transform 0.2s;
-}
 .cf2m-card .btn-outline-secondary:hover {
     color: var(--cf2m-white);
 }
-.cf2m-card .btn-outline-secondary:hover::after {
+/* Flèche uniquement sur la carte formation de l'accueil ("En savoir plus →") —
+   la fiche formation a son propre lien "← Retour aux formations", qui a déjà
+   ses flèches dans le texte : lui ajouter ::after créait une double flèche. */
+.page-home .cf2m-card .btn-outline-secondary::after {
+    content: '→';
+    transition: transform 0.2s;
+}
+.page-home .cf2m-card .btn-outline-secondary:hover::after {
     transform: translateX(3px);
 }
 
