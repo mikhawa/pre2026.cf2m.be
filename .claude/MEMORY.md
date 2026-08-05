@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-125 (2026-08-05) — Restyle accueil : hero, cartes formations, partenaires
+129 (2026-08-05) — Vérification finale du restyle "raffiné white/dark" : plan terminé
 
 ## Dernier numéro .claude-tasks
-193 (2026-08-05)
+197 (2026-08-05)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -184,7 +184,7 @@ Ne jamais modifier un fichier qui n'a pas été explicitement demandé. Toujours
 - **Event delegation toggle** : écouter `change` sur `document`, vérifier `checkbox.closest('td[data-column="treat"]')` — survit aux navigations Turbo sans réinitialisation
 - **Assets compilés dev** : supprimer `public/assets/` + `cache:clear` après chaque modif JS/CSS pour forcer la recompilation
 
-## Restyle visuel "raffiné white/dark" — EN COURS 🔄 (démarré 2026-08-05)
+## Restyle visuel "raffiné white/dark" — TERMINÉ ✅ (2026-08-05)
 
 ### Origine
 Un mockup généré par claude.ai/design a été reçu dans `datas/Site raffiné whitedark mode/`. Analyse : c'est une refonte complète hors-Bootstrap avec un modèle de données fictif (`formation.name`, `.price`, `.duration`...) et seulement 4 pages sur la vingtaine du site réel — inutilisable tel quel (routes inexistantes `app_pixel_and_co`/`app_dashboard`, `ContactType` incompatible, Turnstile absent, `.claude-tasks/192-...md` documente l'analyse complète).
@@ -197,10 +197,12 @@ Plan détaillé (contexte, périmètre exclu, ordre d'exécution) : `.claude/pla
 1. ✅ Tokens couleur dans `assets/styles/app.css` (tâche `.claude-tasks/sonnet/192-...md`)
 2. ✅ Navbar + footer
 3. ✅ Page d'accueil (hero, cartes formations, partenaires) — tâche `.claude-tasks/sonnet/193-...md`
-4. ⏳ Page formation/show
-5. ⏳ Contact (formulaire réel + Turnstile)
-6. ⏳ Login (formulaire réel + Turnstile + liens forgot-password/register)
-7. ⏳ Vérification visuelle des pages non couvertes (registration, profil, works, page)
+4. ✅ Page formation/show — tâche `.claude-tasks/sonnet/194-...md` (héritait déjà des styles de l'étape 3 ; entité `Formation` réelle n'a pas les champs du mockup — duration/price/modules — donc pas de reproduction de sa structure hero+meta+modules, juste vérification + fix d'une régression : flèche en double sur "Retour aux formations")
+5. ✅ Contact (formulaire réel + Turnstile) — tâche `.claude-tasks/sonnet/195-...md` (page déjà fonctionnelle et cohérente ; juste harmonisation des derniers rayons carrés — `.cf2m-input`, `.cf2m-btn-submit` — en pill, comme le reste du site)
+6. ✅ Login (formulaire réel + Turnstile + liens forgot-password/register) — tâche `.claude-tasks/sonnet/196-...md` (composant `.cf2m-login-*` partagé par login/forgot-password/register/reset-password/2FA : un seul jeu de règles CSS harmonisées en pill couvre tout le parcours)
+7. ✅ Vérification visuelle des pages non couvertes — tâche `.claude-tasks/sonnet/197-...md` (page générique, works/show déjà cohérentes ; profil/reset-password/2FA vérifiés par lecture de code, faute d'identifiants de fixtures valides pour se connecter en dev)
+
+**Découverte annexe hors scope** : la route publique `app_public_profile` (`/utilisateur/{id}`) expose des données de profil sans authentification — signalé par l'utilisateur comme problématique. Voir [[bug-profil-public-accessible]]. Non corrigé (hors périmètre du restyle CSS).
 
 ### Ce qui a changé (étapes 1-2)
 - Accent cyan : `#00b4d8 → #3cc8e6` (dark), `#48cae4 → #7fdcef` (hover), propagé aussi dans les `rgba()` codés en dur (glows/ombres/bordures, pas seulement les `var(--cf2m-cyan)`).
