@@ -1,0 +1,65 @@
+{# Attend en contexte : formations_nav (itérable de Formation) — voir README, injecté par un Twig global ou un composant #}
+{% set nav_formations = formations_nav ?? [] %}
+
+<nav class="cf2m-navbar" data-controller="burger">
+    <div class="cf2m-container cf2m-navbar__bar">
+        <a class="cf2m-logo" href="{{ path('app_home') }}">
+            <img class="is-white" src="{{ asset('images/logo-cf2m-blanc.svg') }}" alt="CF2m">
+            <img class="is-blue" src="{{ asset('images/logo-cf2m-bleu.svg') }}" alt="">
+        </a>
+
+        <div class="cf2m-nav__links">
+            <a class="cf2m-nav__link {{ app.request.attributes.get('_route') == 'app_home' ? 'is-active' }}"
+               href="{{ path('app_home') }}">Accueil</a>
+
+            <div class="cf2m-dd">
+                <span class="cf2m-nav__link" tabindex="0">Nos formations <span style="font-size:9px;opacity:.55">▾</span></span>
+                <div class="cf2m-dd__menu">
+                    <span class="cf2m-eyebrow cf2m-eyebrow--muted" style="padding:8px 12px 6px">Nos formations</span>
+                    {% for formation in nav_formations %}
+                        <a class="cf2m-dd__item" href="{{ path('app_formation_show', {slug: formation.slug}) }}">
+                            <span class="chev">›</span>{{ formation.name }}
+                            {% if formation.recruiting %}<span class="cf2m-badge" style="margin-left:auto">Recrutement</span>{% endif %}
+                        </a>
+                    {% endfor %}
+                    <div class="cf2m-divider"></div>
+                    <a class="cf2m-dd__all" href="{{ path('app_home') }}#formations">Voir toutes les formations →</a>
+                </div>
+            </div>
+
+            <a class="cf2m-nav__link {{ app.request.attributes.get('_route') == 'app_contact' ? 'is-active' }}"
+               href="{{ path('app_contact') }}">Nous contacter</a>
+            <a class="cf2m-nav__link" href="{{ path('app_pixel_and_co') }}">Nos activités</a>
+            <a class="cf2m-nav__link cf2m-nav__link--soft" href="https://cf2d.be" target="_blank" rel="noopener">CF2d ↗</a>
+        </div>
+
+        <div class="cf2m-nav__actions" data-controller="theme">
+            <button class="cf2m-theme-btn" type="button" title="Changer de thème"
+                    data-action="theme#toggle" data-theme-target="icon">☀</button>
+            {# Bouton de comparaison des deux directions visuelles — à retirer une fois la direction choisie #}
+            <button class="cf2m-btn cf2m-btn--ghost" type="button" data-action="theme#toggleDir">Direction A / B</button>
+
+            {% if app.user %}
+                <a class="cf2m-btn cf2m-btn--ghost" href="{{ path('app_dashboard') }}">Mon espace</a>
+                <a class="cf2m-btn cf2m-btn--ghost" href="{{ path('app_logout') }}">Déconnexion</a>
+            {% else %}
+                <a class="cf2m-btn cf2m-btn--ghost" href="{{ path('app_login') }}">Connexion</a>
+            {% endif %}
+
+            <button class="cf2m-burger" type="button" aria-label="Menu" data-action="burger#toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="cf2m-mobile-nav" data-burger-target="menu">
+        <a class="is-primary" href="{{ path('app_home') }}">Accueil</a>
+        <span class="cf2m-eyebrow cf2m-eyebrow--muted" style="padding:14px 4px 6px">Nos formations</span>
+        {% for formation in nav_formations %}
+            <a href="{{ path('app_formation_show', {slug: formation.slug}) }}">{{ formation.name }}</a>
+        {% endfor %}
+        <a class="is-primary" href="{{ path('app_contact') }}">Nous contacter</a>
+        <a class="is-primary" href="{{ path('app_pixel_and_co') }}">Nos activités</a>
+        <a href="https://cf2d.be" target="_blank" rel="noopener">CF2d ↗</a>
+    </div>
+</nav>

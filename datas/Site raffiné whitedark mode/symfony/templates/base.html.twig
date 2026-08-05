@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-dir="a">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}CF2m — Centre de Formation 2M{% endblock %}</title>
+    <link rel="icon" href="{{ asset('images/favicon.svg') }}">
+    {# Évite le flash de thème : lit localStorage avant le premier paint #}
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('cf2m-theme');
+                var d = localStorage.getItem('cf2m-dir');
+                if (t) document.documentElement.dataset.theme = t;
+                if (d) document.documentElement.dataset.dir = d;
+            } catch (e) {}
+        })();
+    </script>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        {{ importmap('app') }}
+    {% endblock %}
+</head>
+<body>
+{% block navbar %}{{ include('_partials/navbar.html.twig') }}{% endblock %}
+
+{% block body %}{% endblock %}
+
+{% block footer %}{{ include('_partials/footer.html.twig') }}{% endblock %}
+</body>
+</html>

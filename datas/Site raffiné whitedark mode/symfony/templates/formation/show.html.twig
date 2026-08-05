@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ formation.name }} — CF2m{% endblock %}
+
+{% block body %}
+    <section class="cf2m-fhero">
+        <div class="cf2m-glow" style="top:-160px;right:-80px;width:460px;height:460px"></div>
+        <div class="cf2m-container cf2m-fhero__inner">
+            <nav class="cf2m-breadcrumb">
+                <a href="{{ path('app_home') }}">Accueil</a><span>/</span>
+                <a href="{{ path('app_home') }}#formations">Formations</a><span>/</span>
+                <span>{{ formation.name }}</span>
+            </nav>
+            <span class="cf2m-badge cf2m-badge--outline">{{ formation.statusLabel }}</span>
+            <h1 class="cf2m-h1" style="margin:1.5rem 0 1.1rem">{{ formation.name }}</h1>
+            <p class="cf2m-lead" style="max-width:52ch">{{ formation.lead }}</p>
+
+            <div class="cf2m-meta">
+                <div><div class="cf2m-meta__v">{{ formation.duration }}</div><div class="cf2m-meta__l">Durée</div></div>
+                <div><div class="cf2m-meta__v">{{ formation.nextSession }}</div><div class="cf2m-meta__l">Session</div></div>
+                <div><div class="cf2m-meta__v">{{ formation.price ?? 'Gratuit' }}</div><div class="cf2m-meta__l">Pour dem. d'emploi</div></div>
+                <div><div class="cf2m-meta__v">{{ formation.groupSize }} max</div><div class="cf2m-meta__l">Par groupe</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cf2m-section" style="border-top:none">
+        <div class="cf2m-container cf2m-split">
+            <div>
+                <span class="cf2m-eyebrow">Programme</span>
+                <h2 class="cf2m-h2" style="margin:.8rem 0 2rem">Contenu de la formation</h2>
+                <div class="cf2m-modules">
+                    {% for module in formation.modules %}
+                        <div class="cf2m-module">
+                            <span class="cf2m-module__n">{{ '%02d'|format(loop.index) }}</span>
+                            <div>
+                                <div class="cf2m-module__t">{{ module.name }}</div>
+                                <div class="cf2m-module__d">{{ module.description }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <aside class="cf2m-panel cf2m-sticky">
+                <span class="cf2m-eyebrow">S'inscrire</span>
+                <h3 class="cf2m-h3" style="margin:.7rem 0 .6rem">Séance d'info gratuite</h3>
+                <p class="cf2m-card__text" style="margin-bottom:1.6rem">
+                    Venez découvrir la formation sans engagement. Prochaine séance : voir le planning.
+                </p>
+                <a class="cf2m-btn cf2m-btn--block" href="{{ path('app_contact', {formation: formation.slug}) }}">Réserver ma place</a>
+                <p class="cf2m-help">Gratuit · Sans engagement</p>
+            </aside>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}{{ include('_partials/footer_slim.html.twig') }}{% endblock %}
