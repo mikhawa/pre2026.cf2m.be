@@ -232,6 +232,10 @@ header {
 .cf2m-logo-img {
     display: block;
 }
+/* Bascule blanc (dark, par défaut) / bleu (light) — cf. .cf2m-logo-img--light plus bas */
+.cf2m-logo-img--light {
+    display: none;
+}
 
 /* Liens de navigation */
 .cf2m-navbar .nav-link {
@@ -1795,43 +1799,101 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-work-share-btn,
 [data-theme="light"] .cf2m-work-share-btn:hover { color: #fff !important; }
 
-/* Bouton thème en light mode */
+/* Bouton thème en light mode : navbar claire → contraste foncé */
 [data-theme="light"] .cf2m-theme-toggle {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 60, 120, 0.06);
+    border-color: rgba(0, 60, 120, 0.16);
+    color: rgba(13, 30, 53, 0.75);
+}
+[data-theme="light"] .cf2m-theme-toggle:hover {
+    color: var(--cf2m-navy);
+}
+/* Bouton thème mobile : même correction (sinon texte blanc sur navbar blanche) */
+[data-theme="light"] .cf2m-theme-toggle-mobile {
+    background: rgba(0, 60, 120, 0.06);
+    border-color: rgba(0, 60, 120, 0.16);
+    color: rgba(13, 30, 53, 0.75);
+}
+[data-theme="light"] .cf2m-theme-toggle-mobile:hover {
+    color: var(--cf2m-navy);
 }
 
-/* ── Light mode : corrections lisibilité ─────────────────────────────── */
+/* ── Light mode : navbar + footer passent en clair ───────────────────── */
 
-/* Navbar + footer restent sombres en light mode → l'accent doit rester le cyan clair (pas la variante foncée utilisée sur fond blanc) */
-[data-theme="light"] .cf2m-navbar,
-[data-theme="light"] .cf2m-footer {
-    --cf2m-cyan: #3cc8e6;
+/* Navbar : fond blanc, séparation par une ombre légère (plus de verre sombre) */
+[data-theme="light"] .cf2m-navbar {
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid rgba(0, 60, 120, 0.10);
+    box-shadow: 0 2px 12px rgba(0, 30, 60, 0.06);
 }
 
-/* Navbar + dropdowns : fond toujours sombre → texte toujours blanc */
+/* Liens navbar : texte foncé sur fond blanc (dropdown-item/-all exclus : ils ont leurs propres couleurs ci-dessous) */
 [data-theme="light"] .cf2m-navbar .nav-link,
+[data-theme="light"] .cf2m-navbar a:not(.cf2m-dropdown-item):not(.cf2m-dropdown-all) { color: #1a2b3c !important; }
 [data-theme="light"] .cf2m-navbar .nav-link:hover,
-[data-theme="light"] .cf2m-navbar .nav-link.active,
-[data-theme="light"] .cf2m-navbar a { color: rgba(255, 255, 255, 0.85) !important; }
-[data-theme="light"] .cf2m-navbar .nav-link:hover,
-[data-theme="light"] .cf2m-navbar .nav-link.active { color: var(--cf2m-white) !important; }
+[data-theme="light"] .cf2m-navbar .nav-link.active { color: var(--cf2m-cyan) !important; }
 
-[data-theme="light"] .cf2m-btn-connexion { color: rgba(255,255,255,0.85); }
-[data-theme="light"] .cf2m-user-dropdown-toggle { color: rgba(255,255,255,0.85); }
+[data-theme="light"] .cf2m-btn-connexion {
+    color: #1a2b3c;
+    border-color: rgba(13, 30, 53, 0.35);
+}
+[data-theme="light"] .cf2m-btn-connexion:hover {
+    color: var(--cf2m-cyan);
+    border-color: var(--cf2m-cyan);
+}
+[data-theme="light"] .cf2m-user-dropdown-toggle {
+    color: #1a2b3c;
+    border-color: rgba(13, 30, 53, 0.35);
+}
+[data-theme="light"] .cf2m-user-dropdown-toggle:hover,
+[data-theme="light"] .cf2m-user-dropdown-toggle[aria-expanded="true"] {
+    color: var(--cf2m-cyan);
+    border-color: var(--cf2m-cyan);
+}
 
+/* Dropdowns (formations, utilisateur) : fond blanc, texte foncé */
+[data-theme="light"] .cf2m-dropdown {
+    background: #ffffff;
+    border-top-color: rgba(0, 60, 120, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 30, 60, 0.12);
+}
 [data-theme="light"] .cf2m-dropdown,
-[data-theme="light"] .cf2m-dropdown * { color: rgba(255, 255, 255, 0.82); }
-[data-theme="light"] .cf2m-dropdown-item { color: rgba(255, 255, 255, 0.82); }
+[data-theme="light"] .cf2m-dropdown * { color: #2a3f52; }
+[data-theme="light"] .cf2m-dropdown-item { color: #2a3f52; }
 [data-theme="light"] .cf2m-dropdown-item:hover,
 [data-theme="light"] .cf2m-dropdown-item:focus { color: var(--cf2m-cyan); }
 [data-theme="light"] .cf2m-dropdown-all { color: var(--cf2m-cyan); }
+[data-theme="light"] .cf2m-dropdown-divider { border-color: rgba(0, 60, 120, 0.10); }
 
-/* Footer : fond toujours sombre → texte blanc */
+/* Dropdowns inline (mobile, menu collapsed) */
+[data-theme="light"] .navbar-nav .cf2m-dropdown {
+    background: rgba(0, 60, 120, 0.04);
+    border-left-color: rgba(0, 114, 163, 0.35);
+}
+
+/* Menu mobile (collapsed) : séparateurs visibles sur fond blanc */
+@media (max-width: 991.98px) {
+    [data-theme="light"] .cf2m-navbar .navbar-collapse.show,
+    [data-theme="light"] .cf2m-navbar .navbar-collapse.collapsing {
+        border-top-color: rgba(0, 60, 120, 0.12);
+    }
+    [data-theme="light"] .cf2m-navbar .navbar-nav + .d-flex,
+    [data-theme="light"] .cf2m-navbar .navbar-nav + .ms-lg-auto {
+        border-top-color: rgba(0, 60, 120, 0.12);
+    }
+}
+
+/* Footer : fond blanc, séparation par une bordure haute */
+[data-theme="light"] .cf2m-footer {
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 60, 120, 0.10);
+}
 [data-theme="light"] .cf2m-footer a,
-[data-theme="light"] .cf2m-footer .cf2m-footer-link { color: rgba(255,255,255,0.55); }
-[data-theme="light"] .cf2m-footer .cf2m-footer-link:hover { color: #ffffff !important; }
-[data-theme="light"] .cf2m-footer .text-muted { color: rgba(255,255,255,0.55) !important; }
+[data-theme="light"] .cf2m-footer .cf2m-footer-link { color: #4a6070; }
+[data-theme="light"] .cf2m-footer .cf2m-footer-link:hover { color: var(--cf2m-navy) !important; }
+[data-theme="light"] .cf2m-footer .text-muted { color: #4a6070 !important; }
+/* Re-priorise sur la règle générique "contenu interieur" (body:not(.page-home):not(.page-login) .text-muted, plus spécifique) qui écraserait sinon le footer sur les pages non-home/non-login */
+[data-theme="light"] body:not(.page-home):not(.page-login) .cf2m-footer .text-muted { color: #4a6070 !important; }
 
 /* Liens dans les cartes de contenu (fond clair) */
 [data-theme="light"] .cf2m-card a:not(.btn) { color: #0072a3; }
@@ -2030,6 +2092,10 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     filter: drop-shadow(0 0 10px rgba(0, 100, 160, 0.30));
 }
 [data-theme="light"] .cf2m-login-logo--dark { display: none; }
+
+/* Logo navbar + footer : en mode clair, on swap vers le logo bleu (fond blanc) */
+[data-theme="light"] .cf2m-logo-img--dark { display: none; }
+[data-theme="light"] .cf2m-logo-img--light { display: inline-block; }
 
 /* ─── Titres dans les card-header (pages et formations) : plus lumineux ─── */
 /* Titres dans les card-header (pages et formations) : plus lumineux */
