@@ -1738,6 +1738,10 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-card .card-text       { color: #4a6070; }
 [data-theme="light"] .cf2m-card .btn-outline-secondary { color: #0072a3; }
 [data-theme="light"] .cf2m-card .btn-outline-secondary:hover { color: var(--cf2m-navy); }
+/* .card-header reste toujours sombre (même en light mode, cf. color-mix(--cf2m-dark) ci-dessus) :
+   le cyan assombri pour fond blanc y est illisible, on garde le cyan clair du dark mode */
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary { color: var(--cf2m-cyan-light); }
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary:hover { color: var(--cf2m-white); }
 
 /* Section partenaires */
 [data-theme="light"] .cf2m-partners {
