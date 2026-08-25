@@ -133,8 +133,10 @@ Controllers Formation/Page/Works basculés vers tables typées. RevisionService 
 - Sur les branches `preprod/*` : vérifier que `symfony/mailjet-mailer` est bien dans `composer.json`, sinon l'ajouter
 - Ne jamais créer ni modifier `.env.local`, ni toucher aux fichiers `.git/`
 
-## Convention navbar (couleur uniforme)
-Sur les pages intérieures (non-home, non-login), la navbar doit avoir `background: var(--cf2m-dark)` + `backdrop-filter: none` pour rester visuellement identique à son apparence sur la home (qui flotte sur fond sombre). Ne jamais laisser le `backdrop-filter` actif sur fond blanc.
+## Convention navbar (couleur uniforme, dark mode)
+Sur les pages intérieures (non-home, non-login), la navbar doit avoir `background: rgba(6, 14, 26, 0.80)` + `backdrop-filter: none` en dropdown mobile pour rester visuellement identique à son apparence sur la home (qui flotte sur fond sombre). Ne jamais laisser le `backdrop-filter` actif sur fond blanc.
+
+**Revirement 2026-08-25** : en `[data-theme="light"]`, la navbar et le footer passent désormais en fond blanc (logo bascule blanc→bleu, texte foncé) — l'ancienne règle "toujours sombre même en light mode" ne s'applique plus qu'au dark mode. Détails complets : [[navbar-convention]].
 
 ## Convention CSRF (SameOriginCsrfTokenManager)
 Le projet utilise le mécanisme stateless de Symfony (`SameOriginCsrfTokenManager`) :
@@ -182,7 +184,7 @@ Ne jamais modifier un fichier qui n'a pas été explicitement demandé. Toujours
 - **Cellules tableau** : `<td data-column="fieldProperty">` et `<tr data-id="entityId">` — data attributes natifs EasyAdmin 4, utilisables pour cibler les cellules en JS
 - **CSS admin via AssetMapper** : utiliser `import './styles/admin.css'` dans `admin.js`, PAS `addHtmlContentToHead(...)` dans `configureAssets()` (chemin non-fingerprinted → 404 avec assets compilés)
 - **Event delegation toggle** : écouter `change` sur `document`, vérifier `checkbox.closest('td[data-column="treat"]')` — survit aux navigations Turbo sans réinitialisation
-- **Assets compilés dev** : supprimer `public/assets/` + `cache:clear` après chaque modif JS/CSS pour forcer la recompilation
+- **Assets compilés dev** : supprimer `public/assets/` seul ne suffit pas toujours (cache de digest persistant) → après chaque modif JS/CSS, lancer `docker compose exec php php bin/console asset-map:compile --env=dev` et vérifier que le hash servi (`curl` sur `/`) a changé avant de conclure. Détails : [[assetmapper-debug-cache]]
 
 ## Restyle visuel "raffiné white/dark" — TERMINÉ ✅ (2026-08-05)
 

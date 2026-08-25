@@ -35,12 +35,16 @@
                  aria-label="Navigation principale">
                 <div class="container">
 
-                    {# Logo #}
+                    {# Logo : bascule blanc (dark) / bleu (light) selon le thème #}
                     <a class="navbar-brand" href="{{ path('app_home') }}" aria-label="CF2m — Accueil">
                         <img src="{{ asset('images/logo-cf2m-blanc.svg') }}"
                              alt="Logo CF2m"
                              width="80" height="80"
-                             class="cf2m-logo-img">
+                             class="cf2m-logo-img cf2m-logo-img--dark">
+                        <img src="{{ asset('images/logo-cf2m-bleu.svg') }}"
+                             alt="Logo CF2m"
+                             width="80" height="80"
+                             class="cf2m-logo-img cf2m-logo-img--light">
                     </a>
 
                     {# Bouton thème mobile : centré avec texte, hors collapse, caché sur desktop #}
@@ -281,7 +285,11 @@
                             <img src="{{ asset('images/logo-cf2m-blanc.svg') }}"
                                  alt="Logo CF2m"
                                  width="50" height="50"
-                                 class="cf2m-logo-img">
+                                 class="cf2m-logo-img cf2m-logo-img--dark">
+                            <img src="{{ asset('images/logo-cf2m-bleu.svg') }}"
+                                 alt="Logo CF2m"
+                                 width="50" height="50"
+                                 class="cf2m-logo-img cf2m-logo-img--light">
                         </a>
                         <span class="text-muted">Centre de Formation 2M</span>
                     </div>
