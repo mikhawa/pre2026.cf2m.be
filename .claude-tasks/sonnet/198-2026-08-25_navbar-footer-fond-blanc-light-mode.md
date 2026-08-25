@@ -30,11 +30,20 @@ L'agent `design-review` a été lancé sur le diff et a remonté 4 problèmes, t
 
 En creusant le point 3, un bug analogue non détecté par l'agent a été trouvé et corrigé : le hover cyan de `.cf2m-btn-connexion` et `.cf2m-user-dropdown-toggle` était écrasé par la règle de couleur de base en light mode (même spécificité, ordre de source défavorable) → ajout de règles `:hover`/`[aria-expanded="true"]` dédiées en light mode pour ces deux composants.
 
+## Correctif post-livraison (retour utilisateur)
+L'utilisateur a signalé que les menus déroulants ouverts (formations, activités, utilisateur) étaient quasi-transparents en light mode. Cause : `[data-theme="light"] .navbar-nav .cf2m-dropdown { background: rgba(0, 60, 120, 0.04); }` (pensée pour le menu mobile collapsed) n'était pas confinée au `@media (max-width: 991.98px)`, alors que le sélecteur `.navbar-nav .cf2m-dropdown` matche aussi les dropdowns desktop (spécificité 0,3,0 > 0,2,0 du fond blanc opaque `.cf2m-dropdown`), donc ce fond à 4% d'opacité écrasait le fond blanc partout. Corrigé en déplaçant cette règle à l'intérieur du media query mobile.
+
+## Bug environnement découvert : cache AssetMapper périmé
+Après les correctifs ci-dessus, l'utilisateur a signalé une opacité toujours trop faible puis un accordéon mobile "blanc sur blanc". Diagnostic : `public/assets/` en mode debug ne se régénère pas tant que les fichiers compilés existent déjà — un `rm` seul ne suffit pas, il faut `bin/console asset-map:compile` (et vider `var/cache/dev/asset_mapper`). Voir [[assetmapper-debug-cache]]. Une fois le bundle CSS réellement à jour servi, vérification par capture d'écran réelle (Playwright via Windows/WSL, cf. méthode documentée dans `.claude/MEMORY.md`) : desktop (dropdown "Nos formations" ouvert) et mobile (menu hamburger + accordéon ouverts) en light mode — tout est correct, aucun résidu "blanc sur blanc". Les deux signalements précédents étaient donc des symptômes du cache périmé, pas de nouveaux bugs CSS.
+
+## Correctif post-livraison n°2 : icône hamburger invisible
+Signalé par l'utilisateur : `.navbar-toggler-icon` (mobile) invisible en light mode. Cause : Bootstrap génère cette icône via la variable `--bs-navbar-toggler-icon-bg` (SVG inline), fixée à un trait blanc par la classe `navbar-dark` sur `<nav>` — jamais pensée pour une navbar blanche. Corrigé par une surcharge `[data-theme="light"] .cf2m-navbar .navbar-toggler-icon { --bs-navbar-toggler-icon-bg: url(...trait #0d1e35...); }`. Vérifié par capture Playwright (mobile, light mode) : icône bien visible.
+
 ## Critères d'acceptation
 - [x] `bin/console lint:twig` OK sur `base.html.twig`
 - [x] CSS : accolades équilibrées (vérif automatique)
 - [x] Revue par l'agent `design-review` + correction des 4 points remontés
-- [ ] Vérification visuelle manuelle en environnement Docker (recommandée avant merge — bascule du thème sur la home, une page intérieure, mobile et desktop)
+- [x] Vérification visuelle réelle (captures Playwright) : desktop + mobile, home, dropdown et accordéon ouverts, light mode
 
 ## Résultat
 Navbar et footer basculent en fond blanc avec logo bleu et texte foncé quand le thème clair est actif ; le dark mode reste inchangé (fond sombre, logo blanc). Mémoire projet mise à jour pour refléter ce nouveau comportement. `public/assets/` (build AssetMapper, gitignoré) vidé à la demande de l'utilisateur pour forcer la régénération.
