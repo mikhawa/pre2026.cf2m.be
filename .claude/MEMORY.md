@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-132 (2026-09-14) — Ombres bleutées légères sur le fond white mode
+133 (2026-09-14) — Intensification des ombres bleutées du fond white mode
 
 ## Dernier numéro .claude-tasks
-201 (2026-09-14)
+202 (2026-09-14)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -85,7 +85,7 @@ Tâches 096 à 102. Fichiers principaux modifiés :
 - Anti-flash inline dans `<head>` : applique le thème avant le rendu
 
 ### Couleurs white mode
-- Fond universel (`body`, pages hors accueil/login) : `#f5f7f9` + 4 `radial-gradient` bleu/cyan très atténués (0.05-0.07, vignette basse 0.45), même structure que le dark mode mais en clair (**révisé 2026-09-14**, ex `#c4dff0` uni — voir tâches `.claude-tasks/sonnet/199-...md` et `201-...md`)
+- Fond universel (`body`, pages hors accueil/login) : `#f5f7f9` + 4 `radial-gradient` bleu/cyan (halos 0.15-0.20, vignette basse 0.60 — remontés le 2026-09-14 suite tâche 202, les opacités "équivalent dark" 0.05-0.07 de la tâche 201 étaient imperceptibles sur fond clair), même structure/positions que le dark mode (**révisé 2026-09-14**, ex `#c4dff0` uni — voir tâches `.claude-tasks/sonnet/199-...md`, `201-...md`, `202-...md`)
 - Accueil (`#formations`) et hero conservent `#c4dff0` — non concernés par la révision
 
 ### Images hero remplacées (2026-09-14, tâche 200)
