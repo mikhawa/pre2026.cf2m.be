@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact — CF2m{% endblock %}
+
+{% block body %}
+    <section style="padding:calc(70px + 4rem) 0 var(--cf2m-sec-pad);position:relative;overflow:hidden">
+        <div class="cf2m-glow" style="top:-120px;left:-100px;width:420px;height:420px"></div>
+        <div class="cf2m-container" style="position:relative">
+            <nav class="cf2m-breadcrumb" style="margin-bottom:2.5rem">
+                <a href="{{ path('app_home') }}">Accueil</a><span>/</span><span>Contact</span>
+            </nav>
+
+            <div class="cf2m-center" style="max-width:660px;margin:0 auto 3rem">
+                <span class="cf2m-eyebrow">Contact</span>
+                <h1 class="cf2m-h1" style="font-size:clamp(2rem,4.2vw,3rem);margin:.9rem 0 .8rem">Contactez-nous</h1>
+                <p class="cf2m-lead" style="max-width:44ch">Une question sur nos formations ? Nous répondons dans les 24h ouvrables.</p>
+            </div>
+
+            <div style="max-width:660px;margin:0 auto">
+                {% for message in app.flashes('contact_success') %}
+                    <div class="cf2m-alert" style="margin:0 0 1.5rem">
+                        <div class="cf2m-alert__t">Message envoyé !</div>
+                        <div class="cf2m-alert__d">{{ message }}</div>
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form, {attr: {class: 'cf2m-panel cf2m-form', novalidate: 'novalidate'}}) }}
+                    {% if not form.vars.valid %}
+                        <ul class="cf2m-form-errors">
+                            {% for error in form.vars.errors %}<li>{{ error.message }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="cf2m-row">
+                        <div class="cf2m-field">
+                            {{ form_label(form.firstName, 'Prénom', {label_attr: {class: 'cf2m-label'}}) }}
+                            {{ form_widget(form.firstName, {attr: {class: 'cf2m-input', placeholder: 'Votre prénom'}}) }}
+                            {{ form_errors(form.firstName) }}
+                        </div>
+                        <div class="cf2m-field">
+                            {{ form_label(form.lastName, 'Nom', {label_attr: {class: 'cf2m-label'}}) }}
+                            {{ form_widget(form.lastName, {attr: {class: 'cf2m-input', placeholder: 'Votre nom'}}) }}
+                            {{ form_errors(form.lastName) }}
+                        </div>
+                    </div>
+
+                    <div class="cf2m-field">
+                        {{ form_label(form.email, 'Email', {label_attr: {class: 'cf2m-label'}}) }}
+                        {{ form_widget(form.email, {attr: {class: 'cf2m-input', placeholder: 'votre@email.com'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="cf2m-field">
+                        {{ form_label(form.formation, 'Formation souhaitée', {label_attr: {class: 'cf2m-label'}}) }}
+                        {{ form_widget(form.formation, {attr: {class: 'cf2m-select'}}) }}
+                        {{ form_errors(form.formation) }}
+                    </div>
+
+                    <div class="cf2m-field">
+                        {{ form_label(form.message, 'Message', {label_attr: {class: 'cf2m-label'}}) }}
+                        {{ form_widget(form.message, {attr: {class: 'cf2m-textarea', rows: 4, placeholder: 'Votre message…'}}) }}
+                        {{ form_errors(form.message) }}
+                    </div>
+
+                    <button class="cf2m-btn cf2m-btn--sm" style="align-self:flex-start" type="submit">Envoyer le message</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}{{ include('_partials/footer_slim.html.twig') }}{% endblock %}

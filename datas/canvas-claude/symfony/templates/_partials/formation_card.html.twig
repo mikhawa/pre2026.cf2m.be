@@ -1,0 +1,12 @@
+{# _partials/formation_card.html.twig — attend : formation #}
+<a class="cf2m-card" href="{{ path('app_formation_show', {slug: formation.slug}) }}">
+    <div class="cf2m-card__head">
+        {% if formation.icon %}<img src="{{ asset('images/formation-icons/' ~ formation.icon) }}" alt="">{% endif %}
+        <span class="cf2m-card__title">{{ formation.name }}</span>
+        <span class="cf2m-badge {{ formation.open ? '' : 'cf2m-badge--muted' }}">{{ formation.statusLabel }}</span>
+    </div>
+    <div class="cf2m-card__body">
+        <p class="cf2m-card__text">{{ formation.shortDescription }}</p>
+        <span class="cf2m-card__cta">Voir la formation →</span>
+    </div>
+</a>

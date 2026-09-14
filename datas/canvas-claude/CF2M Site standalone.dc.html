@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#050e18">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#050e18"/>
+    <circle cx="600" cy="400" r="230" fill="none" stroke="#3cc8e6" stroke-width="6" opacity=".35"/>
+    <text x="600" y="455" font-family="Outfit, sans-serif" font-size="190" font-weight="800" letter-spacing="-8" fill="#3cc8e6" text-anchor="middle">CF2m</text>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink-2);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-2)}
+img{display:block;max-width:100%}
+input,textarea,select,button{font:inherit;color:inherit}
+::selection{background:var(--accent);color:var(--on-accent)}
+:root{
+  --bg:#050e18;--bg-2:#081524;--panel:rgba(255,255,255,.045);--panel-2:rgba(255,255,255,.075);
+  --ink:#f4f8fb;--ink-2:rgba(244,248,251,.74);--ink-3:rgba(244,248,251,.44);
+  --line:rgba(255,255,255,.11);--line-2:rgba(255,255,255,.2);
+  --accent:#3cc8e6;--accent-2:#7fdcef;--on-accent:#04121e;--gold:#f4c430;
+  --nav-bg:rgba(5,14,24,.72);--shadow:0 20px 60px rgba(0,0,0,.45);
+  --scrim:rgba(5,14,24,.84);--logo-w:1;--logo-b:0;
+}
+[data-theme="light"]{
+  --bg:#f5f7f9;--bg-2:#ffffff;--panel:#ffffff;--panel-2:#eef2f6;
+  --ink:#0c1c30;--ink-2:rgba(12,28,48,.7);--ink-3:rgba(12,28,48,.45);
+  --line:rgba(12,28,48,.11);--line-2:rgba(12,28,48,.2);
+  --accent:#00728e;--accent-2:#00596f;--on-accent:#ffffff;--gold:#b07d0a;
+  --nav-bg:rgba(245,247,249,.82);--shadow:0 18px 44px rgba(12,28,48,.09);
+  --scrim:rgba(245,247,249,.9);--logo-w:0;--logo-b:1;
+}
+[data-dir="a"]{
+  --r:20px;--r-sm:12px;--r-pill:999px;--sec-pad:7.5rem;--card-pad:26px;
+  --w-display:800;--ls-display:-.035em;--lh-display:1.03;--eyebrow-ls:.2em;
+  --rule:var(--accent);--hero-img:url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1600&q=60');
+  --panel-blur:blur(18px) saturate(1.4);
+}
+[data-dir="b"]{
+  --r:3px;--r-sm:2px;--r-pill:3px;--sec-pad:5.5rem;--card-pad:20px;
+  --w-display:500;--ls-display:-.012em;--lh-display:1.1;--eyebrow-ls:.34em;
+  --rule:var(--gold);--hero-img:none;
+  --panel-blur:none;
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg);color:var(--ink-2);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6">
+
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:90;background:var(--nav-bg);backdrop-filter:blur(22px) saturate(1.5);border-bottom:1px solid var(--line)">
+    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:14px">
+      <a href="#" onClick="{{ open.home }}" style="display:block;position:relative;width:118px;height:46px;flex-shrink:0">
+        <img src="assets/logo-cf2m-blanc.svg" alt="CF2m" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-w);transition:opacity .35s" />
+        <img src="assets/logo-cf2m-bleu.svg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-b);transition:opacity .35s" />
+      </a>
+
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:2px;flex-wrap:nowrap;justify-content:flex-end;height:70px">
+        <a href="#" onClick="{{ open.home }}" style="font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:500;letter-spacing:.01em;color:var(--ink);padding:9px 13px;border-radius:var(--r-sm);transition:background .25s,color .25s" style-hover="background:var(--panel-2)">Accueil</a>
+        <div style="position:relative" onMouseEnter="{{ openMenu }}" onMouseLeave="{{ closeMenu }}">
+          <a href="#" onClick="{{ noop }}" style="display:flex;align-items:center;gap:5px;font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink-2);padding:9px 13px;border-radius:var(--r-sm);transition:background .25s,color .25s" style-hover="background:var(--panel-2);color:var(--ink)">Nos formations <span style="font-size:9px;opacity:.55">▾</span></a>
+          <sc-if value="{{ menu }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);min-width:270px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:8px;display:flex;flex-direction:column;animation:rise .22s cubic-bezier(.2,.7,.3,1) both">
+              <div style="font-family:'Outfit',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--ink-3);padding:8px 12px 6px">Nos formations</div>
+              <a href="#" onClick="{{ open.web }}" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);transition:background .2s,color .2s,padding-left .2s" style-hover="background:var(--panel-2);color:var(--ink);padding-left:16px"><span style="color:var(--accent)">›</span>Web Developer<span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:2px 7px;border-radius:var(--r-pill)">Recrutement</span></a>
+              <a href="#" onClick="{{ open.design }}" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);transition:background .2s,color .2s,padding-left .2s" style-hover="background:var(--panel-2);color:var(--ink);padding-left:16px"><span style="color:var(--accent)">›</span>Digital Designer</a>
+              <a href="#" onClick="{{ open.tech }}" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);transition:background .2s,color .2s,padding-left .2s" style-hover="background:var(--panel-2);color:var(--ink);padding-left:16px"><span style="color:var(--accent)">›</span>Tech PC &amp; Réseaux</a>
+              <a href="#" onClick="{{ open.anim }}" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);transition:background .2s,color .2s,padding-left .2s" style-hover="background:var(--panel-2);color:var(--ink);padding-left:16px"><span style="color:var(--accent)">›</span>Animateur Digital</a>
+              <div style="height:1px;background:var(--line);margin:6px 12px"></div>
+              <a href="#" onClick="{{ open.home }}" style="font-family:'Outfit',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding:9px 12px;border-radius:var(--r-sm);transition:background .2s" style-hover="background:var(--panel-2)">Voir toutes les formations →</a>
+            </div>
+          </sc-if>
+        </div>
+        <a href="#" onClick="{{ open.contact }}" style="font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink-2);padding:9px 13px;border-radius:var(--r-sm);transition:background .25s,color .25s" style-hover="background:var(--panel-2);color:var(--ink)">Nous contacter</a>
+        <a href="#" onClick="{{ noop }}" style="font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink-2);padding:9px 13px;border-radius:var(--r-sm);transition:background .25s,color .25s" style-hover="background:var(--panel-2);color:var(--ink)">Nos activités <span style="font-size:9px;opacity:.55">▾</span></a>
+        <a href="#" onClick="{{ noop }}" style="font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:500;color:var(--ink-3);padding:9px 11px;border-radius:var(--r-sm);transition:color .25s" style-hover="color:var(--ink-2)">CF2d ↗</a>
+      </div>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto">
+        <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ toggleBurger }}" title="Menu" style="width:38px;height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:border-color .25s" style-hover="border-color:var(--line-2)">
+            <span style="display:block;width:16px;height:1.5px;background:var(--ink)"></span>
+            <span style="display:block;width:16px;height:1.5px;background:var(--ink)"></span>
+            <span style="display:block;width:16px;height:1.5px;background:var(--ink)"></span>
+          </button>
+        </sc-if>
+        <button onClick="{{ toggleDir }}" title="Changer de direction visuelle" style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);background:transparent;border:1px solid var(--line);padding:7px 11px;border-radius:var(--r-pill);cursor:pointer;transition:color .25s,border-color .25s" style-hover="color:var(--ink);border-color:var(--line-2)">{{ dirLabel }}</button>
+        <button onClick="{{ toggleTheme }}" title="Changer de thème" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:50%;color:var(--ink-2);font-size:13px;cursor:pointer;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .25s,color .25s" style-hover="transform:rotate(24deg);border-color:var(--accent);color:var(--accent)">{{ themeIcon }}</button>
+        <button onClick="{{ open.login }}" style="font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:500;background:transparent;border:1px solid var(--line-2);color:var(--ink);padding:7px 17px;border-radius:var(--r-pill);cursor:pointer;white-space:nowrap;transition:border-color .25s,color .25s,background .25s" style-hover="border-color:var(--accent);color:var(--accent);background:var(--panel)">Connexion</button>
+      </div>
+    </div>
+    <sc-if value="{{ burger }}" hint-placeholder-val="{{ false }}">
+      <div style="border-top:1px solid var(--line);background:var(--bg-2);padding:12px clamp(18px,4vw,40px) 18px;display:flex;flex-direction:column;gap:2px;animation:rise .22s cubic-bezier(.2,.7,.3,1) both">
+        <a href="#" onClick="{{ open.home }}" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;color:var(--ink);padding:11px 4px;border-bottom:1px solid var(--line)">Accueil</a>
+        <span style="font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--ink-3);padding:14px 4px 6px">Nos formations</span>
+        <a href="#" onClick="{{ open.web }}" style="font-size:14.5px;color:var(--ink-2);padding:10px 4px">Web Developer</a>
+        <a href="#" onClick="{{ open.design }}" style="font-size:14.5px;color:var(--ink-2);padding:10px 4px">Digital Designer</a>
+        <a href="#" onClick="{{ open.tech }}" style="font-size:14.5px;color:var(--ink-2);padding:10px 4px">Tech PC &amp; Réseaux</a>
+        <a href="#" onClick="{{ open.anim }}" style="font-size:14.5px;color:var(--ink-2);padding:10px 4px;border-bottom:1px solid var(--line)">Animateur Digital</a>
+        <a href="#" onClick="{{ open.contact }}" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;color:var(--ink);padding:11px 4px">Nous contacter</a>
+        <a href="#" onClick="{{ noop }}" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;color:var(--ink-2);padding:11px 4px">Nos activités</a>
+        <a href="#" onClick="{{ noop }}" style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:var(--ink-3);padding:11px 4px">CF2d ↗</a>
+      </div>
+    </sc-if>
+  </nav>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="padding:calc(70px + clamp(3rem,7vw,6rem)) 0 var(--sec-pad);background-image:linear-gradient(var(--scrim),var(--scrim)),var(--hero-img);background-size:cover;background-position:center;background-attachment:fixed;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-140px;right:-100px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--accent) 16%,transparent) 0%,transparent 68%);pointer-events:none"></div>
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(2.5rem,5vw,4.5rem);align-items:center">
+        <div style="animation:rise .7s cubic-bezier(.2,.7,.3,1) both">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.6rem">
+            <span style="width:26px;height:2px;background:var(--rule)"></span>
+            <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent)">Centre de Formation 2M — Bruxelles</span>
+          </div>
+          <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2.4rem,5.4vw,4.1rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);line-height:var(--lh-display);color:var(--ink);margin-bottom:1.4rem;text-wrap:balance">Lancez votre carrière<br />dans le <span style="color:var(--accent)">numérique</span></h1>
+          <p style="font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.7;color:var(--ink-2);max-width:30ch;margin-bottom:2.4rem">Formations gratuites et certifiantes pour les demandeurs d'emploi bruxellois. Pratique intensive, petits groupes, suivi personnalisé.</p>
+          <a href="#formations" style="display:inline-block;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;letter-spacing:.01em;background:var(--accent);color:var(--on-accent);padding:14px 30px;border-radius:var(--r-pill);transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,background .25s" style-hover="transform:translateY(-2px);background:var(--accent-2);box-shadow:0 12px 30px color-mix(in oklab,var(--accent) 35%,transparent)">Découvrir les formations</a>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1.5rem 2rem;margin-top:3.2rem;padding-top:2rem;border-top:1px solid var(--line)">
+            <div><div style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:var(--w-display);letter-spacing:-.03em;line-height:1;color:var(--ink)">85%</div><div style="font-size:.78rem;letter-spacing:.04em;color:var(--ink-3);margin-top:.45rem">Taux d'insertion</div></div>
+            <div><div style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:var(--w-display);letter-spacing:-.03em;line-height:1;color:var(--ink)">20+</div><div style="font-size:.78rem;letter-spacing:.04em;color:var(--ink-3);margin-top:.45rem">Années</div></div>
+            <div><div style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:var(--w-display);letter-spacing:-.03em;line-height:1;color:var(--ink)">500+</div><div style="font-size:.78rem;letter-spacing:.04em;color:var(--ink-3);margin-top:.45rem">Diplômés</div></div>
+            <div><div style="font-family:'Outfit',sans-serif;font-size:2.1rem;font-weight:var(--w-display);letter-spacing:-.03em;line-height:1;color:var(--ink)">100%</div><div style="font-size:.78rem;letter-spacing:.04em;color:var(--ink-3);margin-top:.45rem">Pratique</div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;animation:fade .9s ease .15s both">
+          <div style="position:relative">
+            <img src="assets/cercle-contour-bleuclair.svg" alt="" style="position:absolute;width:148%;max-width:none;top:50%;left:50%;transform:translate(-50%,-48%);opacity:.55;pointer-events:none" />
+            <div style="width:clamp(230px,26vw,320px);height:clamp(230px,26vw,320px);border-radius:50%;overflow:hidden;border:1px solid var(--line-2);box-shadow:var(--shadow)">
+              <img src="https://images.unsplash.com/photo-1580518337843-f959e992563b?w=600&q=80" alt="Stagiaire CF2m" style="width:160%;height:160%;object-fit:cover;margin-left:-30%;margin-top:-35%" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="formations" style="padding:var(--sec-pad) 0;background:var(--bg-2);border-top:1px solid var(--line)">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px)">
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:clamp(2.5rem,5vw,4rem)">
+          <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent);margin-bottom:1rem">Nos formations</span>
+          <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);line-height:1.15;color:var(--ink);text-wrap:balance">Des métiers du numérique<br />à votre portée</h2>
+          <span style="display:block;width:44px;height:2px;background:var(--rule);margin-top:1.4rem"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:clamp(14px,1.6vw,22px)">
+          <a href="#" onClick="{{ open.web }}" style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/responsive-design.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Web Developer</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:3px 8px;border-radius:var(--r-pill)">Recrutement</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Codez des applications web modernes, du front-end au back-end. HTML, CSS, JS, React, Node.js.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </a>
+          <a href="#" onClick="{{ open.design }}" style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/design-ideas.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Digital Designer</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);padding:2px 8px;border-radius:var(--r-pill)">Complet</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Concevez des interfaces et visuels numériques percutants. Figma, Adobe Suite, UX/UI.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </a>
+          <a href="#" onClick="{{ open.tech }}" style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/network-tree.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Tech PC &amp; Réseaux</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);padding:2px 8px;border-radius:var(--r-pill)">Complet</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Installez, configurez et sécurisez ordinateurs et infrastructures réseaux.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </a>
+          <a href="#" onClick="{{ open.anim }}" style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/movie-speaker.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Animateur Digital</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:3px 8px;border-radius:var(--r-pill)">Ouvert</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Accompagnez les publics dans l'utilisation des outils numériques du quotidien.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </a>
+          <div style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/multimedia.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Chèques TIC</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);padding:2px 8px;border-radius:var(--r-pill)">Continu</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Validez vos compétences numériques de base rapidement. Inscriptions en continu.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .35s" style-hover="transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px var(--card-pad);border-bottom:1px solid var(--line)">
+              <img src="assets/formation-icons/collect-computer.svg" alt="" style="width:26px;height:26px;opacity:.85" />
+              <span style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--ink)">Aventure Digitale</span>
+              <span style="margin-left:auto;font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);padding:2px 8px;border-radius:var(--r-pill)">Continu</span>
+            </div>
+            <div style="padding:var(--card-pad);display:flex;flex-direction:column;gap:18px;flex:1">
+              <p style="font-size:.9rem;line-height:1.7;color:var(--ink-2)">Découvrez le numérique par la pratique avec un parcours d'initiation progressif.</p>
+              <span style="margin-top:auto;font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">Voir la formation →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:var(--sec-pad) 0;background:var(--bg);border-top:1px solid var(--line)">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);display:flex;flex-direction:column;align-items:center;text-align:center">
+        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent);margin-bottom:1rem">Partenaires &amp; financeurs</span>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.7rem,3vw,2.3rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);color:var(--ink);margin-bottom:2.8rem">Ils nous font confiance</h2>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px">
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">Actiris</span>
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">Bruxelles Formation</span>
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">VDAB</span>
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">Région Bruxelloise</span>
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">FSE+</span>
+          <span style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-pill);padding:11px 22px;transition:color .25s,border-color .25s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="color:var(--accent);border-color:var(--accent);transform:translateY(-2px)">COCOF</span>
+        </div>
+      </div>
+    </section>
+
+    <footer style="background:var(--bg-2);border-top:1px solid var(--line);padding:3.5rem 0 2rem">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;padding-bottom:2.5rem">
+          <div>
+            <div style="position:relative;width:104px;height:40px;margin-bottom:1.2rem">
+              <img src="assets/logo-cf2m-blanc.svg" alt="CF2m" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-w)" />
+              <img src="assets/logo-cf2m-bleu.svg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-b)" />
+            </div>
+            <p style="font-size:.86rem;line-height:1.7;color:var(--ink-3);max-width:32ch">Centre de Formation 2M — Former les Bruxellois aux métiers du numérique depuis plus de 20 ans.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <span style="font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--ink-3);margin-bottom:.3rem">Nos activités</span>
+            <a href="#" onClick="{{ noop }}" style="font-size:.88rem;color:var(--ink-2);transition:color .25s" style-hover="color:var(--accent)">Pixel &amp; Co</a>
+            <a href="#" onClick="{{ noop }}" style="font-size:.88rem;color:var(--ink-2);transition:color .25s" style-hover="color:var(--accent)">CF2d</a>
+            <a href="#" onClick="{{ noop }}" style="font-size:.88rem;color:var(--ink-2);transition:color .25s" style-hover="color:var(--accent)">Aventure Digitale</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <span style="font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--ink-3);margin-bottom:.3rem">Contact</span>
+            <a href="mailto:info@cf2m.be" style="font-size:.88rem;color:var(--ink-2);transition:color .25s" style-hover="color:var(--accent)">info@cf2m.be</a>
+            <a href="#" onClick="{{ open.contact }}" style="font-size:.88rem;color:var(--ink-2);transition:color .25s" style-hover="color:var(--accent)">Nous contacter</a>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding-top:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center">
+          <small style="font-size:.78rem;color:var(--ink-3)">© 2026 CF2m — Tous droits réservés</small>
+          <small style="font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">Bruxelles</small>
+        </div>
+      </div>
+    </footer>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isFormation }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <section style="padding:calc(70px + 4rem) 0 3.5rem;background:var(--bg-2);border-bottom:1px solid var(--line);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-160px;right:-80px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--accent) 14%,transparent) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);position:relative;animation:rise .55s cubic-bezier(.2,.7,.3,1) both">
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--ink-3);margin-bottom:1.8rem">
+          <a href="#" onClick="{{ open.home }}" style="color:var(--ink-2);transition:color .2s" style-hover="color:var(--accent)">Accueil</a><span>/</span>
+          <a href="#" onClick="{{ open.home }}" style="color:var(--ink-2);transition:color .2s" style-hover="color:var(--accent)">Formations</a><span>/</span>
+          <span>{{ f.h1 }}</span>
+        </div>
+        <span style="display:inline-block;font-family:'Outfit',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent);border:1px solid var(--line-2);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:1.5rem">{{ f.label }}</span>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);line-height:var(--lh-display);color:var(--ink);margin-bottom:1.1rem">{{ f.h1 }}</h1>
+        <p style="font-size:1.05rem;line-height:1.7;color:var(--ink-2);max-width:52ch">{{ f.lead }}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1.5rem 2rem;margin-top:3rem;padding-top:1.8rem;border-top:1px solid var(--line)">
+          <div><div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:600;color:var(--ink)">{{ f.dur }}</div><div style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:.3rem">Durée</div></div>
+          <div><div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:600;color:var(--ink)">{{ f.sess }}</div><div style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:.3rem">Session</div></div>
+          <div><div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:600;color:var(--ink)">Gratuit</div><div style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:.3rem">Pour dem. d'emploi</div></div>
+          <div><div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:600;color:var(--ink)">12 max</div><div style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:.3rem">Par groupe</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:var(--sec-pad) 0">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(2rem,4vw,3.5rem);align-items:start">
+        <div>
+          <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent)">Programme</span>
+          <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.6rem,2.8vw,2.1rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);color:var(--ink);margin:.8rem 0 2rem">Contenu de la formation</h2>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ f.modules }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;gap:18px;align-items:flex-start;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r-sm);padding:18px 22px;transition:border-color .3s,transform .3s cubic-bezier(.2,.7,.3,1)" style-hover="border-color:var(--line-2);transform:translateX(3px)">
+                <span style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:var(--w-display);line-height:1;color:var(--rule);opacity:.55;flex-shrink:0">{{ m.i }}</span>
+                <div>
+                  <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:.35rem">{{ m.n }}</div>
+                  <div style="font-size:.86rem;line-height:1.65;color:var(--ink-2)">{{ m.d }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:sticky;top:92px;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);padding:clamp(22px,3vw,30px)">
+          <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent)">S'inscrire</span>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:600;letter-spacing:-.02em;color:var(--ink);margin:.7rem 0 .6rem">Séance d'info gratuite</h3>
+          <p style="font-size:.88rem;line-height:1.7;color:var(--ink-2);margin-bottom:1.6rem">Venez découvrir la formation sans engagement. Prochaine séance : voir le planning.</p>
+          <button onClick="{{ open.contact }}" style="width:100%;font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:600;background:var(--accent);color:var(--on-accent);border:none;padding:13px;border-radius:var(--r-pill);cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.3,1),background .25s,box-shadow .3s" style-hover="transform:translateY(-2px);background:var(--accent-2);box-shadow:0 12px 28px color-mix(in oklab,var(--accent) 32%,transparent)">Réserver ma place</button>
+          <p style="font-size:.75rem;color:var(--ink-3);text-align:center;margin-top:.9rem">Gratuit · Sans engagement</p>
+        </div>
+      </div>
+    </section>
+
+    <footer style="background:var(--bg-2);border-top:1px solid var(--line);padding:2rem 0">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);display:flex;justify-content:space-between;align-items:center;gap:1rem">
+        <div style="position:relative;width:92px;height:34px">
+          <img src="assets/logo-cf2m-blanc.svg" alt="CF2m" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-w)" />
+          <img src="assets/logo-cf2m-bleu.svg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-b)" />
+        </div>
+        <small style="font-size:.78rem;color:var(--ink-3)">© 2026 CF2m</small>
+      </div>
+    </footer>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <section style="padding:calc(70px + 4rem) 0 var(--sec-pad);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-120px;left:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--accent) 15%,transparent) 0%,transparent 68%);pointer-events:none"></div>
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);position:relative">
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--ink-3);margin-bottom:2.5rem">
+          <a href="#" onClick="{{ open.home }}" style="color:var(--ink-2);transition:color .2s" style-hover="color:var(--accent)">Accueil</a><span>/</span><span>Contact</span>
+        </div>
+        <div style="max-width:660px;margin:0 auto;text-align:center;margin-bottom:3rem">
+          <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:var(--eyebrow-ls);text-transform:uppercase;color:var(--accent)">Contact</span>
+          <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2rem,4.2vw,3rem);font-weight:var(--w-display);letter-spacing:var(--ls-display);line-height:1.1;color:var(--ink);margin:.9rem 0 .8rem">Contactez-nous</h1>
+          <p style="font-size:1.05rem;line-height:1.7;color:var(--ink-2);max-width:44ch;margin:0 auto">Une question sur nos formations ? Nous répondons dans les 24h ouvrables.</p>
+        </div>
+        <div style="max-width:660px;margin:0 auto">
+          <div style="background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);padding:clamp(24px,3.5vw,36px);display:flex;flex-direction:column;gap:1.1rem">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.1rem">
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.02em;color:var(--ink-2)">Prénom</label>
+                <input type="text" placeholder="Votre prénom" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.75rem 1rem;outline:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.02em;color:var(--ink-2)">Nom</label>
+                <input type="text" placeholder="Votre nom" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.75rem 1rem;outline:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)" />
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <label style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:var(--ink-2)">Email</label>
+              <input type="email" placeholder="votre@email.com" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.75rem 1rem;outline:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <label style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:var(--ink-2)">Formation souhaitée</label>
+              <select style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.75rem 1rem;outline:none;transition:border-color .25s" style-focus="border-color:var(--accent)">
+                <option>Web Developer</option>
+                <option>Digital Designer</option>
+                <option>Tech PC &amp; Réseaux</option>
+                <option>Animateur Digital</option>
+                <option>Renseignements généraux</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <label style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:var(--ink-2)">Message</label>
+              <textarea rows="4" placeholder="Votre message…" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.75rem 1rem;outline:none;resize:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)"></textarea>
+            </div>
+            <button onClick="{{ send }}" style="align-self:flex-start;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;background:var(--accent);color:var(--on-accent);border:none;padding:12px 26px;border-radius:var(--r-pill);cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.3,1),background .25s,box-shadow .3s" style-hover="transform:translateY(-2px);background:var(--accent-2);box-shadow:0 12px 28px color-mix(in oklab,var(--accent) 32%,transparent)">Envoyer le message</button>
+          </div>
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:1.5rem;border:1px solid var(--accent);border-radius:var(--r-sm);padding:18px;text-align:center;animation:rise .35s cubic-bezier(.2,.7,.3,1) both">
+              <div style="font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.25rem">Message envoyé !</div>
+              <div style="font-size:.85rem;color:var(--ink-2)">Nous vous répondrons dans les 24h ouvrables.</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+    <footer style="background:var(--bg-2);border-top:1px solid var(--line);padding:2rem 0">
+      <div style="max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);display:flex;justify-content:space-between;align-items:center;gap:1rem">
+        <div style="position:relative;width:92px;height:34px">
+          <img src="assets/logo-cf2m-blanc.svg" alt="CF2m" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-w)" />
+          <img src="assets/logo-cf2m-bleu.svg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-b)" />
+        </div>
+        <small style="font-size:.78rem;color:var(--ink-3)">© 2026 CF2m</small>
+      </div>
+    </footer>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <section style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem clamp(18px,4vw,40px);position:relative;overflow:hidden;background:var(--bg)">
+      <div style="position:absolute;top:-100px;left:-90px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--accent) 16%,transparent) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;bottom:-120px;right:-70px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,color-mix(in oklab,var(--accent) 10%,transparent) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="position:relative;width:100%;max-width:430px;background:var(--panel);backdrop-filter:var(--panel-blur);border:1px solid var(--line);border-radius:var(--r);padding:clamp(28px,4vw,40px);box-shadow:var(--shadow);animation:rise .5s cubic-bezier(.2,.7,.3,1) both">
+        <div style="position:relative;width:118px;height:46px;margin:0 auto 1.6rem">
+          <img src="assets/logo-cf2m-blanc.svg" alt="CF2m" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-w)" />
+          <img src="assets/logo-cf2m-bleu.svg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--logo-b)" />
+        </div>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:var(--w-display);letter-spacing:var(--ls-display);color:var(--ink);text-align:center;margin-bottom:.4rem">Connexion</h2>
+        <p style="font-size:.88rem;color:var(--ink-3);text-align:center;margin-bottom:2rem">Accédez à votre espace CF2m</p>
+        <div style="display:flex;flex-direction:column;gap:1.1rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <label style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;color:var(--ink-2)">Adresse email</label>
+            <input type="email" placeholder="votre@email.com" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.78rem 1rem;outline:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)" />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <label style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;color:var(--ink-2)">Mot de passe</label>
+            <input type="password" placeholder="••••••••" style="background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-size:.95rem;padding:.78rem 1rem;outline:none;transition:border-color .25s,box-shadow .25s" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 18%,transparent)" />
+          </div>
+          <button style="width:100%;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;background:var(--accent);color:var(--on-accent);border:none;padding:.85rem;border-radius:var(--r-pill);cursor:pointer;margin-top:.3rem;transition:transform .3s cubic-bezier(.2,.7,.3,1),background .25s,box-shadow .3s" style-hover="transform:translateY(-2px);background:var(--accent-2);box-shadow:0 12px 28px color-mix(in oklab,var(--accent) 32%,transparent)">Se connecter</button>
+        </div>
+        <div style="text-align:center;margin-top:1.6rem">
+          <a href="#" onClick="{{ open.home }}" style="font-size:.82rem;color:var(--ink-3);transition:color .25s" style-hover="color:var(--ink)">← Retour à l'accueil</a>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;,&quot;section&quot;:&quot;Thème&quot;},&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a&quot;,&quot;b&quot;],&quot;default&quot;:&quot;a&quot;,&quot;tsType&quot;:&quot;'a'|'b'&quot;,&quot;section&quot;:&quot;Thème&quot;}}">
+const FDATA = {
+  web:{h1:'Web Developer',lead:'Codez des applications web modernes, du front-end au back-end. Formation 100% pratique.',label:'Recrutement en cours',dur:'12 mois',sess:'Sept. 2026',modules:[{n:'Fondamentaux web',d:'HTML5, CSS3, JavaScript ES6+, Git, accessibilité'},{n:'Front-end moderne',d:'React.js, TypeScript, APIs REST, state management'},{n:'Back-end & BDD',d:'Node.js, Express, PostgreSQL, auth, Docker'},{n:'Projet final',d:'Application full-stack, portfolio, présentation client'}]},
+  design:{h1:'Digital Designer',lead:"Concevez des interfaces et visuels numériques percutants. Figma, Adobe, UX/UI.",label:'Complet — Oct. 2026',dur:'13 mois',sess:'Oct. 2026',modules:[{n:'Fondamentaux design',d:'Théorie couleurs, typographie, composition, branding'},{n:'Identité visuelle',d:'Logos, chartes graphiques, InDesign, print & retouche'},{n:'UI/UX Design',d:'Figma avancé, design systems, prototypage, tests utilisateurs'},{n:'Portfolio & emploi',d:'Site portfolio, pitch client, freelance, entretiens'}]},
+  tech:{h1:'Tech PC & Réseaux',lead:"Installez, configurez et sécurisez ordinateurs et infrastructures réseaux.",label:'Complet — Mai 2026',dur:'9 mois',sess:'Mai 2026',modules:[{n:'Hardware & OS',d:'Assemblage PC, Windows & Linux, virtualisation, dépannage'},{n:'Réseaux',d:'TCP/IP, routage, switching, VLAN, Wi-Fi, Cisco'},{n:'Cybersécurité',d:'Pare-feu, VPN, audits de sécurité, backup & recovery'},{n:'Projet pro',d:'Infrastructure client, helpdesk, ITIL, CompTIA A+'}]},
+  anim:{h1:'Animateur Digital',lead:"Accompagnez les publics dans l'utilisation des outils numériques du quotidien.",label:'Séances ouvertes',dur:'10 mois',sess:'Avril 2026',modules:[{n:'Pédagogie numérique',d:"Techniques d'animation, publics éloignés, outils pédagogiques"},{n:'Outils numériques',d:'Office, internet & sécurité, réseaux sociaux, admin en ligne'},{n:"Projets d'animation",d:'Ateliers thématiques, plan de cours, évaluation, partenariats'},{n:'Stage & emploi',d:"Stage en structure, CV & lettres, entretiens, réseautage"}]}
+};
+
+class Component extends DCLogic {
+  state = { screen:'home', slug:'web', theme:null, dir:null, menu:false, sent:false, burger:false, w:typeof window!=='undefined'?window.innerWidth:1280 };
+
+  componentWillUnmount(){ if(this._onR) window.removeEventListener('resize', this._onR); }
+
+  componentDidMount(){
+    this._onR = () => this.setState({w:window.innerWidth});
+    window.addEventListener('resize', this._onR);
+    this._onR();
+    let theme = this.props.theme || 'dark';
+    let dir = this.props.direction || 'a';
+    try {
+      const t = localStorage.getItem('cf2m-theme'); if(t) theme = t;
+      const d = localStorage.getItem('cf2m-dir'); if(d) dir = d;
+    } catch(e){}
+    this.setState({theme, dir});
+    this.apply(theme, dir);
+  }
+
+  apply(theme, dir){
+    const el = document.documentElement;
+    el.dataset.theme = theme;
+    el.dataset.dir = dir;
+    try{ localStorage.setItem('cf2m-theme', theme); localStorage.setItem('cf2m-dir', dir); }catch(e){}
+  }
+
+  go(screen, slug){
+    this.setState({screen, slug: slug || this.state.slug, menu:false, sent:false, burger:false});
+    window.scrollTo(0,0);
+  }
+
+  renderVals(){
+    const theme = this.state.theme || this.props.theme || 'dark';
+    const dir = this.state.dir || this.props.direction || 'a';
+    const f = FDATA[this.state.slug] || FDATA.web;
+    const nav = s => e => { if(e) e.preventDefault(); this.go(s); };
+    return {
+      isHome: this.state.screen==='home',
+      isFormation: this.state.screen==='formation',
+      isContact: this.state.screen==='contact',
+      isLogin: this.state.screen==='login',
+      wide: this.state.w >= 1060,
+      narrow: this.state.w < 1060,
+      burger: this.state.burger && this.state.w < 1060,
+      toggleBurger: () => this.setState(s => ({burger:!s.burger})),
+      menu: this.state.menu,
+      sent: this.state.sent,
+      themeIcon: theme==='light' ? '☾' : '☀',
+      dirLabel: dir==='a' ? 'Direction A · Éditorial' : 'Direction B · Structuré',
+      f: Object.assign({}, f, { modules: f.modules.map((m,i)=>({n:m.n,d:m.d,i:String(i+1).padStart(2,'0')})) }),
+      open: {
+        home: nav('home'),
+        contact: nav('contact'),
+        login: nav('login'),
+        web: e => { if(e) e.preventDefault(); this.go('formation','web'); },
+        design: e => { if(e) e.preventDefault(); this.go('formation','design'); },
+        tech: e => { if(e) e.preventDefault(); this.go('formation','tech'); },
+        anim: e => { if(e) e.preventDefault(); this.go('formation','anim'); }
+      },
+      noop: e => { if(e) e.preventDefault(); },
+      openMenu: () => this.setState({menu:true}),
+      closeMenu: () => this.setState({menu:false}),
+      send: () => this.setState({sent:true}),
+      toggleTheme: () => { const t = theme==='light'?'dark':'light'; this.setState({theme:t}); this.apply(t, dir); },
+      toggleDir: () => { const d = dir==='a'?'b':'a'; this.setState({dir:d}); this.apply(theme, d); }
+    };
+  }
+}
+</script>
+</body>
+</html>
