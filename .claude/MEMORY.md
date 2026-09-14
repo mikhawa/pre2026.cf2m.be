@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-129 (2026-08-05) — Vérification finale du restyle "raffiné white/dark" : plan terminé
+130 (2026-09-14) — Fond white mode pages intérieures inspiré du thème claude.ai/design
 
 ## Dernier numéro .claude-tasks
-197 (2026-08-05)
+199 (2026-09-14)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -85,7 +85,8 @@ Tâches 096 à 102. Fichiers principaux modifiés :
 - Anti-flash inline dans `<head>` : applique le thème avant le rendu
 
 ### Couleurs white mode
-- Fond universel : `rgb(196, 223, 240)` = `#c4dff0`
+- Fond universel (`body`, pages hors accueil/login) : `#f5f7f9` (**révisé 2026-09-14**, ex `#c4dff0`, repris du thème claude.ai/design "CF2M Site" — voir tâche `.claude-tasks/sonnet/199-...md`)
+- Accueil (`#formations`) et hero conservent `#c4dff0` — non concernés par la révision
 - Hero : reçoit son propre `background-image: url('/images/hero-bg.jpg')` en light (le body n'en a plus)
 - Hero glass : `rgba(255,255,255,0.88)` + 3 couches d'ombre portée → verre blanc opaque
 - Textes hero : `h1` → `#0d1e35`, `.lead` → `#2e4a62`
