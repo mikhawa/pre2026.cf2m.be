@@ -39,6 +39,16 @@ Après les correctifs ci-dessus, l'utilisateur a signalé une opacité toujours 
 ## Correctif post-livraison n°2 : icône hamburger invisible
 Signalé par l'utilisateur : `.navbar-toggler-icon` (mobile) invisible en light mode. Cause : Bootstrap génère cette icône via la variable `--bs-navbar-toggler-icon-bg` (SVG inline), fixée à un trait blanc par la classe `navbar-dark` sur `<nav>` — jamais pensée pour une navbar blanche. Corrigé par une surcharge `[data-theme="light"] .cf2m-navbar .navbar-toggler-icon { --bs-navbar-toggler-icon-bg: url(...trait #0d1e35...); }`. Vérifié par capture Playwright (mobile, light mode) : icône bien visible.
 
+## Correctif post-livraison n°3 : contraste `.card-header .btn-outline-secondary` (bug systémique, pas juste /profil)
+Signalé sur `/profil` connecté : liens "Administration"/"Membres"/"Modifier mon profil" peu lisibles en light mode. Cause : `.cf2m-card .card-header` reste **toujours sombre** (`color-mix(..., var(--cf2m-dark), ...)`, jamais réassigné en light mode — même pattern que l'ancienne convention navbar/footer), mais `[data-theme="light"] .cf2m-card .btn-outline-secondary { color: #0072a3; }` (app.css:1739, déjà existant avant cette session) assombrit le cyan en présumant un fond blanc. Résultat : cyan foncé sur navy foncé, faible contraste. Ce pattern `.cf2m-card .card-header` + `.btn-outline-secondary` est réutilisé sur `/profil`, `/profil/edit`, `/page/show`, `/formation/show` et plusieurs pages admin (`revisions-en-attente`, `historique` formation/page/works, `stagiaires`) — bug systémique, pas isolé à /profil.
+
+Corrigé par une surcharge plus spécifique restaurant le cyan clair (dark-mode) pour ce contexte précis :
+```css
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary { color: var(--cf2m-cyan-light); }
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary:hover { color: var(--cf2m-white); }
+```
+Vérifié par connexion réelle (Playwright + code 2FA récupéré via l'API Mailpit) et capture d'écran sur `/profil` en light mode.
+
 ## Critères d'acceptation
 - [x] `bin/console lint:twig` OK sur `base.html.twig`
 - [x] CSS : accolades équilibrées (vérif automatique)
