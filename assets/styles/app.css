@@ -1694,11 +1694,16 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 }
 
 /* Body — fond des pages intérieures (hors accueil/login qui ont leur propre fond) :
-   gris quasi-blanc raffiné, repris du thème claude.ai/design "CF2M Site" */
+   blanc raffiné, repris du thème claude.ai/design "CF2M Site", avec les mêmes ombres
+   bleutées que le dark mode (ci-dessus) mais très atténuées */
 [data-theme="light"] body {
     color: #1a2b3c;
     background-color: #f5f7f9;
-    background-image: none;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 75%  5%,  rgba(0,  150, 195, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 60% at  5% 40%,  rgba(10,  80, 160, 0.06) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 45% at 88% 85%,  rgba(0,  110, 170, 0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 85% 35% at 50% 115%, rgba(190, 210, 228, 0.45) 0%, transparent 70%);
 }
 
 /* Textes généraux */
