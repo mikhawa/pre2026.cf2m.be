@@ -1693,10 +1693,11 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     --cf2m-cyan:            #0072a3;
 }
 
-/* Body */
+/* Body — fond des pages intérieures (hors accueil/login qui ont leur propre fond) :
+   gris quasi-blanc raffiné, repris du thème claude.ai/design "CF2M Site" */
 [data-theme="light"] body {
     color: #1a2b3c;
-    background-color: #c4dff0;
+    background-color: #f5f7f9;
     background-image: none;
 }
 
