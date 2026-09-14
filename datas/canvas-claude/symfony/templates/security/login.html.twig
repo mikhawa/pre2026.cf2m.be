@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — CF2m{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+    <section class="cf2m-login">
+        <div class="cf2m-glow" style="top:-100px;left:-90px;width:380px;height:380px"></div>
+        <div class="cf2m-glow" style="bottom:-120px;right:-70px;width:420px;height:420px;opacity:.6"></div>
+
+        <div class="cf2m-login__card">
+            <div class="cf2m-login__logo">
+                <img class="is-white" src="{{ asset('images/logo-cf2m-blanc.svg') }}" alt="CF2m">
+                <img class="is-blue" src="{{ asset('images/logo-cf2m-bleu.svg') }}" alt="">
+            </div>
+            <h2 class="cf2m-login__title">Connexion</h2>
+            <p class="cf2m-login__sub">Accédez à votre espace CF2m</p>
+
+            {% if error %}
+                <div class="cf2m-alert cf2m-alert--error" style="margin:0 0 1.2rem">
+                    <div class="cf2m-alert__t">Connexion impossible</div>
+                    <div class="cf2m-alert__d">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                </div>
+            {% endif %}
+
+            <form class="cf2m-form" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="cf2m-field">
+                    <label class="cf2m-label" for="username">Adresse email</label>
+                    <input class="cf2m-input" type="email" id="username" name="_username"
+                           value="{{ last_username }}" placeholder="votre@email.com" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="cf2m-field">
+                    <label class="cf2m-label" for="password">Mot de passe</label>
+                    <input class="cf2m-input" type="password" id="password" name="_password"
+                           placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+
+                <button class="cf2m-btn cf2m-btn--block" type="submit" style="margin-top:.3rem">Se connecter</button>
+            </form>
+
+            <div class="cf2m-login__back">
+                <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

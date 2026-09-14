@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CF2m — Lancez votre carrière dans le numérique{% endblock %}
+
+{% block body %}
+    <section class="cf2m-hero">
+        <div class="cf2m-glow cf2m-glow--hero"></div>
+        <div class="cf2m-container cf2m-hero__grid">
+            <div class="cf2m-hero__copy">
+                <div class="cf2m-hero__kicker">
+                    <span class="bar"></span>
+                    <span class="cf2m-eyebrow">Centre de Formation 2M — Bruxelles</span>
+                </div>
+                <h1 class="cf2m-h1">Lancez votre carrière<br>dans le <span class="cf2m-accent-word">numérique</span></h1>
+                <p class="cf2m-lead" style="max-width:30ch;margin:1.4rem 0 2.4rem">
+                    Formations gratuites et certifiantes pour les demandeurs d'emploi bruxellois.
+                    Pratique intensive, petits groupes, suivi personnalisé.
+                </p>
+                <a class="cf2m-btn" href="#formations">Découvrir les formations</a>
+
+                <div class="cf2m-stats">
+                    {% for stat in stats %}
+                        <div>
+                            <div class="cf2m-stat__v">{{ stat.value }}</div>
+                            <div class="cf2m-stat__l">{{ stat.label }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="cf2m-portrait-wrap">
+                <div class="cf2m-portrait">
+                    <img class="cf2m-portrait__ring" src="{{ asset('images/cercle-contour-bleuclair.svg') }}" alt="">
+                    <div class="cf2m-portrait__photo">
+                        <img src="{{ asset('images/hero-portrait.jpg') }}" alt="Stagiaire CF2m">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cf2m-section cf2m-section--alt" id="formations">
+        <div class="cf2m-container">
+            <div class="cf2m-center" style="margin-bottom:clamp(2.5rem,5vw,4rem)">
+                <span class="cf2m-eyebrow" style="margin-bottom:1rem">Nos formations</span>
+                <h2 class="cf2m-h2">Des métiers du numérique<br>à votre portée</h2>
+                <span class="cf2m-rule" style="margin-top:1.4rem"></span>
+            </div>
+            <div class="cf2m-grid-cards">
+                {% for formation in formations %}
+                    {{ include('_partials/formation_card.html.twig', {formation: formation}) }}
+                {% else %}
+                    <p class="cf2m-card__text">Aucune formation publiée pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="cf2m-section">
+        <div class="cf2m-container cf2m-center">
+            <span class="cf2m-eyebrow" style="margin-bottom:1rem">Partenaires &amp; financeurs</span>
+            <h2 class="cf2m-h2" style="margin-bottom:2.8rem">Ils nous font confiance</h2>
+            <div class="cf2m-partners">
+                {% for partner in partners %}
+                    {% if partner.url %}
+                        <a class="cf2m-partner" href="{{ partner.url }}" target="_blank" rel="noopener">{{ partner.name }}</a>
+                    {% else %}
+                        <span class="cf2m-partner">{{ partner.name }}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

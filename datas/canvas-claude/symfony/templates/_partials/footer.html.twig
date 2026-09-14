@@ -1,0 +1,28 @@
+<footer class="cf2m-footer">
+    <div class="cf2m-container">
+        <div class="cf2m-footer__grid">
+            <div>
+                <div class="cf2m-footer__logo" style="margin-bottom:1.2rem">
+                    <img class="is-white" src="{{ asset('images/logo-cf2m-blanc.svg') }}" alt="CF2m">
+                    <img class="is-blue" src="{{ asset('images/logo-cf2m-bleu.svg') }}" alt="">
+                </div>
+                <p class="cf2m-footer__text">Centre de Formation 2M — Former les Bruxellois aux métiers du numérique depuis plus de 20 ans.</p>
+            </div>
+            <div class="cf2m-footer__col">
+                <span class="cf2m-eyebrow cf2m-eyebrow--muted">Nos activités</span>
+                <a href="{{ path('app_pixel_and_co') }}">Pixel &amp; Co</a>
+                <a href="https://cf2d.be" target="_blank" rel="noopener">CF2d</a>
+                <a href="{{ path('app_home') }}#formations">Aventure Digitale</a>
+            </div>
+            <div class="cf2m-footer__col">
+                <span class="cf2m-eyebrow cf2m-eyebrow--muted">Contact</span>
+                <a href="mailto:info@cf2m.be">info@cf2m.be</a>
+                <a href="{{ path('app_contact') }}">Nous contacter</a>
+            </div>
+        </div>
+        <div class="cf2m-footer__bottom">
+            <small>© {{ 'now'|date('Y') }} CF2m — Tous droits réservés</small>
+            <small style="font-family:var(--cf2m-font-display);letter-spacing:.14em;text-transform:uppercase">Bruxelles</small>
+        </div>
+    </div>
+</footer>

@@ -68,10 +68,10 @@ ln -sf "${PROJECT_PATH}/.claude/MEMORY.md" ~/.claude/projects/${HASH}/memory/MEM
 ```
 
 ## Dernier numéro de changelog
-129 (2026-08-05) — Vérification finale du restyle "raffiné white/dark" : plan terminé
+133 (2026-09-14) — Intensification des ombres bleutées du fond white mode
 
 ## Dernier numéro .claude-tasks
-197 (2026-08-05)
+202 (2026-09-14)
 
 ## Dark/Light mode — TERMINÉ ✅ (2026-03-21)
 Tâches 096 à 102. Fichiers principaux modifiés :
@@ -85,7 +85,19 @@ Tâches 096 à 102. Fichiers principaux modifiés :
 - Anti-flash inline dans `<head>` : applique le thème avant le rendu
 
 ### Couleurs white mode
-- Fond universel : `rgb(196, 223, 240)` = `#c4dff0`
+- Fond universel (`body`, pages hors accueil/login) : `#f5f7f9` + 4 `radial-gradient` bleu/cyan (halos 0.15-0.20, vignette basse 0.60 — remontés le 2026-09-14 suite tâche 202, les opacités "équivalent dark" 0.05-0.07 de la tâche 201 étaient imperceptibles sur fond clair), même structure/positions que le dark mode (**révisé 2026-09-14**, ex `#c4dff0` uni — voir tâches `.claude-tasks/sonnet/199-...md`, `201-...md`, `202-...md`)
+- Accueil (`#formations`) et hero conservent `#c4dff0` — non concernés par la révision
+
+### Images hero remplacées (2026-09-14, tâche 200)
+`public/images/hero-bg.jpg` et `hero-portrait.jpg` remplacés par les photos du thème
+claude.ai/design (extraites de l'export « hors ligne » du canvas — les `.dc.html`
+n'ont qu'un placeholder Unsplash en URL). **Attention** : ce sont des photos stock
+génériques, pas de vraies photos du CF2m (contrairement à l'ancien `hero-portrait.jpg`,
+issu de `datas/resize_hero.php`) — remplacement demandé et confirmé explicitement par
+l'utilisateur malgré cet avertissement. Alt text du portrait mis à jour en conséquence
+(`templates/home/index.html.twig`). Les `.webp` associés (`hero-bg.webp`,
+`hero-bg-mobile.webp`, `hero-portrait.webp`) sont orphelins (non référencés dans le
+code) et n'ont pas été régénérés.
 - Hero : reçoit son propre `background-image: url('/images/hero-bg.jpg')` en light (le body n'en a plus)
 - Hero glass : `rgba(255,255,255,0.88)` + 3 couches d'ombre portée → verre blanc opaque
 - Textes hero : `h1` → `#0d1e35`, `.lead` → `#2e4a62`

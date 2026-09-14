@@ -1693,11 +1693,17 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
     --cf2m-cyan:            #0072a3;
 }
 
-/* Body */
+/* Body — fond des pages intérieures (hors accueil/login qui ont leur propre fond) :
+   blanc raffiné, repris du thème claude.ai/design "CF2M Site", avec les mêmes ombres
+   bleutées que le dark mode (ci-dessus), rendues clairement visibles sur fond clair */
 [data-theme="light"] body {
     color: #1a2b3c;
-    background-color: #c4dff0;
-    background-image: none;
+    background-color: #f5f7f9;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 75%  5%,  rgba(0,  140, 190, 0.20) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 60% at  5% 40%,  rgba(10,  70, 150, 0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 45% at 88% 85%,  rgba(0,  100, 165, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 85% 35% at 50% 115%, rgba(160, 190, 218, 0.60) 0%, transparent 70%);
 }
 
 /* Textes généraux */
@@ -1738,6 +1744,10 @@ html:not([data-theme="light"]) .cf2m-theme-moon { display: none; }
 [data-theme="light"] .cf2m-card .card-text       { color: #4a6070; }
 [data-theme="light"] .cf2m-card .btn-outline-secondary { color: #0072a3; }
 [data-theme="light"] .cf2m-card .btn-outline-secondary:hover { color: var(--cf2m-navy); }
+/* .card-header reste toujours sombre (même en light mode, cf. color-mix(--cf2m-dark) ci-dessus) :
+   le cyan assombri pour fond blanc y est illisible, on garde le cyan clair du dark mode */
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary { color: var(--cf2m-cyan-light); }
+[data-theme="light"] .cf2m-card .card-header .btn-outline-secondary:hover { color: var(--cf2m-white); }
 
 /* Section partenaires */
 [data-theme="light"] .cf2m-partners {
