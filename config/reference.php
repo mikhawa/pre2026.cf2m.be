@@ -1573,6 +1573,10 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         db_driver?: scalar|Param|null, // Default: null
  *     }>,
  * }
+ * @psalm-type ReactConfig = array{
+ *     controllers_path?: scalar|Param|null, // The path to the directory where React controller components are stored - relevant only when using symfony/asset-mapper. // Default: "%kernel.project_dir%/assets/react/controllers"
+ *     name_glob?: list<scalar|Param|null>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1588,6 +1592,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     monolog?: MonologConfig,
  *     twig_component?: TwigComponentConfig,
  *     vich_uploader?: VichUploaderConfig,
+ *     react?: ReactConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1607,6 +1612,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         vich_uploader?: VichUploaderConfig,
+ *         react?: ReactConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1623,6 +1629,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         monolog?: MonologConfig,
  *         twig_component?: TwigComponentConfig,
  *         vich_uploader?: VichUploaderConfig,
+ *         react?: ReactConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1641,6 +1648,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         vich_uploader?: VichUploaderConfig,
+ *         react?: ReactConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

@@ -85,4 +85,25 @@ return [
     '@cropper/element-viewer' => [
         'version' => '2.1.0',
     ],
+    '@symfony/ux-react' => [
+        'path' => './vendor/symfony/ux-react/assets/dist/loader.js',
+    ],
+    // React : entrées ajoutées à la main (bug d'AssetMapper 7.4.19 : `importmap:require`
+    // échoue sur les dépendances encodées « react@%5E19.3.0 » renvoyées par jsDelivr).
+    // Toujours garder les versions react / react-dom identiques.
+    'react' => [
+        'version' => '19.3.0',
+    ],
+    'react/jsx-runtime' => [
+        'version' => '19.3.0',
+    ],
+    'react-dom' => [
+        'version' => '19.3.0',
+    ],
+    'react-dom/client' => [
+        'version' => '19.3.0',
+    ],
+    'scheduler' => [
+        'version' => '0.28.0',
+    ],
 ];
