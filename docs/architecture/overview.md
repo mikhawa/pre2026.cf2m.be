@@ -6,7 +6,7 @@
 | Framework | Symfony 7.4 LTS (--webapp) |
 | Langage | PHP 8.5 (strict_types) |
 | Base de données | MariaDB 11.4 |
-| Frontend | ImportMap + Stimulus + Turbo (pas de build step) |
+| Frontend | ImportMap + Stimulus + Turbo + îlots React (Babel uniquement pour le JSX) |
 | Back-office | EasyAdmin 4 |
 | Containerisation | Docker (dev) |
 | CI/CD | GitHub Actions |
@@ -78,6 +78,7 @@ Les rôles `ROLE_SUPER_ADMIN`, `ROLE_ADMIN` et `ROLE_PEDAGO` sont soumis à une 
 - Pas de bundler (Webpack/Vite) — ImportMap natif Symfony
 - Stimulus pour les composants JS interactifs
 - Turbo pour la navigation SPA-like sans rechargement complet
+- Îlots React (Symfony UX React) pour les interactions riches : sources JSX dans `assets/react/src/`, compilées par Babel dans `assets/react/build/` (versionné) — voir `docs/architecture/decision-ilots-react.md`
 
 ## Back-office (EasyAdmin 4)
 - Interface d'administration générée via EasyAdmin 4
