@@ -77,6 +77,13 @@
     </div>
 </section>
 
+{# ── Îlot React de démonstration (dev uniquement) ──────────────────── #}
+{% if app.environment == 'dev' %}
+<div class="container">
+    <div {{ react_component('Demo/HelloIsland', { name: 'CF2m' }) }}></div>
+</div>
+{% endif %}
+
 {# ── Section Formations ────────────────────────────────────────────── #}
 <section id="formations" class="py-5">
     <div class="container">
