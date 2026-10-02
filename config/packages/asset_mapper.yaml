@@ -3,6 +3,10 @@ framework:
         # The paths to make available to the asset mapper.
         paths:
             - assets/
+        # Sources JSX non lisibles par le navigateur : seule leur version
+        # compilée par Babel (assets/react/build/) est servie.
+        excluded_patterns:
+            - '*/assets/react/src/*'
         missing_import_mode: strict
 
 when@prod:

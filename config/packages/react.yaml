@@ -1,0 +1,7 @@
+# Îlots React (voir docs/architecture/decision-ilots-react.md)
+# Babel compile assets/react/src/ → assets/react/build/ (npm run react:build).
+# Seuls les composants de build/islands/ sont exposés à Twig via react_component() :
+# « islands/Demo/HelloIsland.jsx » → {{ react_component('Demo/HelloIsland') }}.
+react:
+    controllers_path: '%kernel.project_dir%/assets/react/build/islands'
+    name_glob: ['*.js']

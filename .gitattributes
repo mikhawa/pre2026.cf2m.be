@@ -7,3 +7,6 @@
 *.gif binary
 *.ico binary
 *.pdf binary
+
+# JSX compilé par Babel (npm run react:build) : replié dans les diffs GitHub
+assets/react/build/** linguist-generated=true
