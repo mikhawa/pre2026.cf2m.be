@@ -25,6 +25,18 @@ services:
     depends_on:
       - php
 
+  # Compilation JSX des îlots React (Babel en mode watch) — voir docs/architecture/decision-ilots-react.md
+  node:
+    image: node:24-alpine
+    container_name: pre_cf2m_node
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      # Les événements de fichiers ne traversent pas les volumes Windows/WSL : on scrute à intervalle régulier
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "npm install && npm run react:watch"
+
   db:
     image: mariadb:11.4
     container_name: pre_cf2m_db

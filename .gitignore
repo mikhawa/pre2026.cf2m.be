@@ -28,3 +28,7 @@
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+###> îlots React (Babel) ###
+/node_modules/
+###< îlots React (Babel) ###

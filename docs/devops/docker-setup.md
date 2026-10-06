@@ -8,6 +8,7 @@
 | db | mariadb:11.4      | 3307 | Base de données |
 | phpmyadmin | phpmyadmin:latest | 8181 | Interface de gestion BDD |
 | mailer | mailpit           | 8025 | SMTP de test |
+| node | node:24-alpine    | — | Compile le JSX des îlots React (`npm run react:watch`) |
 
 ## Commandes quotidiennes
 ```bash
@@ -15,6 +16,8 @@ docker compose up -d
 docker compose exec php bin/console [commande]
 docker compose exec php composer install
 docker compose exec php bin/console doctrine:migrations:migrate
+docker compose logs -f node          # suivre la compilation JSX
+docker compose exec node npm run react:build   # recompiler tout le JSX
 ```
 
 ## Variables d'environnement dev

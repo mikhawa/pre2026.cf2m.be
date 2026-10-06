@@ -1,0 +1,14 @@
+{
+    "name": "cf2m-react-islands",
+    "private": true,
+    "description": "Outils de développement des îlots React du site CF2m (compilation JSX uniquement, React est servi par l'importmap)",
+    "scripts": {
+        "react:build": "babel assets/react/src --out-dir assets/react/build --delete-dir-on-start",
+        "react:watch": "babel assets/react/src --out-dir assets/react/build --watch"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.28.0",
+        "@babel/core": "^7.28.0",
+        "@babel/preset-react": "^7.27.1"
+    }
+}

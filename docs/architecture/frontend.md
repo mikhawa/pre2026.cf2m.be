@@ -5,6 +5,7 @@
 |--------|-------------|
 | CSS framework | Bootstrap 5 |
 | JS | Stimulus + Turbo (ImportMap, pas de bundler) |
+| Îlots React | React 19 via Symfony UX React, JSX compilé par Babel — voir `docs/architecture/decision-ilots-react.md` |
 | Templates | Twig |
 | Polices | Google Fonts (`Outfit` en titres, `DM Sans` en corps de texte) — chargement non bloquant, voir `docs/architecture/seo-performances.md` |
 
