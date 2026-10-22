@@ -1,0 +1,42 @@
+/*
+ * Tokens de design issus de la maquette Figma (refonte 2026).
+ * ⚠ Valeurs relevées à l'œil sur la capture « Header + Hero » : à remplacer
+ *   par les valeurs exactes de Figma Dev Mode (couleurs, polices, tailles).
+ * Les composants utilisent ces variables plutôt que des valeurs en dur, pour
+ * que les deux thèmes et les futures pages restent cohérents.
+ */
+:root {
+    /* Couleurs */
+    --cf2m-accent: #3fdfee;
+    /* cyan Figma : liens du menu, chiffres, bouton */
+    --cf2m-accent-hover: #ffffff;
+    --cf2m-ink: #0b2540;
+    /* texte sur fond cyan (bouton) */
+    --cf2m-on-photo: #ffffff;
+    /* texte posé sur une photo */
+    --cf2m-photo-overlay: linear-gradient(90deg, rgba(5, 14, 24, 0.78) 0%, rgba(5, 14, 24, 0.45) 55%, rgba(5, 14, 24, 0.25) 100%);
+    --cf2m-header-line: rgba(255, 255, 255, 0.45);
+
+    /* Typographie */
+    --cf2m-font-display: 'Poppins', sans-serif;
+    --cf2m-tracking-wide: 0.14em;
+    /* titres en capitales espacées */
+
+    /* Typographie pour subheading*/
+    --cf2m-font-text: 'Montserrat', sans-serif;
+    /* Formes */
+    --cf2m-radius-pill: 999px;
+
+    /* En-tête des pages intérieures */
+    --cf2m-header-bg: var(--cf2m-dark);
+    --cf2m-header-link: var(--cf2m-accent);
+    --cf2m-header-link-hover: #ffffff;
+}
+
+[data-theme="light"] {
+    --cf2m-header-bg: #ffffff;
+    --cf2m-header-link: #0d5c7a;
+    /* le cyan Figma est trop clair sur fond blanc (contraste) */
+    --cf2m-header-link-hover: #0d1e35;
+    --cf2m-header-line: rgba(13, 30, 53, 0.15);
+}

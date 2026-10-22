@@ -49,21 +49,31 @@ jobs:
       run: |
         mkdir -p data
         touch data/database.sqlite
-    # Îlots React : le serveur n'a pas Node, le JSX compilé (assets/react/build/) est donc versionné.
-    # On vérifie ici qu'il correspond bien aux sources (assets/react/src/).
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '24'
-        cache: 'npm'
-    - name: Compile React islands (Babel)
-      run: |
-        npm ci
-        npm run react:build
-    - name: Check compiled React islands are committed
-      run: |
-        git add -N assets/react/build
-        git diff --exit-code -- assets/react/build || (echo "::error::assets/react/build n'est pas à jour : lancez 'npm run react:build' et commitez le résultat." && exit 1)
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
       run: vendor/bin/phpunit
+
+  # SPA React (Vite) : le serveur n'a pas Node, la compilation se fait donc ici.
+  # Le résultat (frontend/dist) est publié comme artefact ; son déploiement sur le VPS viendra plus tard.
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    - name: Install SPA dependencies
+      run: npm ci
+    - name: Build SPA (Vite)
+      run: npm run build
+    - uses: actions/upload-artifact@v4
+      with:
+        name: frontend-dist
+        path: frontend/dist
+        if-no-files-found: error
