@@ -98,7 +98,13 @@ frontend/
 - **API** : contrôleurs dans `src/Controller/Api/`, routes `/api/...`, réponses JSON. Premier point : `GET /api/statut`
   (`StatutController`, testé par `tests/Controller/Api/StatutControllerTest.php`).
 - **CI** : le job `frontend-build` de `symfony.yml` fait `npm ci` + `npm run build` et publie `frontend/dist`
-  (artefact `frontend-dist`). `dist/` n'est pas versionné. Le déploiement sur le VPS reste à faire.
+  (artefact `frontend-dist`). `dist/` n'est pas versionné.
+- **Déploiement préprod** (`deploy-preprod.yml`, depuis le 2026-10-26) : la SPA est compilée avec
+  `VITE_ROUTER_BASENAME=/spa`, envoyée par SCP dans `var/spa-dist`, puis installée après le `git pull` :
+  `public/spa/index.html` (point d'entrée, servi sur `/spa/`) et `public/spa-assets/` (JS/CSS ; Vite
+  `assetsDir: 'spa-assets'` pour ne pas entrer en collision avec `public/assets/` d'AssetMapper). Le site Twig
+  n'est pas touché. Pas de repli serveur : un rechargement sur une sous-route (`/spa/xxx`) donne un 404 Nginx
+  tant que la config Plesk n'est pas faite. La prod ne déploie pas encore la SPA.
 - Imports **sans** extension (Vite résout les `.jsx`).
 
 ## API (backend Symfony) — API Platform

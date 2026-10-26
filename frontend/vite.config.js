@@ -18,5 +18,7 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
+        // Sur le serveur, les JS/CSS vont dans public/spa-assets/ : le dossier public/assets/ appartient à AssetMapper
+        assetsDir: 'spa-assets',
     },
 });
