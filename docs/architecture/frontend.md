@@ -1,12 +1,17 @@
 # Frontend — CF2m
 
+> **Changement de cap (2026-10-15)** : le frontend public migre vers une **SPA React séparée (Vite, `frontend/`)**,
+> Symfony restant le backend (API JSON, sécurité, EasyAdmin). Ce document décrit le site **Twig actuel**, valable jusqu'à
+> la fin de la migration. Voir `docs/architecture/decision-ilots-react.md`.
+
 ## Stack
 | Couche | Technologie |
 |--------|-------------|
 | CSS framework | Bootstrap 5 |
 | JS | Stimulus + Turbo (ImportMap, pas de bundler) |
+| SPA React (en construction) | React 19 + Vite dans `frontend/` — voir `docs/architecture/decision-ilots-react.md` |
 | Templates | Twig |
-| Polices | Google Fonts (`Outfit` en titres, `DM Sans` en corps de texte) — chargement non bloquant, voir `docs/architecture/seo-performances.md` |
+| Polices | Google Fonts (`Poppins` en titres, `Montserrat` en corps de texte) — chargement non bloquant, voir `docs/architecture/seo-performances.md` |
 
 ## Palette de couleurs
 Définie dans `assets/styles/app.css` (`:root`), mode sombre par défaut avec bascule mode clair (voir plus bas).

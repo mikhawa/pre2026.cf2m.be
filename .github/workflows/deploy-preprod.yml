@@ -38,11 +38,59 @@ jobs:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: vendor/bin/phpunit
 
+  # SPA React (Vite) : le serveur n'a pas Node, la compilation se fait donc ici
+  frontend-build:
+    name: Build SPA React
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Installer les dépendances de la SPA
+        run: npm ci
+
+      - name: Compiler la SPA (Vite)
+        env:
+          VITE_ROUTER_BASENAME: /spa
+        run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          if-no-files-found: error
+
   deploy:
     name: Déploiement sur pre2026.cf2m.be
     runs-on: ubuntu-latest
-    needs: tests
+    needs: [ tests, frontend-build ]
     steps:
+      - name: Récupérer la SPA compilée
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: spa-dist
+
+      # Dépôt temporaire dans var/spa-dist (non versionné, vidé à chaque envoi) ; la mise en place dans public/ se fait après le git pull
+      - name: Envoi de la SPA sur le serveur
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_VPS_HOST }}
+          username: ${{ secrets.PROD_VPS_USER }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          source: spa-dist
+          target: /var/www/vhosts/cf2m.be/pre2026.cf2m.be/var/spa-dist
+          strip_components: 1
+          rm: true
+
       - name: Déploiement SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -73,6 +121,14 @@ jobs:
             echo "=== Assets ==="
             php bin/console importmap:install
             php bin/console asset-map:compile --env=dev
+
+            echo "=== SPA React ==="
+            test -f var/spa-dist/index.html
+            rm -rf public/spa public/spa-assets
+            mkdir -p public/spa
+            mv var/spa-dist/index.html public/spa/index.html
+            mv var/spa-dist/spa-assets public/spa-assets
+            rm -rf var/spa-dist
 
             echo "=== Permissions ==="
             chmod -R 775 public/uploads
