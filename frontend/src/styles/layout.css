@@ -1,0 +1,275 @@
+/*
+ * En-tête, hero de l'accueil — maquette Figma « Header + Hero ».
+ * Composants React : assets/react/src/islands/Layout/Header.jsx, islands/Home/Hero.jsx
+ * (et leurs contenus de repli Twig, qui partagent les mêmes classes).
+ */
+
+/* ── En-tête ─────────────────────────────────────────────────────────── */
+.cf2m-site-header {
+    position: relative;
+    z-index: 1030;
+    background: var(--cf2m-header-bg);
+    border-bottom: 1px solid var(--cf2m-header-line);
+}
+
+/* Accueil : l'en-tête est posé par-dessus le hero */
+body[data-page="home"] .cf2m-site-header {
+    position: absolute;
+    inset: 0 0 auto 0;
+    /* background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+    --cf2m-header-link: var(--cf2m-accent);
+    --cf2m-header-link-hover: #ffffff; */
+}
+
+/* Accueil, thème sombre : en-tête transparent sur la photo */
+html:not([data-theme="light"]) body[data-page="home"] .cf2m-site-header {
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+    --cf2m-header-link: var(--cf2m-accent);
+    --cf2m-header-link-hover: #ffffff;
+}
+
+/* 
+body[data-page="home"] .cf2m-site-header .cf2m-logo-img--dark {
+    display: inline-block;
+}
+
+body[data-page="home"] .cf2m-site-header .cf2m-logo-img--light {
+    display: none;
+} */
+
+.cf2m-site-header__nav {
+    padding-block: 0.75rem;
+    /* icône du bouton menu mobile : claire sur fond sombre ou photo */
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+[data-theme="light"] .cf2m-site-header__nav {
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2813, 30, 53, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.cf2m-site-header__brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    margin-right: 2rem;
+    text-decoration: none;
+}
+
+.cf2m-site-header__tagline {
+    max-width: 7rem;
+    margin-top: -0.9rem;
+    font-family: var(--cf2m-font-text);
+    font-size: 0.55rem;
+    line-height: 1.2;
+    text-align: center;
+    color: #ffffff;
+    white-space: normal;
+}
+
+[data-theme="light"] body:not([data-page="home"]) .cf2m-site-header__tagline {
+    color: #0d1e35;
+}
+
+.cf2m-site-header__links {
+    gap: 0.25rem;
+    margin-right: auto;
+}
+
+.cf2m-site-header .nav-link {
+    font-family: var(--cf2m-font-display);
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--cf2m-header-link);
+    padding-inline: 0.6rem;
+}
+
+.cf2m-site-header .nav-link:hover,
+.cf2m-site-header .nav-link:focus-visible,
+.cf2m-site-header .nav-link.show {
+    color: var(--cf2m-header-link-hover);
+}
+
+.cf2m-site-header .nav-link.active {
+    color: var(--cf2m-header-link);
+    font-weight: 900;
+}
+
+.cf2m-site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.cf2m-badge-recruiting {
+    font-size: 0.65rem;
+}
+
+.cf2m-badge-pending {
+    background: #dc3545;
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+/* Menu mobile ouvert : fond opaque pour rester lisible sur la photo */
+@media (max-width: 991.98px) {
+    .cf2m-site-header .navbar-collapse {
+        margin-top: 0.75rem;
+        padding: 0.75rem 1rem 1rem;
+        border-radius: 12px;
+        background: rgba(5, 14, 24, 0.95);
+    }
+
+    [data-theme="light"] body:not([data-page="home"]) .cf2m-site-header .navbar-collapse {
+        background: #f5f7f9;
+    }
+
+    .cf2m-site-header__actions {
+        margin-top: 0.75rem;
+    }
+}
+
+/* ── Hero de l'accueil ───────────────────────────────────────────────── */
+.cf2m-home-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: max(640px, 100vh);
+    padding: 9rem 0 4rem;
+    overflow: hidden;
+    color: var(--cf2m-on-photo);
+}
+
+.cf2m-home-hero__bg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cf2m-home-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--cf2m-photo-overlay);
+}
+
+.cf2m-home-hero__inner {
+    position: relative;
+    z-index: 1;
+}
+
+.cf2m-home-hero .cf2m-home-hero__title {
+    margin: 0 0 2.25rem;
+    font-family: var(--cf2m-font-display);
+    font-size: clamp(1.9rem, 4vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: var(--cf2m-tracking-wide);
+    text-transform: uppercase;
+    color: var(--cf2m-on-photo);
+}
+
+.cf2m-home-hero__subtitle {
+    display: block;
+    margin-top: 0.9rem;
+    font-size: clamp(0.95rem, 1.7vw, 1.3rem);
+    letter-spacing: 0.16em;
+    font-family: var(--cf2m-font-text);
+}
+
+.cf2m-home-hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem clamp(2rem, 7vw, 5.5rem);
+    margin: 0 0 1.75rem;
+}
+
+.cf2m-home-hero__stat-value,
+.cf2m-home-hero__stat-label {
+    font-family: var(--cf2m-font-display);
+    font-size: clamp(2.1rem, 4.4vw, 3.3rem);
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.cf2m-home-hero__stat-value {
+    color: var(--cf2m-accent);
+}
+
+.cf2m-home-hero__stat-label {
+    margin: 0;
+    color: var(--cf2m-on-photo);
+}
+
+.cf2m-home-hero__tagline {
+    margin: 0 0 2.25rem;
+    font-family: var(--cf2m-font-text);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--cf2m-accent);
+}
+
+.cf2m-home-hero__cta {
+    display: inline-block;
+    padding: 0.55rem 1.15rem;
+    border-radius: var(--cf2m-radius-pill);
+    background: var(--cf2m-accent);
+    color: var(--cf2m-ink);
+    font-family: var(--cf2m-font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.15s;
+}
+
+.cf2m-home-hero__cta:hover,
+.cf2m-home-hero__cta:focus-visible {
+    background: var(--cf2m-accent-hover);
+    color: var(--cf2m-ink);
+    transform: translateY(-1px);
+}
+
+.cf2m-home-hero__cta:focus-visible {
+    outline: 3px solid var(--cf2m-accent);
+    outline-offset: 3px;
+}
+
+/* Portrait : photo ronde dans l'anneau « C » du logo (cercle-contour-blanc.svg) */
+.cf2m-home-hero__portrait {
+    position: relative;
+    width: min(440px, 100%);
+    aspect-ratio: 1;
+}
+
+.cf2m-home-hero__ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cf2m-home-hero__photo {
+    position: absolute;
+    left: 16.8%;
+    top: 15.4%;
+    width: 66.4%;
+    height: 66.4%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cf2m-home-hero__cta {
+        transition: none;
+    }
+
+    .cf2m-home-hero__cta:hover {
+        transform: none;
+    }
+}

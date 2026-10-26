@@ -20,6 +20,10 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
+# SPA React compilée, déposée par deploy-preprod.yml / deploy-prod.yml (voir frontend/)
+/public/spa/
+/public/spa-assets/
+
 # Fichiers uploadés par les utilisateurs
 /public/uploads/**/*
 !/public/uploads/**/.gitkeep

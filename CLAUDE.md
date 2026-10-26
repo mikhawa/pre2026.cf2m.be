@@ -6,7 +6,7 @@
 
 **Langue du projet** : Ce projet se fait entièrement en français : code (commentaires, messages de validation, noms de commits), documentation, et échanges.
 
-**Stack** : Symfony 7.4 LTS --webapp | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap.
+**Stack** : Symfony 7.4 LTS --webapp | PHP 8.5 | MariaDB 11.4 | Docker | ImportMap | React 19 + Vite (SPA `frontend/`, migration en cours).
 
 **Environnements** : dev (Docker local) → préprod (GitHub CI) → prod (VPS Debian 12.13 sous Plesk).
 
@@ -44,7 +44,7 @@ Pour **toute tâche modifiant du code**, créer un fichier dans `.claude-tasks/`
 ## Contexte rapide
 - Architecture : MVC + couche Service + Repository pattern
 - Auth : Symfony Security (voters custom)
-- Frontend : ImportMap + Stimulus + Turbo (pas de build step)
+- Frontend : **décision du 2026-10-15 → SPA React séparée (Vite), Symfony en backend (API JSON + EasyAdmin)**, migration en cours. Site actuel : Twig + ImportMap + Stimulus + Turbo (îlots React retirés) — voir `docs/architecture/decision-ilots-react.md`
 - Déploiement : GitHub Actions → SSH VPS
 
 ## Fichiers clés à connaître

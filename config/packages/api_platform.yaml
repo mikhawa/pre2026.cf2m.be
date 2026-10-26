@@ -1,0 +1,21 @@
+# API JSON consommée par la SPA React (frontend/) — voir docs/architecture/decision-ilots-react.md
+api_platform:
+    title: API CF2m
+    version: 1.0.0
+    formats:
+        jsonld: ['application/ld+json']
+        # La SPA envoie « Accept: application/json » : JSON simple, sans métadonnées Hydra
+        json: ['application/json']
+    defaults:
+        # Authentification par session Symfony (SPA sur le même domaine) : l'API doit lire la session
+        stateless: false
+        pagination_items_per_page: 12
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
+
+# Documentation (/api/docs) réservée au développement
+when@prod:
+    api_platform:
+        enable_docs: false
+        enable_swagger_ui: false
+        enable_re_doc: false
