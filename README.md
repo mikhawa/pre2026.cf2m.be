@@ -24,6 +24,7 @@ Site de création du site du **Centre de Formation CF2m**, développé en `Symfo
 | Service       | URL                   | Description                  |
 |---------------|-----------------------|------------------------------|
 | App Symfony   | http://localhost:8085 | Application principale       |
+| React         | http://localhost:5173 | React                        |
 | phpMyAdmin    | http://localhost:8181 | Interface de gestion BDD     |
 | Mailpit       | http://localhost:8025 | Boîte mail de test SMTP      |
 | BDD (MariaDB) | localhost:3307        | Connexion directe (non HTTP) |
